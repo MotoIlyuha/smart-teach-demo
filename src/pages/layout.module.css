@@ -1,0 +1,21 @@
+.layoutHeader {
+    text-align: center;
+    color: #fff;
+    background-color: #4096ff;
+}
+
+.layoutContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.layoutFooter {
+    text-align: center;
+    color: #fff;
+    background-color: #4096ff;
+}
+
+.layout {
+    min-height: 100vh !important;
+}
