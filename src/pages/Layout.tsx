@@ -1,17 +1,16 @@
 import {Outlet} from "react-router-dom";
-import {Layout} from "antd";
+import {App, Layout} from "antd";
 
 import NavBar from "../widgets/NavBar/NavBar.tsx";
 
-import styles from "./layout.module.css";
+import styles from "../styles/layout.module.css";
+import {max_message_count} from "../config/allConfig.ts";
 
 const {Content, Footer, Header} = Layout;
 
 export default function RootLayout() {
   return (
-    <html lang="ru">
-    <body>
-    {/*<AppProvider>*/}
+    <App message={{maxCount: max_message_count}} notification={{placement: 'bottomRight'}}>
       <Layout className={styles.layout}>
         <Header className={styles.layoutHeader}>
           <NavBar/>
@@ -23,8 +22,6 @@ export default function RootLayout() {
           © 2024 SmartTeach
         </Footer>
       </Layout>
-    {/*</AppProvider>*/}
-    </body>
-    </html>
+    </App>
   );
 }
