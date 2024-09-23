@@ -18,3 +18,13 @@ export async function getUserByLogin(login: string): Promise<Tables<'users'>> {
   }
   else return user;
 }
+
+
+export async function getRole(role_id: number): Promise<Tables<'roles'>> {
+  const {data: role, error} = await supabase.from('roles').select("*").eq('id', role_id).single();
+  if (error || !role) {
+    console.error(error);
+    throw new Error(`Role with id "${role_id}" not found`);
+  }
+  else return role;
+}
