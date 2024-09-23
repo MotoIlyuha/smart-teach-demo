@@ -6,6 +6,7 @@ import {Divider, Space} from "antd";
 import {Tables} from "../../types/supabase.ts";
 import {getUserByLogin} from "../../features/SupaBaseUsers.ts";
 import UploadAvatar from "../../widgets/User/UploadAvatarWidget.tsx";
+import UserName from "../../widgets/User/UserNameWidget.tsx";
 
 
 export default function UserPage() {
@@ -22,9 +23,11 @@ export default function UserPage() {
     }
   }, [user_login])
 
-  return (
-    <Space align='center' direction='horizontal' size='large' split={<Divider type="vertical"/>}>
-      {person && <UploadAvatar person={person}/>}
-    </Space>
-  )
+  if (person)
+    return (
+      <Space align='center' direction='horizontal' size='large' split={<Divider type="vertical"/>}>
+        <UploadAvatar person={person}/>
+        <UserName person={person}/>
+      </Space>
+    )
 }

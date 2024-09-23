@@ -8,7 +8,7 @@ import ImgCrop from "antd-img-crop";
 import supabase from "../../config/supabaseClient.ts";
 import {Tables} from "../../types/supabase.ts";
 
-import styles from './PreviewButton.module.css';
+import styles from '../../styles/PreviewButton.module.css';
 
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
