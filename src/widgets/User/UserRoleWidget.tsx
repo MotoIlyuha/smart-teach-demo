@@ -1,35 +1,24 @@
 import {Tag} from "antd";
-import {Tables} from "../../types/supabase.ts";
-import {getRole} from "../../features/SupaBaseUsers.ts";
-import {useEffect, useState} from "react";
 
-export default function UserRole({person}: {person: Tables<'users'>}) {
-  const [role, setRole] = useState<string>();
+export default function UserRole({userRole}: {userRole: string}) {
 
-  useEffect(() => {
-    getRole(person.role_id)
-      .then(role => {
-        switch (role.name) {
-          case 'admin':
-            role.name = 'Администратор';
-            break;
-          case 'teacher':
-            role.name = 'Учитель';
-            break;
-          case 'student':
-            role.name = 'Учащийся';
-            break;
-        }
-        setRole(role.name)
-      })
-      .catch(e => console.error(e))
-  }, [person])
+  switch (userRole) {
+    case 'admin':
+      userRole = 'Администратор';
+      break;
+    case 'teacher':
+      userRole = 'Учитель';
+      break;
+    case 'student':
+      userRole = 'Учащийся';
+      break;
+  }
 
   return (
     <Tag
-      color={role === 'admin' ? 'red' : 'blue'}
+      color={userRole === 'admin' ? 'red' : 'blue'}
     >
-      {role}
+      {userRole}
     </Tag>
   )
 }
