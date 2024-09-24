@@ -19,7 +19,7 @@ export default function RootLayout() {
           <Outlet/>
         </Content>
         <Footer className={styles.layoutFooter}>
-          © 2024 SmartTeach
+          SmartTeach ©{new Date().getFullYear()} | Created by <a href={'https://github.com/MotoIlyuha'}>MotoIlyuha</a>
         </Footer>
       </Layout>
     </App>
