@@ -5,7 +5,7 @@ import {Tables} from "../../types/supabase.ts";
 import {
   getHeadTeacherByGroup,
   getModeratedGroupByTeacher,
-  getStudentGroupByStudent
+  getGroupByStudent
 } from "../../features/SupaBaseUsers.ts";
 
 export default function UserGroup({person, userRole}: { person: Tables<'users'>, userRole: string }) {
@@ -18,7 +18,7 @@ export default function UserGroup({person, userRole}: { person: Tables<'users'>,
       getModeratedGroupByTeacher(person.id, userRole)
         .then(mod_groups => setModeratedGroups(mod_groups))
     else
-      getStudentGroupByStudent(person.id, userRole)
+      getGroupByStudent(person.id, userRole)
         .then(gr => {
           setGroup(gr);
           if (gr) getHeadTeacherByGroup(gr.id)
@@ -36,8 +36,12 @@ export default function UserGroup({person, userRole}: { person: Tables<'users'>,
             <Flex gap={8} align={'baseline'}>
               <Typography.Text strong>Класс: </Typography.Text>
               <Tag color="blue">{group.name}</Tag>
-              <Typography.Text strong>Классный руководитель: </Typography.Text>
-              <Typography.Text>{myHeadTeacher?.first_name} {myHeadTeacher?.last_name}</Typography.Text>
+              {myHeadTeacher && (
+                <>
+                  <Typography.Text strong>Классный руководитель: </Typography.Text>
+                  <Typography.Text>{myHeadTeacher?.first_name} {myHeadTeacher?.last_name}</Typography.Text>
+                </>
+              )}
             </Flex>
           )}
         </>

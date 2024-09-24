@@ -24,6 +24,7 @@ export default function UserPage() {
           setPerson(person_by_login);
           getRole(person_by_login.role_id)
             .then(role => setUserRole(role.name))
+            .catch(e => console.error(e))
         })
         .catch(e => console.error(e))
     }
@@ -34,10 +35,8 @@ export default function UserPage() {
       <Space align='center' direction='horizontal' size='large' split={<Divider type="vertical"/>}>
         <UploadAvatar person={person}/>
         <Flex vertical>
-          <Flex gap={16} align={'baseline'}>
-            <UserName person={person}/>
-            <UserRole userRole={userRole}/>
-          </Flex>
+          <UserRole userRole={userRole}/>
+          <UserName person={person}/>
           <Flex gap={16} align={'baseline'}>
             <Typography.Text strong>{person.login}</Typography.Text>
             <Typography.Text>{person.email}</Typography.Text>

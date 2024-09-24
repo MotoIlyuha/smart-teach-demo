@@ -63,22 +63,23 @@ export async function getModeratedGroupByTeacher(id: string, role: string): Prom
   }
 }
 
-export async function getStudentGroupByStudent(id: string, role: string): Promise<Tables<'student_groups'>> {
+export async function getGroupByStudent(user_id: string, role: string): Promise<Tables<'student_groups'>> {
   if (role === 'student') {
     const {data: group, error} = await supabase
       .from('users')
-      .select('student_groups(*)')
-      .eq('id', id)
+      .select('group_id, student_groups!users_group_id_fkey(*)')
+      .eq('id', user_id)
       .single();
     if (error) {
       console.error(error);
-      throw new Error(`Error fetching group for user_id "${id}": ${error.message}`);
+      throw new Error(`Error fetching group for user_id "${user_id}": ${error.message}`);
     }
     if (!group || !group.student_groups) {
-      throw new Error(`No group found for user_id "${id}"`);
+      throw new Error(`No group found for user_id "${user_id}"`);
     }
     return group.student_groups;
   } else {
+    console.log(role);
     throw new Error('User is not a student');
   }
 }

@@ -15,9 +15,7 @@ export default function UserRole({userRole}: {userRole: string}) {
   }
 
   return (
-    <Tag
-      color={userRole === 'admin' ? 'red' : 'blue'}
-    >
+    <Tag color={userRole === 'admin' ? 'red' : 'blue'} style={{width: 'fit-content'}}>
       {userRole}
     </Tag>
   )

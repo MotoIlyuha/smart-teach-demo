@@ -7,7 +7,9 @@ import supabase from "../../config/supabaseClient.ts";
 export default function UserName({person}: { person: Tables<'users'> }) {
   const [fistName, setFirstName] = useState<string>(person.first_name || '');
   const [lastName, setLastName] = useState<string>(person.last_name || '');
-  const [tooltipText, setTooltipText] = useState<string>('');
+  const [tooltipText, setTooltipText] = useState<string>(
+    (person.first_name === null || person.last_name === null) ? 'Пожалуйста, введите свои имя и фамилию' : '',
+  );
   const [isValid, setIsValid] = useState<boolean>(true);
   const [editMode, setEditMode] = useState<boolean>(fistName === '' || lastName === '');
 
@@ -31,14 +33,14 @@ export default function UserName({person}: { person: Tables<'users'> }) {
       placement={'right'}
       open={fistName === '' || lastName === '' || !isValid}
     >
-      <Flex gap={8} align={'baseline'}>
+      <Flex gap={8} align={'baseline'} style={{width: '60%'}}>
         {editMode ? (
-          <Flex gap={8} align={'baseline'} style={{width: '50%'}}>
+          <Flex gap={8} align={'baseline'}>
             <Input
               className={'first-name-input'}
               value={fistName}
               onChange={e => {
-                if (e.target.value === '') {
+                if (e.target.value === '' || lastName === '') {
                   setIsValid(false);
                   setTooltipText('Пожалуйста, введите свои имя и фамилию');
                 } else if (e.target.value.length < 3) {
@@ -54,14 +56,14 @@ export default function UserName({person}: { person: Tables<'users'> }) {
               placeholder="Имя"
               variant={'borderless'}
               size={'large'}
-              style={{width: 'fit-content', fontSize: '24px'}}
+              style={{fontSize: '24px'}}
             />
             <Input
               id={'last-name-input'}
               className={'last-name-input'}
               value={lastName}
               onChange={e => {
-                if (e.target.value === '') {
+                if (e.target.value === '' || fistName === '') {
                   setIsValid(false);
                   setTooltipText('Пожалуйста, введите свои имя и фамилию');
                 } else if (e.target.value.length < 3) {
@@ -77,7 +79,7 @@ export default function UserName({person}: { person: Tables<'users'> }) {
               placeholder="Фамилия"
               variant={'borderless'}
               size={'large'}
-              style={{width: 'fit-content', fontSize: '24px'}}
+              style={{fontSize: '24px'}}
             />
           </Flex>
         ) : (
