@@ -6,9 +6,10 @@
 }
 
 .layoutContent {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    padding: 24px 48px;
 }
 
 .layoutFooter {
