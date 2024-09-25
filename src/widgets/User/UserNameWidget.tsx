@@ -1,31 +1,39 @@
-import {useState} from "react";
-import {Button, Flex, Input, message, Tooltip, Typography} from "antd";
+import {useEffect, useState} from "react";
+import {Button, Flex, Input, message, Skeleton, Tooltip, Typography} from "antd";
 import {CheckOutlined, EditOutlined} from "@ant-design/icons";
 import {Tables} from "../../types/supabase.ts";
-import supabase from "../../config/supabaseClient.ts";
+import {updateUserName} from "../../features/SupaBaseUsers.ts";
 
 export default function UserName({person, itsMe}: { person: Tables<'users'>, itsMe: boolean }) {
-  const [fistName, setFirstName] = useState<string>(person.first_name || '');
-  const [lastName, setLastName] = useState<string>(person.last_name || '');
+  const [firstName, setFirstName] = useState<string>();
+  const [lastName, setLastName] = useState<string>();
   const [tooltipText, setTooltipText] = useState<string>(
     (person.first_name === null || person.last_name === null) ? 'Пожалуйста, введите свои имя и фамилию' : '',
   );
   const [isValid, setIsValid] = useState<boolean>(true);
-  const [editMode, setEditMode] = useState<boolean>(fistName === '' || lastName === '');
+  const [editMode, setEditMode] = useState<boolean>(firstName === '' || lastName === '');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+    setFirstName(person.first_name || '');
+    setLastName(person.last_name || '');
+    setIsLoading(false);
+  }, [person.first_name, person.last_name]);
 
   const handleUpdateName = async () => {
-    const {data, error} = await supabase
-      .from('users')
-      .update({first_name: fistName, last_name: lastName})
-      .eq('id', person.id)
-      .select();
-    if (error) {
-      message.error(error.message);
-    } else if (data) {
-      message.success('Имя и фамилия успешно обновлены!');
-      setEditMode(false);
-    }
+    setIsLoading(true);
+    if (firstName && lastName)
+    updateUserName(person.id, firstName, lastName)
+      .then(() => {
+        message.success('Имя и фамилия успешно обновлены!');
+        setEditMode(false);
+      })
+      .catch(e => message.error(e.message));
+    setIsLoading(false);
   };
+
+  if (isLoading) return <Skeleton active/>
 
   return (
     <>
@@ -33,14 +41,14 @@ export default function UserName({person, itsMe}: { person: Tables<'users'>, its
         <Tooltip
           title={tooltipText}
           placement={'right'}
-          open={fistName === '' || lastName === '' || !isValid}
+          open={firstName === '' || lastName === '' || !isValid}
         >
           <Flex gap={8} align={'baseline'} style={{width: '60%'}}>
             {editMode ? (
               <Flex gap={8} align={'baseline'}>
                 <Input
                   className={'first-name-input'}
-                  value={fistName}
+                  value={firstName}
                   onChange={e => {
                     if (e.target.value === '' || lastName === '') {
                       setIsValid(false);
@@ -65,7 +73,7 @@ export default function UserName({person, itsMe}: { person: Tables<'users'>, its
                   className={'last-name-input'}
                   value={lastName}
                   onChange={e => {
-                    if (e.target.value === '' || fistName === '') {
+                    if (e.target.value === '' || firstName === '') {
                       setIsValid(false);
                       setTooltipText('Пожалуйста, введите свои имя и фамилию');
                     } else if (e.target.value.length < 3) {
@@ -85,7 +93,7 @@ export default function UserName({person, itsMe}: { person: Tables<'users'>, its
                 />
               </Flex>
             ) : (
-              <Typography.Title level={3}>{fistName} {lastName}</Typography.Title>
+              <Typography.Title level={3}>{firstName} {lastName}</Typography.Title>
             )}
             <Tooltip title={editMode ? 'Сохранить' : 'Редактировать'}>
               <Button

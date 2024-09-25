@@ -9,7 +9,7 @@ import UploadAvatar from "../../widgets/User/UploadAvatarWidget.tsx";
 import UserName from "../../widgets/User/UserNameWidget.tsx";
 import UserRole from "../../widgets/User/UserRoleWidget.tsx";
 import UserBirthday from "../../widgets/User/UserBirthdayWidget.tsx";
-import UserGroup from "../../widgets/User/UserGroupWidget.tsx";
+import UserGroup from "../../widgets/Group/UserGroupWidget.tsx";
 import {useAuth} from "../../hok/Auth.ts";
 
 
@@ -17,7 +17,7 @@ export default function UserPage() {
   const {user_login} = useParams();
   const {person: i_am} = useAuth()
   const [page_person, setPage_person] = useState<Tables<'users'>>();
-  const [userRole, setUserRole] = useState<string>('');
+  const [userRole, setUserRole] = useState<string>();
 
   const itsMe = i_am?.login === user_login;
 
@@ -41,14 +41,14 @@ export default function UserPage() {
       <Space align='center' direction='horizontal' size='large' split={<Divider type="vertical"/>}>
         <UploadAvatar person={page_person} itsMe={itsMe}/>
         <Flex vertical>
-          <UserRole userRole={userRole}/>
+          {userRole && <UserRole userRole={userRole}/>}
           <UserName person={page_person} itsMe={itsMe}/>
           <Flex gap={16} align={'baseline'}>
             <Typography.Text strong>{page_person.login}</Typography.Text>
             <Typography.Text>{page_person.email}</Typography.Text>
           </Flex>
           <UserBirthday person={page_person} itsMe={itsMe}/>
-          <UserGroup person={page_person} userRole={userRole}/>
+          {userRole && <UserGroup person={page_person} userRole={userRole}/>}
         </Flex>
       </Space>
     )

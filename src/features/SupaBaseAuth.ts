@@ -1,5 +1,6 @@
 import supabase from "../config/supabaseClient.ts";
 import {AuthApiError, Session, User} from "@supabase/supabase-js";
+import {getUserByLogin} from "./SupaBaseUsers.ts";
 
 /**
  * Авторизация по почте и паролю
@@ -10,8 +11,16 @@ import {AuthApiError, Session, User} from "@supabase/supabase-js";
 export const signInWithEmail = async ({email, password}: { email: string, password: string }): Promise<Awaited<{
   data: { user: User | null; session: Session | null } | { user: null; session: null }
 }>> => {
-  const {data, error} = await supabase.auth.signInWithPassword({email, password});
+  let email_or_login = email;
+  try {
+    if (await checkIfLoginExists(email))
+      email_or_login = (await getUserByLogin(email)).email;
+  } catch (e) {
+    console.error(e);
+  }
+  const {data, error} = await supabase.auth.signInWithPassword({email: email_or_login, password});
   if (error) throw error;
+  console.log(data);
   return Promise.resolve({data: data});
 }
 
@@ -24,7 +33,7 @@ interface signUpWithEmailProps {
 
 
 /**
- * Регистрация по почте и паролю
+ * Регистрация по почте (логину) и паролю
  * @param login - login пользователя
  * @param email - email пользователя
  * @param password - пароль пользователя
@@ -32,8 +41,12 @@ interface signUpWithEmailProps {
  */
 export const signUpWithEmail = async ({login, email, password}: signUpWithEmailProps): Promise<boolean> => {
   try {
-    const {data: auth_data, error: auth_error} = await supabase.auth.signUp({email, password, options: {data: {login}}});
-    if (auth_error || !auth_data || !auth_data.user) throw auth_error;
+    const {data: auth_data, error: auth_error} = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {data: {login}}
+    });
+    if (auth_error || !auth_data || !auth_data.user) return false;
     try {
       const {error: user_error} = await supabase
         .from('users')
@@ -41,7 +54,7 @@ export const signUpWithEmail = async ({login, email, password}: signUpWithEmailP
           login: login
         })
         .eq('login', email);
-      if (user_error) throw user_error;
+      if (user_error) return false;
       return Promise.resolve(true);
     }
     catch (e) {
@@ -60,15 +73,15 @@ export const signUpWithEmail = async ({login, email, password}: signUpWithEmailP
  * Авторизация через GitHub
  * @returns Promise с результатом попытки входа через GitHub
  */
-export const signInWithGitHub = async () => {
-  const {data, error} = await supabase.auth.signInWithOAuth({
-    provider: 'github',
-  });
-  if (error) {
-    return [false, error];
-  }
-  return [true, data];
-};
+// export const signInWithGitHub = async () => {
+//   const {data, error} = await supabase.auth.signInWithOAuth({
+//     provider: 'github',
+//   });
+//   if (error) {
+//     return [false, error];
+//   }
+//   return [true, data];
+// };
 
 /**
  * Проверка существования пользователя по email
@@ -102,7 +115,6 @@ export const checkIfLoginExists = async (login: string): Promise<boolean> => {
       .select('id')
       .eq('login', login)
       .single();
-    console.log(!!data);
     return Promise.resolve(!!data);
   }
   catch {

@@ -53,7 +53,7 @@ export async function getModeratedGroupByTeacher(id: string, role: string): Prom
     // Проверяем, что все элементы имеют заполненное поле student_groups
     const validGroups = student_groups.filter((group) => group !== null);
 
-    if (validGroups.length > 0) {
+    if (validGroups.length > 0 && validGroups.length === student_groups.length) {
       return validGroups;
     } else {
       throw new Error('No valid groups found');
@@ -63,39 +63,15 @@ export async function getModeratedGroupByTeacher(id: string, role: string): Prom
   }
 }
 
-export async function getGroupByStudent(user_id: string, role: string): Promise<Tables<'student_groups'>> {
-  if (role === 'student') {
-    const {data: group, error} = await supabase
-      .from('users')
-      .select('group_id, student_groups!users_group_id_fkey(*)')
-      .eq('id', user_id)
-      .single();
-    if (error) {
-      console.error(error);
-      throw new Error(`Error fetching group for user_id "${user_id}": ${error.message}`);
-    }
-    if (!group || !group.student_groups) {
-      throw new Error(`No group found for user_id "${user_id}"`);
-    }
-    return group.student_groups;
-  } else {
-    console.log(role);
-    throw new Error('User is not a student');
-  }
-}
-
-export async function getHeadTeacherByGroup(group_id: string): Promise<Tables<'users'>> {
-  const {data: head_teacher, error} = await supabase
-    .from('group_moderators')
-    .select('user_id, users(*)')
-    .eq('group_id', group_id)
-    .single();
+export async function updateUserName(user_id: string, first_name: string, last_name: string): Promise<Tables<'users'>> {
+  const { data: user, error } = await supabase
+    .from('users')
+    .update({ first_name, last_name })
+    .eq('id', user_id)
+    .select();
   if (error) {
     console.error(error);
-    throw new Error(`Error fetching head_teacher for group_id "${group_id}": ${error.message}`);
+    throw new Error(`Error updating user: ${error.message}`);
   }
-  if (!head_teacher || !head_teacher.users) {
-    throw new Error(`No head_teacher found for group_id "${group_id}"`);
-  }
-  return head_teacher.users;
+  return user[0];
 }

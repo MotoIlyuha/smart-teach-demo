@@ -33,7 +33,7 @@ export default function UserBirthday({person, itsMe}: { person: Tables<'users'>,
   return (
     <Flex gap={8} align={'baseline'}>
       <Typography.Text strong>Дата рождения:</Typography.Text>
-      {editMode && !itsMe ? (
+      {editMode && itsMe ? (
         <DatePicker
           value={birthDate}
           format="DD.MM.YYYY"

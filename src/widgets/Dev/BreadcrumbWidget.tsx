@@ -57,7 +57,7 @@ export default function BreadcrumbWidget() {
   }
 
   const thirdLevel = getThirdLevel();
-  const thirdLevelTitle = () => {
+  const getThirdLevelTitle = () => {
     if (secondLevel === 'Пользователи') {
       const currentUser = allUsers.filter(user => user.login === location.pathname.split('/')[2])[0];
       return currentUser?.first_name + ' ' + currentUser?.last_name + ' (' + currentUser?.login + ')';
@@ -68,6 +68,7 @@ export default function BreadcrumbWidget() {
     }
     else return ''
   }
+  const thirdLevelTitle = getThirdLevelTitle();
 
   return (
     <Breadcrumb separator=">" style={{marginBottom: 12}} items={
@@ -117,7 +118,7 @@ export default function BreadcrumbWidget() {
           }
         },
         {
-          title: thirdLevelTitle(),
+          title: thirdLevelTitle,
           menu: {items: thirdLevel}
         }
       ]

@@ -140,8 +140,8 @@ export default function UploadAvatar({person, itsMe}: { person: Tables<'users'>,
         <Avatar
           size={240}
           shape={'square'}
-          icon={avatarUrl ? null : <UserOutlined/>}
-          src={avatarUrl}
+          icon={<UserOutlined/>}
+          src={avatarUrl || undefined}
           alt="avatar"
           style={{borderRadius: 16}}
         />
