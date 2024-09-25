@@ -10,39 +10,45 @@ import UserName from "../../widgets/User/UserNameWidget.tsx";
 import UserRole from "../../widgets/User/UserRoleWidget.tsx";
 import UserBirthday from "../../widgets/User/UserBirthdayWidget.tsx";
 import UserGroup from "../../widgets/User/UserGroupWidget.tsx";
+import {useAuth} from "../../hok/Auth.ts";
 
 
 export default function UserPage() {
   const {user_login} = useParams();
-  const [person, setPerson] = useState<Tables<'users'>>();
+  const {person: i_am} = useAuth()
+  const [page_person, setPage_person] = useState<Tables<'users'>>();
   const [userRole, setUserRole] = useState<string>('');
+
+  const itsMe = i_am?.login === user_login;
 
   useEffect(() => {
     if (user_login) {
-      getUserByLogin(user_login)
-        .then(person_by_login => {
-          setPerson(person_by_login);
-          getRole(person_by_login.role_id)
-            .then(role => setUserRole(role.name))
-            .catch(e => console.error(e))
-        })
-        .catch(e => console.error(e))
+      if (itsMe && i_am) setPage_person(i_am);
+      else 
+        getUserByLogin(user_login)
+          .then(person_by_login => {
+            setPage_person(person_by_login);
+            getRole(person_by_login.role_id)
+              .then(role => setUserRole(role.name))
+              .catch(e => console.error(e))
+          })
+          .catch(e => console.error(e))
     }
-  }, [user_login])
+  }, [i_am, itsMe, page_person, user_login])
 
-  if (person)
+  if (page_person)
     return (
       <Space align='center' direction='horizontal' size='large' split={<Divider type="vertical"/>}>
-        <UploadAvatar person={person}/>
+        <UploadAvatar person={page_person} itsMe={itsMe}/>
         <Flex vertical>
           <UserRole userRole={userRole}/>
-          <UserName person={person}/>
+          <UserName person={page_person} itsMe={itsMe}/>
           <Flex gap={16} align={'baseline'}>
-            <Typography.Text strong>{person.login}</Typography.Text>
-            <Typography.Text>{person.email}</Typography.Text>
+            <Typography.Text strong>{page_person.login}</Typography.Text>
+            <Typography.Text>{page_person.email}</Typography.Text>
           </Flex>
-          <UserBirthday person={person}/>
-          <UserGroup person={person} userRole={userRole}/>
+          <UserBirthday person={page_person} itsMe={itsMe}/>
+          <UserGroup person={page_person} userRole={userRole}/>
         </Flex>
       </Space>
     )

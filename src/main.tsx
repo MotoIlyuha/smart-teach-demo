@@ -5,7 +5,7 @@ import {BrowserRouter} from "react-router-dom";
 import {ConfigProvider} from "antd";
 import ruRU from 'antd/es/locale/ru_RU';
 
-import {AuthProvider} from "./hooks/Auth.tsx";
+import {AuthProvider} from "./hooks/AuthProvider.tsx";
 
 import App from './App.tsx'
 import './styles/index.css'

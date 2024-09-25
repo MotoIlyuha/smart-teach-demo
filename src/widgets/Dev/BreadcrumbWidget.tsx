@@ -70,7 +70,7 @@ export default function BreadcrumbWidget() {
   }
 
   return (
-    <Breadcrumb separator=">" items={
+    <Breadcrumb separator=">" style={{marginBottom: 12}} items={
       [
         {title: <HomeOutlined/>, href: '/'},
         {

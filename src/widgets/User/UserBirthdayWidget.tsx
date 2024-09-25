@@ -5,7 +5,7 @@ import {CheckOutlined, EditOutlined} from "@ant-design/icons";
 import supabase from "../../config/supabaseClient.ts";
 import dayjs, {Dayjs} from "dayjs";
 
-export default function UserBirthday({person}: { person: Tables<'users'> }) {
+export default function UserBirthday({person, itsMe}: { person: Tables<'users'>, itsMe: boolean }) {
   const [editMode, setEditMode] = useState<boolean>(person.birth_date === null);
   const [birthDate, setBirthDate] = useState<Dayjs | null>(null);
 
@@ -33,7 +33,7 @@ export default function UserBirthday({person}: { person: Tables<'users'> }) {
   return (
     <Flex gap={8} align={'baseline'}>
       <Typography.Text strong>Дата рождения:</Typography.Text>
-      {editMode ? (
+      {editMode && !itsMe ? (
         <DatePicker
           value={birthDate}
           format="DD.MM.YYYY"
@@ -45,21 +45,23 @@ export default function UserBirthday({person}: { person: Tables<'users'> }) {
       ) : (
         <Typography.Text>{birthDate?.locale('ru').format('D MMMM YYYY г.')}</Typography.Text>
       )}
-      <Tooltip title={editMode ? 'Сохранить' : 'Изменить'}>
-        <Button
-          type='link'
-          icon={editMode ? <CheckOutlined/> : <EditOutlined/>}
-          style={{color: editMode ? (birthDate === null ? 'gray' : 'green') : 'blue'}}
-          disabled={birthDate === null}
-          onClick={() => {
-            if (!editMode) {
-              setEditMode(true);
-            } else {
-              handleUpdateBirthday();
-            }
-          }}
-        />
-      </Tooltip>
+      {itsMe &&
+          <Tooltip title={editMode ? 'Сохранить' : 'Изменить'}>
+              <Button
+                  type='link'
+                  icon={editMode ? <CheckOutlined/> : <EditOutlined/>}
+                  style={{color: editMode ? (birthDate === null ? 'gray' : 'green') : 'blue'}}
+                  disabled={birthDate === null}
+                  onClick={() => {
+                    if (!editMode) {
+                      setEditMode(true);
+                    } else {
+                      handleUpdateBirthday();
+                    }
+                  }}
+              />
+          </Tooltip>}
+
     </Flex>
   )
 }

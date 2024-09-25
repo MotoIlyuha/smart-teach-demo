@@ -1,19 +1,22 @@
+import {createContext, ReactNode, SetStateAction, useEffect, useState} from 'react';
 import {AuthChangeEvent, Session, User} from '@supabase/supabase-js';
-import {useContext, useState, useEffect, createContext, SetStateAction, ReactNode} from 'react';
+import {Tables} from "../types/supabase.ts";
+import {getUserByEmail} from "../features/SupaBaseUsers.ts";
 import supabase from '../config/supabaseClient.ts';
 
 // create a context for authentication
-const AuthContext = createContext<{
+export const AuthContext = createContext<{
   session: Session | null | undefined,
   user: User | null | undefined,
+  person: Tables<'users'> | null | undefined,
   signOut: () => void
 }>({
-  session: null, user: null, signOut: () => {
-  }
+  session: null, user: null, person: null, signOut: () => {}
 });
 
 export const AuthProvider = ({children}: { children: ReactNode }) => {
-  const [user, setUser] = useState<User>()
+  const [user, setUser] = useState<User>();
+  const [person, setPerson] = useState<Tables<'users'>>();
   const [session, setSession] = useState<Session | null>();
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +26,8 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
       if (error) throw error;
       setSession(session)
       setUser(session?.user)
+      if (session?.user?.email)
+        getUserByEmail(session?.user?.email).then(setPerson);
       setLoading(false);
     };
 
@@ -44,6 +49,7 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
   const value = {
     session,
     user,
+    person,
     signOut: () => {
       supabase.auth.signOut();
       setUser(undefined);
@@ -57,9 +63,4 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
       {!loading && children}
     </AuthContext.Provider>
   );
-};
-
-// export the useAuth hook
-export const useAuth = () => {
-  return useContext(AuthContext);
 };

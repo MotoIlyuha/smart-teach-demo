@@ -1,6 +1,6 @@
 import {ReactNode} from "react";
 import {Navigate, useLocation} from "react-router-dom";
-import {useAuth} from "../hooks/Auth";
+import {useAuth} from "../hok/Auth.ts";
 import {App} from "antd";
 
 const ProtectedRoute = ({children}: { children: ReactNode }) => {

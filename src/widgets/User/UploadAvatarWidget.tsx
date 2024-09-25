@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import {Avatar, Button, Flex, GetProp, Image, Upload, UploadFile, UploadProps, Collapse, message} from "antd";
 import {UploadOutlined, UserOutlined, EyeOutlined} from "@ant-design/icons";
@@ -21,14 +21,18 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-export default function UploadAvatar({person}: { person: Tables<'users'> }) {
-  const [avatarUrl, setAvatarUrl] = useState<string>(person.avatar || '');
+export default function UploadAvatar({person, itsMe}: { person: Tables<'users'>, itsMe: boolean }) {
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>(
     person.avatar ? [{uid: '-1', name: 'avatar', status: 'done', url: person.avatar}] : []
   );
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setAvatarUrl(person.avatar ?? '');
+  }, [person.avatar]);
 
   // Проверка типа файла и размера
   const beforeUpload = (file: FileType) => {
@@ -151,47 +155,49 @@ export default function UploadAvatar({person}: { person: Tables<'users'> }) {
                 <EyeOutlined/>{'  '}<span>Посмотреть</span>
             </div>}
       </div>
-      <Collapse
-        className={styles.collapse}
-        expandIconPosition={'end'}
-        bordered={false}
-        items={[
-          {
-            key: 'upload',
-            label: 'Поменять аватарку',
-            children: (
-              <ImgCrop cropShape={'rect'} rotationSlider>
-                <Upload
-                  name={'avatar'}
-                  listType={'picture'}
-                  onPreview={onPreview}
-                  onChange={handleChange}
-                  beforeUpload={beforeUpload}
-                  progress={{
-                    strokeColor: {
-                      '0%': '#108ee9',
-                      '100%': '#87d068',
-                    },
-                    strokeWidth: 3,
-                  }}
-                  showUploadList={{
-                    showRemoveIcon: true,
-                    showPreviewIcon: true,
-                    showDownloadIcon: true
-                  }}
-                  customRequest={({file, onSuccess}) => {
-                    handleChange({fileList: [...fileList, file as UploadFile], file: file as UploadFile});
-                    if (onSuccess) onSuccess('ok');
-                  }}
-                >
-                  <Button icon={<UploadOutlined/>} loading={loading}>
-                    {loading ? 'Загрузка...' : 'Загрузить аватар'}
-                  </Button>
-                </Upload>
-              </ImgCrop>
-            )
-          }
-        ]}/>
+      {itsMe &&
+          <Collapse
+              className={styles.collapse}
+              expandIconPosition={'end'}
+              bordered={false}
+              items={[
+                {
+                  key: 'upload',
+                  label: 'Поменять аватарку',
+                  children: (
+                    <ImgCrop cropShape={'rect'} rotationSlider>
+                      <Upload
+                        name={'avatar'}
+                        listType={'picture'}
+                        onPreview={onPreview}
+                        onChange={handleChange}
+                        beforeUpload={beforeUpload}
+                        progress={{
+                          strokeColor: {
+                            '0%': '#108ee9',
+                            '100%': '#87d068',
+                          },
+                          strokeWidth: 3,
+                        }}
+                        showUploadList={{
+                          showRemoveIcon: true,
+                          showPreviewIcon: true,
+                          showDownloadIcon: true
+                        }}
+                        customRequest={({file, onSuccess}) => {
+                          handleChange({fileList: [...fileList, file as UploadFile], file: file as UploadFile});
+                          if (onSuccess) onSuccess('ok');
+                        }}
+                      >
+                        <Button icon={<UploadOutlined/>} loading={loading}>
+                          {loading ? 'Загрузка...' : 'Загрузить аватар'}
+                        </Button>
+                      </Upload>
+                    </ImgCrop>
+                  )
+                }
+              ]}/>
+      }
       {previewImage && (
         <Image
           wrapperStyle={{display: 'none'}}

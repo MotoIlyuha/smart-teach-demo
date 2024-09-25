@@ -20,9 +20,9 @@ export default function RootLayout() {
         <Header className={styles.layoutHeader}>
           <NavBar/>
         </Header>
-        <Content className={styles.layoutContent}>
+        <Content style={{ padding: '24px 48px'}}>
           {dev_mode && <BreadcrumbWidget/>}
-          <Layout style={{ padding: '24px 0', background: colorBgContainer, borderRadius: borderRadiusLG }}>
+          <Layout className={styles.layoutContent} style={{ background: colorBgContainer, borderRadius: borderRadiusLG }}>
             <Outlet/>
           </Layout>
         </Content>

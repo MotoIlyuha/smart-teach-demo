@@ -6,7 +6,7 @@ import {User} from "@supabase/supabase-js";
 import {Button, MenuProps, Dropdown, Space, Typography, Avatar} from "antd";
 import {UserOutlined} from "@ant-design/icons";
 
-import {useAuth} from "../../../hooks/Auth.tsx";
+import {useAuth} from "../../../hok/Auth.ts";
 import {getUserByEmail} from "../../../features/SupaBaseUsers.ts";
 import {Tables} from "../../../types/supabase.ts";
 

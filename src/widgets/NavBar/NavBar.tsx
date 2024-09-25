@@ -4,7 +4,7 @@ import {Flex, Tag} from "antd";
 import styles from "../../styles/navBar.module.css";
 import SignInWidget from "./components/SignInWidget.tsx";
 import AvatarWidget from "./components/AvatarWidget.tsx";
-import {useAuth} from "../../hooks/Auth.tsx";
+import {useAuth} from "../../hok/Auth.ts";
 
 export default function NavBar() {
   const {user} = useAuth();
