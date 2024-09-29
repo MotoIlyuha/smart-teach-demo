@@ -1,50 +1,22 @@
-import {useEffect, useState} from "react";
-import {Flex, message, Typography} from "antd";
-import {Tables} from "../../types/supabase.ts";
+import {Skeleton, Tag} from "antd";
+import {useUserStore} from "../../shared/stores/userStore.ts";
 
-import {getModeratedGroupByTeacher} from "../../features/SupaBaseUsers.ts";
-import {getGroupByStudent} from "../../features/SupaBaseGroups.ts";
-import GroupMiniWidget from "./GroupMiniWidget.tsx";
+export default function UserGroup() {
+  const {user: person, loading} = useUserStore();
 
-export default function UserGroup({person, userRole}: { person: Tables<'users'>, userRole: string }) {
-  const [group, setGroup] = useState<Tables<'student_groups'> | null>(null);
-  const [moderatedGroups, setModeratedGroups] = useState<Tables<'student_groups'>[]>([]);
+  // useEffect(() => {
+  //   if (userRole === "teacher")
+  //     getModeratedGroupByTeacher(person.id, userRole)
+  //       .then(mod_groups => setModeratedGroups(mod_groups))
+  //   else if (userRole === "student")
+  //     getGroupByStudent(person.id, userRole)
+  //       .then(setGroup)
+  //       .catch(e => message.error(e.message));
+  // }, [person.id, userRole]);
 
-  useEffect(() => {
-    console.log(userRole);
-    if (userRole === "teacher")
-      getModeratedGroupByTeacher(person.id, userRole)
-        .then(mod_groups => setModeratedGroups(mod_groups))
-    else if (userRole === "student")
-      getGroupByStudent(person.id, userRole)
-        .then(setGroup)
-        .catch(e => message.error(e.message));
-  }, [person, userRole]);
+  if (loading) return <Skeleton active/>
 
   return (
-    <>
-      {userRole === "student" ? (
-        <>
-          {group === null ? (
-            <Typography.Text strong>Не принадлежит ни одному классу</Typography.Text>
-          ) : (
-            <GroupMiniWidget group={group} />
-          )}
-        </>
-      ) : (
-        <>
-          {moderatedGroups.length === 0 ? (
-            <Typography.Text strong>Не является классным руководителем</Typography.Text>
-          ) : (
-            <Flex gap={8} align={'baseline'}>
-              <Typography.Text strong>Классный руководитель для </Typography.Text>
-              {moderatedGroups.map(group => (
-                <GroupMiniWidget group={group} key={group.id}/>
-              ))}
-            </Flex>
-          )}
-        </>
-      )}
-    </>
+    <Tag>{person?.group_name}</Tag>
   )
 }

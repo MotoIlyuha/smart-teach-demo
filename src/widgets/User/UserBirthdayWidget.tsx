@@ -1,67 +1,64 @@
-import {useEffect, useState} from "react";
-import {Typography, Button, Flex, DatePicker, message, Tooltip} from "antd";
-import {Tables} from "../../types/supabase.ts";
-import {CheckOutlined, EditOutlined} from "@ant-design/icons";
-import supabase from "../../config/supabaseClient.ts";
+import {useState} from "react";
+import {Button, DatePicker, Flex, message, Skeleton, Tooltip, Typography} from "antd";
+import {CheckOutlined, CloseOutlined, EditOutlined} from "@ant-design/icons";
 import dayjs, {Dayjs} from "dayjs";
+import {useUserStore} from "../../shared/stores/userStore.ts";
 
-export default function UserBirthday({person, itsMe}: { person: Tables<'users'>, itsMe: boolean }) {
-  const [editMode, setEditMode] = useState<boolean>(person.birth_date === null);
-  const [birthDate, setBirthDate] = useState<Dayjs | null>(null);
+dayjs.locale('ru');
 
-  useEffect(() => {
-    if (person.birth_date !== null) {
-      setBirthDate(dayjs(person.birth_date));
-    }
-  }, [person]);
+export default function UserBirthday({editable}: { editable: boolean }) {
+  const person = useUserStore((state) => state.user);
+  const updateUser = useUserStore((state) => state.updateUser);
+  const loading = useUserStore((state) => state.loading);
+  const [editMode, setEditMode] = useState<boolean>(person?.birth_date === null);
+  const [birthDate, setBirthDate] = useState<Dayjs | null>(dayjs(person?.birth_date));
 
   const handleUpdateBirthday = async () => {
-    const {data, error} = await supabase
-      .from('users')
-      .update({birth_date: birthDate?.toISOString()})
-      .eq('id', person.id)
-      .select();
-    if (error) {
-      message.error(error.message);
-    } else if (data) {
-      console.log(data);
-      message.success('Дата рождения успешно обновлена!');
-      setEditMode(false);
-    }
+    await updateUser({birth_date: birthDate?.toISOString()})
+      .then(() => {
+        message.success('Дата рождения обновлена!');
+        setEditMode(false);
+      })
+      .catch(e => message.error(e.message))
   }
 
-  return (
-    <Flex gap={8} align={'baseline'}>
-      <Typography.Text strong>Дата рождения:</Typography.Text>
-      {editMode && itsMe ? (
-        <DatePicker
-          value={birthDate}
-          format="DD.MM.YYYY"
-          onChange={(date) => {
-            setBirthDate(date);
-          }}
-          placeholder="Выберите дату рождения"
-        />
-      ) : (
-        <Typography.Text>{birthDate?.locale('ru').format('D MMMM YYYY г.')}</Typography.Text>
-      )}
-      {itsMe &&
-          <Tooltip title={editMode ? 'Сохранить' : 'Изменить'}>
-              <Button
-                  type='link'
-                  icon={editMode ? <CheckOutlined/> : <EditOutlined/>}
-                  style={{color: editMode ? (birthDate === null ? 'gray' : 'green') : 'blue'}}
-                  disabled={birthDate === null}
-                  onClick={() => {
-                    if (!editMode) {
-                      setEditMode(true);
-                    } else {
-                      handleUpdateBirthday();
-                    }
-                  }}
-              />
-          </Tooltip>}
+  if (loading || !person) return <Skeleton.Input active/>
 
-    </Flex>
+  return (
+    <>
+      {editable ? (
+        <>
+        {editMode ? (
+          <Flex gap={8} align={'baseline'}>
+            <DatePicker
+              value={birthDate}
+              format="DD.MM.YYYY"
+              onChange={setBirthDate}
+              placeholder="Выберите дату рождения"
+            />
+            <Tooltip title={'Сохранить'}>
+              <Button type="link" onClick={handleUpdateBirthday} icon={<CheckOutlined/>} style={{color: "green"}}/>
+            </Tooltip>
+            <Tooltip title={'Отмена'}>
+              <Button type={'link'} onClick={() => setEditMode(false)} icon={<CloseOutlined/>}/>
+            </Tooltip>
+          </Flex>
+          ) : (
+          <Flex align={'baseline'}>
+        <Typography.Text>{birthDate?.locale('ru').format('DD.MM.YYYY г.')}</Typography.Text>
+        <Tooltip title={'Изменить дату рождения'}>
+          <Button onClick={() => setEditMode(true)} type={'link'} icon={<EditOutlined/>}
+                  style={{color: 'green'}}/>
+        </Tooltip>
+        </Flex>
+      )}
+    </>
   )
+:
+  (
+    <Typography.Text>{birthDate?.locale('ru').format('DD.MM.YYYY г.')}</Typography.Text>
+  )
+}
+</>
+)
 }

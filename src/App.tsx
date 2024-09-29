@@ -6,6 +6,7 @@ import LoginPage from "./pages/auth/LoginPage.tsx";
 import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import UserPage from "./pages/user/UserPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
+import GroupPage from "./pages/group/GroupPage.tsx";
 
 function App() {
 
@@ -18,6 +19,11 @@ function App() {
         <Route path={'/user/:user_login'} element={
           <ProtectedRoute>
             <UserPage/>
+          </ProtectedRoute>
+        }/>
+        <Route path={'/group/:group_id'} element={
+          <ProtectedRoute>
+            <GroupPage/>
           </ProtectedRoute>
         }/>
         <Route path="*" element={<NotFoundPage/>}/>

@@ -1,55 +1,73 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-
-import {Divider, Flex, Space, Typography} from "antd";
-
-import {Tables} from "../../types/supabase.ts";
-import {getRole, getUserByLogin} from "../../features/SupaBaseUsers.ts";
+import {Alert, Descriptions, Divider, Flex, Skeleton, Space} from "antd";
 import UploadAvatar from "../../widgets/User/UploadAvatarWidget.tsx";
 import UserName from "../../widgets/User/UserNameWidget.tsx";
-import UserRole from "../../widgets/User/UserRoleWidget.tsx";
 import UserBirthday from "../../widgets/User/UserBirthdayWidget.tsx";
 import UserGroup from "../../widgets/Group/UserGroupWidget.tsx";
 import {useAuth} from "../../hok/Auth.ts";
-
+import {useUserStore} from "../../shared/stores/userStore.ts";
+import {useShallow} from "zustand/react/shallow";
 
 export default function UserPage() {
-  const {user_login} = useParams();
-  const {person: i_am} = useAuth()
-  const [page_person, setPage_person] = useState<Tables<'users'>>();
-  const [userRole, setUserRole] = useState<string>();
+  const {user_login} = useParams<{ user_login: string }>();
+  const {person, loading: auth_loading} = useAuth();
+  const {user: pagePerson, fetchUser, loading, error} = useUserStore(useShallow(state => ({
+    user: state.user,
+    fetchUser: state.fetchUser,
+    loading: state.loading,
+    error: state.error,
+  })));
 
-  const itsMe = i_am?.login === user_login;
+  const [isEditable, setIsEditable] = useState(false);
 
   useEffect(() => {
-    if (user_login) {
-      if (itsMe && i_am) setPage_person(i_am);
-      else 
-        getUserByLogin(user_login)
-          .then(person_by_login => {
-            setPage_person(person_by_login);
-            getRole(person_by_login.role_id)
-              .then(role => setUserRole(role.name))
-              .catch(e => console.error(e))
-          })
-          .catch(e => console.error(e))
+    if (person && user_login) {
+      const isCurrentUser = person.login === user_login;
+      const isAdmin = person.role_name === "admin";
+      setIsEditable(isCurrentUser || isAdmin);
+      console.log("FETCH", user_login);
+      fetchUser(user_login);
     }
-  }, [i_am, itsMe, page_person, user_login])
+  }, [person, user_login, fetchUser]);
 
-  if (page_person)
+  if (error) return <Alert message="Ошибка" description={error} type="error" showIcon/>;
+
+  if (loading || auth_loading || (!pagePerson && !person)) return (
+    <Space align={'center'}>
+      <Skeleton active/>
+    </Space>
+  );
+
+  if (pagePerson)
     return (
-      <Space align='center' direction='horizontal' size='large' split={<Divider type="vertical"/>}>
-        <UploadAvatar person={page_person} itsMe={itsMe}/>
+      <Space align='start' direction='horizontal' size='large' split={<Divider type="vertical"/>}
+             style={{height: '100%'}}>
+        <UploadAvatar editable={isEditable}/>
         <Flex vertical>
-          {userRole && <UserRole userRole={userRole}/>}
-          <UserName person={page_person} itsMe={itsMe}/>
-          <Flex gap={16} align={'baseline'}>
-            <Typography.Text strong>{page_person.login}</Typography.Text>
-            <Typography.Text>{page_person.email}</Typography.Text>
-          </Flex>
-          <UserBirthday person={page_person} itsMe={itsMe}/>
-          {userRole && <UserGroup person={page_person} userRole={userRole}/>}
+          <UserName editable={isEditable}/>
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label={'Почта'}>{pagePerson.email}</Descriptions.Item>
+            <Descriptions.Item label={'Логин'}>{pagePerson.login}</Descriptions.Item>
+            <Descriptions.Item label={'Дата рождения'}>
+              <UserBirthday editable={isEditable}/>
+            </Descriptions.Item>
+            {person?.role_name !== 'admin' && (
+              <>
+                {pagePerson.group_name ? (
+                  <Descriptions.Item label={pagePerson.role_name === 'teacher' ? 'Классный руководитель для' : 'Класс'}>
+                    <UserGroup/>
+                  </Descriptions.Item>
+                ) : (
+                  <Descriptions.Item label={'Класс'}>
+                    {pagePerson.role_name === 'teacher' ? 'Не является классным руководителем' : 'Не принадлежит ни одному классу'}
+                  </Descriptions.Item>
+                )}
+              </>
+            )}
+          </Descriptions>
         </Flex>
       </Space>
-    )
+    );
+  else return null;
 }

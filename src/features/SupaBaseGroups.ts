@@ -1,6 +1,22 @@
 import {Tables} from "../types/supabase.ts";
 import supabase from "../config/supabaseClient.ts";
 
+export async function getGroupById(group_id: string): Promise<Tables<'student_groups'>> {
+  const {data: group, error} = await supabase
+    .from('student_groups')
+    .select('*')
+    .eq('id', group_id)
+    .single();
+  if (error) {
+    console.error(error);
+    throw new Error(`Error fetching group for group_id "${group_id}": ${error.message}`);
+  }
+  if (!group) {
+    throw new Error(`No group found for group_id "${group_id}"`);
+  }
+  return group;
+}
+
 export async function getGroupByStudent(user_id: string, role: string): Promise<Tables<'student_groups'>> {
   if (role === 'student') {
     const {data: group, error} = await supabase

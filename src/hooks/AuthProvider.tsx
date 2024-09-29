@@ -1,63 +1,85 @@
-import {createContext, ReactNode, SetStateAction, useEffect, useState} from 'react';
+// AuthProvider.tsx
+import {createContext, ReactNode, useEffect, useState} from 'react';
 import {AuthChangeEvent, Session, User} from '@supabase/supabase-js';
-import {Tables} from "../types/supabase.ts";
-import {getUserByEmail} from "../features/SupaBaseUsers.ts";
-import supabase from '../config/supabaseClient.ts';
+import {fetchUserDetails} from '../features/SupaBaseUsers';
+import supabase from '../config/supabaseClient';
+import {useAuthStore} from "../shared/stores/authStore.ts";
+import {UserDetails} from "../types/UserTypes.ts";
 
-// create a context for authentication
+// Создаем контекст для аутентификации
 export const AuthContext = createContext<{
-  session: Session | null | undefined,
-  user: User | null | undefined,
-  person: Tables<'users'> | null | undefined,
-  signOut: () => void
+  session: Session | null;
+  user: User | null;
+  person: UserDetails | null;
+  loading: boolean;
+  signOut: () => void;
 }>({
-  session: null, user: null, person: null, signOut: () => {}
+  session: null,
+  user: null,
+  person: null,
+  loading: true,
+  signOut: () => {
+  },
 });
 
 export const AuthProvider = ({children}: { children: ReactNode }) => {
-  const [user, setUser] = useState<User>();
-  const [person, setPerson] = useState<Tables<'users'>>();
-  const [session, setSession] = useState<Session | null>();
+  const {user, session, person, setSession, setUser, setPerson} = useAuthStore();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const setData = async () => {
+    const setData = async (): Promise<{session: Session, user: User, person: UserDetails}> => {
       const {data: {session}, error} = await supabase.auth.getSession();
       if (error) throw error;
-      setSession(session)
-      setUser(session?.user)
-      if (session?.user?.email)
-        getUserByEmail(session?.user?.email).then(setPerson);
-      setLoading(false);
+
+      setUser(session?.user || null);
+
+      if (session?.user?.email) {
+        const {data: user_login, error} = await supabase.from('users').select('login').eq('id', session.user.id).single();
+        if (error) throw error;
+        const {data: person_data, error: fetch_error} = await fetchUserDetails(user_login.login);
+        if (fetch_error || !person_data) throw fetch_error;
+        setLoading(false);
+        return {session: session, user: session.user, person: person_data}
+      } else throw new Error("No person");
     };
 
-    const {data: listener} = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: SetStateAction<Session | null | undefined>) => {
-      setSession(session);
-      if (session && "user" in session) {
-        setUser(session?.user)
-      }
-      setLoading(false)
+    const {data: listener} = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
+      setData()
+        .then(({user, person}) => {
+          setSession(session);
+          setUser(user);
+          setPerson(person);
+        })
+        .catch(e => console.error(e));
     });
 
-    setData();
+    setData()
+      .then(({session, user, person}) => {
+      setSession(session);
+      setUser(user);
+      setPerson(person);
+    })
+      .catch(e => console.error(e));
 
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [setPerson, setSession, setUser]);
 
   const value = {
-    session,
-    user,
-    person,
+    session: session || null,
+    user: user || null,
+    person: person || null,
+    loading: loading,
     signOut: () => {
       supabase.auth.signOut();
-      setUser(undefined);
-      setSession(undefined);
+      setUser(null);
+      setSession(null);
+      setPerson(null);
     },
   };
 
-  // use a provider to pass down the value
+  // Используем провайдер для передачи значения
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
