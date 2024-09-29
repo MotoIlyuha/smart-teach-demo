@@ -1,34 +1,30 @@
 import {useState} from "react";
 
-import {Avatar, Button, Flex, GetProp, Image, Upload, UploadFile, UploadProps, Collapse, message} from "antd";
-import {UploadOutlined, UserOutlined, EyeOutlined} from "@ant-design/icons";
+import {Button, Collapse, Flex, GetProp, Image, message, Skeleton, Upload, UploadFile, UploadProps} from "antd";
+import {UploadOutlined} from "@ant-design/icons";
 import {UploadChangeParam} from "antd/es/upload";
 import ImgCrop from "antd-img-crop";
 
 import supabase from "../../config/supabaseClient.ts";
-import {Tables} from "../../types/supabase.ts";
 
-import styles from './PreviewButton.module.css';
+import styles from '../../styles/PreviewButton.module.css';
+import UserAvatar from "./UserAvatar.tsx";
+import {getBase64} from "../../shared/utils/getBase64.ts";
+import {useUserStore} from "../../shared/stores/userStore.ts";
 
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const getBase64 = (file: FileType): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-
-export default function UploadAvatar({person}: { person: Tables<'users'> }) {
-  const [avatarUrl, setAvatarUrl] = useState<string>(person.avatar || '');
+export default function UploadAvatar({editable}: { editable: boolean }) {
+  const person = useUserStore((state) => state.user);
+  const updateUser = useUserStore((state) => state.updateUser);
+  const [avatarUrl, setAvatarUrl] = useState<string>(person?.avatar || '');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>(
-    person.avatar ? [{uid: '-1', name: 'avatar', status: 'done', url: person.avatar}] : []
+    person?.avatar ? [{uid: '-1', name: 'avatar', status: 'done', url: person.avatar}] : []
   );
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(useUserStore((state) => state.loading));
 
   // Проверка типа файла и размера
   const beforeUpload = (file: FileType) => {
@@ -56,7 +52,7 @@ export default function UploadAvatar({person}: { person: Tables<'users'> }) {
   const handleUploadToSupabase = async (file: FileType) => {
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${person.login}_${Date.now()}.${fileExt}`;
+      const fileName = `${person?.login}_${Date.now()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
       console.log(filePath);
 
@@ -82,20 +78,11 @@ export default function UploadAvatar({person}: { person: Tables<'users'> }) {
         return;  // Выход из функции при отсутствии URL
       }
 
-      console.log("Public URL:", data.publicUrl);
-
-      // Обновление информации о пользователе
-      if (person.login) {
-        const {error: updateError} = await supabase
-          .from('users')
-          .update({avatar: data.publicUrl})
-          .eq('login', person.login)
-          .single();
-
-        if (updateError) {
-          message.error(`Ошибка обновления пользователя: ${updateError.message}`);
-          return;  // Выход из функции при ошибке обновления
-        }
+      const newAvatarUrl = data.publicUrl
+      if (newAvatarUrl) {
+        setAvatarUrl(newAvatarUrl); // Обновляем состояние локально
+        console.log("AVATAR", person, newAvatarUrl);
+        await updateUser({avatar: newAvatarUrl}); // Обновляем аватар в базе данных
       }
 
       // Обновление URL аватара в интерфейсе
@@ -110,7 +97,7 @@ export default function UploadAvatar({person}: { person: Tables<'users'> }) {
 
   // Обработка загрузки
   const handleChange = async (info: UploadChangeParam) => {
-    console.log(info);
+    console.log(info.file.status, person);
     if (info.file.status === 'removed') {
       console.log("REMOVED");
       await handleUploadToSupabase(info.file as FileType);
@@ -131,67 +118,57 @@ export default function UploadAvatar({person}: { person: Tables<'users'> }) {
   };
 
   return (
-    <Flex vertical align={'center'}>
-      <div className={styles.container}>
-        <Avatar
-          size={240}
-          shape={'square'}
-          icon={avatarUrl ? null : <UserOutlined/>}
-          src={avatarUrl}
-          alt="avatar"
-          style={{borderRadius: 16}}
-        />
-        {avatarUrl &&
-            <div
-                className={styles.overlay}
-                onClick={() => {
-                  setPreviewOpen(true);
-                  setPreviewImage(avatarUrl);
-                }}>
-                <EyeOutlined/>{'  '}<span>Посмотреть</span>
-            </div>}
-      </div>
-      <Collapse
-        className={styles.collapse}
-        expandIconPosition={'end'}
-        bordered={false}
-        items={[
-          {
-            key: 'upload',
-            label: 'Поменять аватарку',
-            children: (
-              <ImgCrop cropShape={'rect'} rotationSlider>
-                <Upload
-                  name={'avatar'}
-                  listType={'picture'}
-                  onPreview={onPreview}
-                  onChange={handleChange}
-                  beforeUpload={beforeUpload}
-                  progress={{
-                    strokeColor: {
-                      '0%': '#108ee9',
-                      '100%': '#87d068',
-                    },
-                    strokeWidth: 3,
-                  }}
-                  showUploadList={{
-                    showRemoveIcon: true,
-                    showPreviewIcon: true,
-                    showDownloadIcon: true
-                  }}
-                  customRequest={({file, onSuccess}) => {
-                    handleChange({fileList: [...fileList, file as UploadFile], file: file as UploadFile});
-                    if (onSuccess) onSuccess('ok');
-                  }}
-                >
-                  <Button icon={<UploadOutlined/>} loading={loading}>
-                    {loading ? 'Загрузка...' : 'Загрузить аватар'}
-                  </Button>
-                </Upload>
-              </ImgCrop>
-            )
-          }
-        ]}/>
+    <>
+      <Flex vertical align={'center'} style={{marginTop: 16}}>
+        {loading ? (
+          <Skeleton.Image style={{width: 240, height: 240}} active/>
+        ) : (
+          <UserAvatar avatar_url={avatarUrl}/>
+        )}
+        {editable &&
+            <Collapse
+                className={styles.collapse}
+                expandIconPosition={'end'}
+                bordered={false}
+                items={[
+                  {
+                    key: 'upload',
+                    label: 'Поменять аватарку',
+                    children: (
+                      <ImgCrop cropShape={'rect'} rotationSlider>
+                        <Upload
+                          name={'avatar'}
+                          listType={'picture'}
+                          onPreview={onPreview}
+                          onChange={handleChange}
+                          beforeUpload={beforeUpload}
+                          progress={{
+                            strokeColor: {
+                              '0%': '#108ee9',
+                              '100%': '#87d068',
+                            },
+                            strokeWidth: 3,
+                          }}
+                          showUploadList={{
+                            showRemoveIcon: true,
+                            showPreviewIcon: true,
+                            showDownloadIcon: true
+                          }}
+                          customRequest={({file, onSuccess}) => {
+                            handleChange({fileList: [...fileList, file as UploadFile], file: file as UploadFile});
+                            if (onSuccess) onSuccess('ok');
+                          }}
+                        >
+                          <Button icon={<UploadOutlined/>} loading={loading}>
+                            {loading ? 'Загрузка...' : 'Загрузить аватар'}
+                          </Button>
+                        </Upload>
+                      </ImgCrop>
+                    )
+                  }
+                ]}/>
+        }
+      </Flex>
       {previewImage && (
         <Image
           wrapperStyle={{display: 'none'}}
@@ -203,6 +180,6 @@ export default function UploadAvatar({person}: { person: Tables<'users'> }) {
           src={previewImage}
         />
       )}
-    </Flex>
+    </>
   )
 }
