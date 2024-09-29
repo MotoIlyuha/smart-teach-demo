@@ -6,6 +6,7 @@ import {HomeOutlined, UserOutlined, UsergroupAddOutlined} from "@ant-design/icon
 
 import supabase from "../../config/supabaseClient.ts";
 import {Tables} from "../../types/supabase.ts";
+import UserMini from "../User/UserMiniWidget.tsx";
 
 export default function BreadcrumbWidget() {
 
@@ -40,7 +41,7 @@ export default function BreadcrumbWidget() {
     if (secondLevel === 'Пользователи') {
       return allUsers.map(user => {
         return {
-          label: <Link to={'/user/' + user.login}>{user.first_name} {user.last_name} ({user.login})</Link>,
+          label: <Link to={'/user/' + user.login}><UserMini person={user}/></Link>,
           key: user.id
         }
       })
@@ -55,8 +56,8 @@ export default function BreadcrumbWidget() {
     }
     else return []
   }
-
   const thirdLevel = getThirdLevel();
+
   const getThirdLevelTitle = () => {
     if (secondLevel === 'Пользователи') {
       const currentUser = allUsers.filter(user => user.login === location.pathname.split('/')[2])[0];
@@ -85,8 +86,7 @@ export default function BreadcrumbWidget() {
                 icon: <UserOutlined/>,
                 children: allUsers.map(user => (
                   {
-                    //TODO: Вместо просто ссылок сделать UserMiniWidget
-                    label: <Link to={'/user/' + user.login}>{user.first_name} {user.last_name} ({user.login})</Link>,
+                    label: <Link to={'/user/' + user.login}><UserMini person={user}/></Link>,
                     key: user.id
                   }
                 ))
