@@ -4,11 +4,16 @@ import {Avatar, Button, Flex, Popover, Tooltip, Typography} from "antd";
 import {UserOutlined} from "@ant-design/icons";
 import UserMini from "../User/UserMiniWidget.tsx";
 import {GroupDetails} from "../../features/SupaBaseGroups.ts";
+import {Tables} from "../../types/supabase.ts";
 
 export default function GroupMiniWidget({group_data}: { group_data: GroupDetails }) {
   const {students, moderator} = group_data ?? {group: null, students: [], moderator: null};
 
   if (!group_data || !group_data.group) return null;
+
+  const tooltipTitle = (student: Tables<"users">) => (
+    student.first_name || student.last_name ? student.first_name + ' ' + student.last_name : student.login
+  )
 
   const groupAdv = () => (
     group_data.group &&
@@ -18,7 +23,7 @@ export default function GroupMiniWidget({group_data}: { group_data: GroupDetails
             <Typography.Text strong>Учащиеся: </Typography.Text>
             <Avatar.Group>
               {students.map(student => (
-                <Tooltip title={student.first_name + ' ' + student.last_name} key={student.id}>
+                <Tooltip title={tooltipTitle(student)} key={student.id}>
                   <Link to={'/user/' + student.login}>
                     <Avatar
                       key={student.id}

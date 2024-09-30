@@ -12,8 +12,6 @@ export default function UserName({editable}: { editable: boolean }) {
   const [editMode, setEditMode] = useState<boolean>(firstName === '' || lastName === '');
   const [loading, setLoading] = useState<boolean>(useUserStore((state) => state.loading));
 
-  console.log(editMode, firstName, lastName);
-
   const firstNameTooltip = () => {
     if (firstName) {
       if (firstName.length < 3)
