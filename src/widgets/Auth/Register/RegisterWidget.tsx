@@ -5,7 +5,7 @@ import {RegisterActions} from "./components/RegisterActions";
 import {handleFinish} from "./handlers/registerHandler";
 
 
-export default function RegisterWidget() {
+export default function RegisterWidget({groupId}: { groupId?: string | null }) {
   const {notification} = App.useApp()
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ export default function RegisterWidget() {
       {...formItemLayout}
       name="normal_register"
       className="register-form"
-      onFinish={(values) => handleFinish(values, notification, navigate)}
+      onFinish={(values) => handleFinish({group_id: groupId, values, notification, navigate})}
       initialValues={{remember: true}}
       style={{maxWidth: 800}}
       scrollToFirstError

@@ -1,22 +1,27 @@
-import {Skeleton, Tag} from "antd";
+import {Skeleton} from "antd";
 import {useUserStore} from "../../shared/stores/userStore.ts";
+import GroupMiniWidget from "./GroupMiniWidget.tsx";
+import {useGroupStore} from "../../shared/stores/groupStore.ts";
+import {useShallow} from "zustand/react/shallow";
+import {useEffect} from "react";
 
 export default function UserGroup() {
-  const {user: person, loading} = useUserStore();
+  const {user: person, loading: personLoading} = useUserStore();
+  const {group: group_data, fetchGroup, loading: groupLoading} = useGroupStore(useShallow(state => ({
+    group: state.group,
+    fetchGroup: state.fetchGroup,
+    loading: state.loading
+  })));
 
-  // useEffect(() => {
-  //   if (userRole === "teacher")
-  //     getModeratedGroupByTeacher(person.id, userRole)
-  //       .then(mod_groups => setModeratedGroups(mod_groups))
-  //   else if (userRole === "student")
-  //     getGroupByStudent(person.id, userRole)
-  //       .then(setGroup)
-  //       .catch(e => message.error(e.message));
-  // }, [person.id, userRole]);
+  useEffect(() => {
+    if (person) {
+      fetchGroup(person.group_id);
+    }
+  }, [fetchGroup, person]);
 
-  if (loading) return <Skeleton active/>
+  if (personLoading || groupLoading || !group_data) return <Skeleton.Input active/>
 
   return (
-    <Tag>{person?.group_name}</Tag>
+    <GroupMiniWidget group_data={group_data}/>
   )
 }

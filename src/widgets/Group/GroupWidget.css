@@ -1,0 +1,10 @@
+.ant-pro-checkcard-content {
+    display: none;
+}
+
+.ant-pro-field-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-inline: 12px;
+}

@@ -4,9 +4,11 @@ import {useAuth} from "../hok/Auth.ts";
 import {App} from "antd";
 
 const ProtectedRoute = ({children}: { children: ReactNode }) => {
-  const {user} = useAuth()
+  const {user, loading} = useAuth()
   const location = useLocation()
   const {message} = App.useApp()
+
+  if (loading) return null;
 
   if (!user) {
     // user is not authenticated

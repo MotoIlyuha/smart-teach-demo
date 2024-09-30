@@ -1,35 +1,41 @@
-import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
-import {Tables} from "../../types/supabase.ts";
-import {getGroupById, getGroupStudents, getHeadTeacherByGroup} from "../../features/SupaBaseGroups.ts";
+import {useEffect} from "react";
+import {useLocation, useParams} from "react-router-dom";
+import {useShallow} from "zustand/react/shallow";
+
+import {Alert} from "antd";
+
 import {useAuth} from "../../hok/Auth.ts";
 import GroupWidget from "../../widgets/Group/GroupWidget.tsx";
+import {useGroupStore} from "../../shared/stores/groupStore.ts";
+import GroupInviteModal from "../../widgets/Group/components/GroupInviteModal.tsx";
 
 export default function GroupPage() {
+  const location = useLocation();
   const {group_id} = useParams();
   const {person} = useAuth();
-  const [group, setGroup] = useState<Tables<'student_groups'> | null>(null);
-  const [groupModerator, setGroupModerator] = useState<Tables<'users'> | null>(null);
-  const [groupStudents, setGroupStudents] = useState<Tables<'users'>[] | null>(null);
-
-  const my_group = groupModerator?.id === person?.id;
+  const {group, fetchGroup, updateGroup, error} = useGroupStore(useShallow(state => ({
+    group: state.group,
+    fetchGroup: state.fetchGroup,
+    updateGroup: state.updateGroup,
+    error: state.error
+  })));
 
   useEffect(() => {
     if (group_id) {
-      getGroupById(group_id)
-        .then(setGroup)
-        .catch(() => setGroup(null));
-      getHeadTeacherByGroup(group_id)
-        .then(setGroupModerator)
-        .catch(() => setGroupModerator(null));
-      getGroupStudents(group_id)
-        .then(setGroupStudents)
-        .catch(() => setGroupStudents(null));
+      fetchGroup(group_id);
     }
-  }, [group_id]);
-  
+  }, [fetchGroup, group_id]);
+
+  if (error) return <Alert message="Error" description={error} type="error" showIcon/>
+
+  const my_group = group?.moderator?.id === person?.id || person?.role_name === "admin";
+
   return (
-    (group && groupModerator && groupStudents) &&
-    <GroupWidget group_name={group?.name} group_moderator={groupModerator} group_students={groupStudents} my_group={my_group}/>
+    <>
+      {group && <GroupWidget my_group={my_group}/>}
+      {location.state && location.state.group_id && group &&
+          <GroupInviteModal group_data={group} updateGroup={updateGroup} invited_id={location.state.invited_id}/>
+      }
+    </>
   )
 }

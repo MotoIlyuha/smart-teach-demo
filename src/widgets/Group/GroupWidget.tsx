@@ -1,64 +1,97 @@
-import {Button, Flex, ListProps, Typography} from "antd";
+import {Flex, ListProps, message, Typography} from "antd";
 import {ProList, ProListMetas} from "@ant-design/pro-components";
+import {useShallow} from "zustand/react/shallow";
 import {Tables} from "../../types/supabase.ts";
 import UserMini from "../User/UserMiniWidget.tsx";
 import UserMegaWidget from "../User/UserMegaWidget.tsx";
+import {useGroupStore} from "../../shared/stores/groupStore.ts";
+import GroupTitle from "./components/GroupTitle.tsx";
+import DeleteStudentConfirm from "./components/DeleteStudentConfirm.tsx";
+import AddStudentToGroup from "./components/AddStudentToGroup.tsx";
+import {getUserByLogin} from "../../features/SupaBaseUsers.ts";
+import './GroupWidget.css';
 
-interface GroupWidgetProps {
-  group_name: string;
-  group_moderator: Tables<'users'>;
-  group_students: Tables<'users'>[];
-  my_group: boolean;
-}
+
+export default function GroupWidget({my_group}: { my_group: boolean }) {
+  const {group: group_details, updateGroup, loading} = useGroupStore(useShallow(state => ({
+    group: state.group,
+    updateGroup: state.updateGroup,
+    loading: state.loading
+  })));
+  const {group, students, moderator} = group_details ?? {group: null, students: null, moderator: []};
+
+  if (!group_details || !group) return null;
+
+  const handleAddStudent = async (student_login: string) => {
+    await updateGroup(group.id, {students: [...students, await getUserByLogin(student_login)]})
+      .then(() => message.success('Ученик успешно добавлен в группу!'))
+      .catch((error) => message.error(error.message))
+  }
+
+  const handleDeleteStudent = async (student: Tables<'users'>) => {
+    await updateGroup(group.id, {students: students.filter(s => s.id !== student.id)})
+      .then(() => message.success('Ученик успешно удален из группы!'))
+      .catch((error) => message.error(error.message))
+  }
+
+  const HeaderTitle = () => {
+    return <Flex gap={8} align={'center'}>
+      <GroupTitle group_name={group.name} editable={my_group}
+                  updateGroup={(name: string) => updateGroup(group?.id, {group: {...group, name: name}})}/>
+      {moderator ? (
+        <>
+          <Typography.Text strong style={{textWrap: 'pretty'}}>Классный руководитель: </Typography.Text>
+          <UserMini person={moderator}/>
+        </>
+      ) : (
+        <Typography.Text strong>У класса нет классного руководителя</Typography.Text>
+      )}
+    </Flex>
+  }
 
 
-export default function GroupWidget({group_name, group_moderator, group_students, my_group}: GroupWidgetProps) {
-
-  const data: ListProps<Tables<'users'>>['dataSource'] = group_students.map(student => ({
-    // title: (<>{student.first_name} {student.last_name}</>),
-    // description: (<>{student.email}</>),
-    // avatar: student.avatar ? student.avatar : '',
+  const data: ListProps<Tables<'users'>>['dataSource'] = students.map(student => ({
+    ...student,
     content: <UserMegaWidget person={student}/>,
-    actions: [<>{group_moderator.first_name}</>]
+    actions: my_group ? [
+      // <Link to={'/user/' + student.login} key={'user'}>
+      //   <Button size={'small'}>
+      //     Посмотреть профиль
+      //   </Button>
+      // </Link>,
+      <DeleteStudentConfirm
+        key={student.id}
+        deleteStudent={() => handleDeleteStudent(student)}
+      />
+    ] : []
   }))
 
   return (
     <ProList<Tables<'users'>>
       bordered
       ghost={false}
-      // itemCardProps={{ghost: false}}
+      loading={loading}
       pagination={false}
       showActions={'hover'}
       itemLayout={'vertical'}
-      grid={{gutter: 16, xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 3}}
+      itemCardProps={{bodyStyle: {padding: 12}}}
+      grid={{gutter: 8, xs: 1, sm: 1, md: 2, lg: 2, xl: 3, xxl: 3}}
       metas={{
-        // title: {},
-        // subTitle: {},
-        // avatar: {},
-        // description: {},
         content: {},
-        actions: {'x-overflow-auto': false},
+        actions: {cardActionProps: 'actions'},
       } as ProListMetas<Tables<'users'>>}
       toolBarRender={() => {
         return my_group ? [
-          <Button key="3" type="primary">
-            Добавить ученика
-          </Button>,
+          <AddStudentToGroup
+            group_id={group?.id}
+            addStudent={handleAddStudent}
+            invited_id={moderator?.id}
+            key={'add_student'}/>
         ] : [];
       }}
-      headerTitle={
-        <Flex gap={8} align={'baseline'}>
-          <Button type={'primary'} size={'large'} style={{padding: 8}}>
-            <Typography.Title level={3} style={{color: 'white', margin: 0}} >
-              {group_name}
-            </Typography.Title>
-          </Button>
-          <Typography.Text strong>Классный руководитель: </Typography.Text>
-          <UserMini person={group_moderator}/>
-        </Flex>
-      }
+      headerTitle={<HeaderTitle/>}
       dataSource={data}
       style={{width: '100%'}}
-      />
+    />
   )
 }

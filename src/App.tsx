@@ -5,8 +5,9 @@ import RootLayout from "./pages/Layout.tsx";
 import LoginPage from "./pages/auth/LoginPage.tsx";
 import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import UserPage from "./pages/user/UserPage.tsx";
-import ProtectedRoute from "./components/ProtectedRoute.tsx";
+import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import GroupPage from "./pages/group/GroupPage.tsx";
+import AddToGroupByLink from "./pages/group/AddToGroupByLink.tsx";
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
             <GroupPage/>
           </ProtectedRoute>
         }/>
+        <Route path={'/add_to_group/:group_id'} element={<AddToGroupByLink/>}/>
         <Route path="*" element={<NotFoundPage/>}/>
       </Route>
     </Routes>

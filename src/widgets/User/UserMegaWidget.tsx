@@ -9,7 +9,7 @@ export default function UserMegaWidget({person}: {person: Tables<'users'>}) {
       <UserAvatar avatar_url={person.avatar || ''} size={140}/>
       <Flex gap={8} align={'start'} vertical>
         <Link to={'/user/' + person.login}>
-          <Typography.Text strong>{person.first_name} {person.last_name}</Typography.Text>
+          <Typography.Title level={3}>{person.first_name} {person.last_name}</Typography.Title>
         </Link>
       </Flex>
     </Space>

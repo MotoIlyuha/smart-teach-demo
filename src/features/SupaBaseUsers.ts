@@ -2,6 +2,15 @@ import supabase from "../config/supabaseClient.ts";
 import {Tables} from "../types/supabase.ts";
 import {UserDetails} from "../types/UserTypes.ts";
 import {PostgrestError} from "@supabase/supabase-js";
+import {getGroupById} from "./SupaBaseGroups.ts";
+
+export async function getUserById(user_id: string): Promise<Tables<'users'>> {
+  const {data: user, error} = await supabase.from('users').select("*").eq('id', user_id).single();
+  if (error || !user) {
+    console.error(error);
+    throw new Error(`User with id "${user_id}" not found`);
+  } else return user;
+}
 
 export async function getUserByEmail(email: string): Promise<Tables<'users'>> {
   const {data: user, error} = await supabase.from('users').select("*").eq('email', email).single();
@@ -83,7 +92,30 @@ export const fetchUserDetails = async (userLogin: string): Promise<{data: UserDe
     .rpc('get_user_details_by_login', { user_login: userLogin })
     .single();
 
-  return {data: data as UserDetails, error: error};
+  if (data && !error) {
+    if (data.role_name === 'teacher') {
+      const return_data = {
+        ...data,
+        role_id: 2,
+        updated_at: null,
+        created_at: null,
+        group: data.moderated_group_id ? await getGroupById(data.moderated_group_id) : null
+      } as UserDetails;
+      return {data: return_data, error: error};
+    }
+    else {
+      const return_data = {
+        ...data,
+        role_id: 1,
+        updated_at: null,
+        created_at: null,
+        group: data.group_id ? await getGroupById(data.group_id) : null
+      } as UserDetails;
+      return {data: return_data, error: error};
+    }
+
+  }
+    else return {data: null, error: error}
 };
 
 export const updateUserDetails = async (userId: string, updates: Partial<UserDetails>) => {
