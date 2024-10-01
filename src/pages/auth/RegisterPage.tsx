@@ -11,7 +11,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     setError(location.state?.error);
-    if (location.state.group_id) {
+    if (location.state && location.state.group_id) {
       getGroupById(location.state.group_id).then((group) => {
         if (group) {
           setInviteText(`После регистрации вы автоматически будете зачислены в группу ${group.name}`)
@@ -22,13 +22,13 @@ export default function RegisterPage() {
     } else {
       setInviteText("");
     }
-  }, [location.state?.error, location.state.group_id]);
+  }, [location.state]);
 
   return (
     <Space align='center' direction='vertical' size='large'>
       {inviteText && <Alert description={inviteText} type="info" showIcon/>}
       {error && <Alert message='Ошибка!' description={error} type="error" showIcon/>}
-      <RegisterWidget groupId={location.state.group_id}/>
+      <RegisterWidget groupId={location.state && location.state.group_id}/>
     </Space>
   )
 }
