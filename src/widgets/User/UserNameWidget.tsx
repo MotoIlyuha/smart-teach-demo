@@ -9,7 +9,7 @@ export default function UserName({editable}: { editable: boolean }) {
   const updateUser = useUserStore((state) => state.updateUser);
   const [firstName, setFirstName] = useState<string>(person?.first_name || '');
   const [lastName, setLastName] = useState<string>(person?.last_name || '');
-  const [editMode, setEditMode] = useState<boolean>(person?.first_name === '' || person?.last_name === '');
+  const [editMode, setEditMode] = useState<boolean>(firstName === '' || lastName === '');
   const [loading, setLoading] = useState<boolean>(useUserStore((state) => state.loading));
 
   const firstNameTooltip = () => {
@@ -93,7 +93,7 @@ export default function UserName({editable}: { editable: boolean }) {
                     style={{color: firstNameTooltip() === '' && lastNameTooltip() === '' ? "green" : 'grey'}}
                   />
                 </Tooltip>
-                {!(person.first_name === '' || person.last_name === '') && (
+                {!(firstName === '' || lastName === '') && (
                   <Tooltip title={'Отмена'}>
                     <Button type={'link'} onClick={() => setEditMode(false)} icon={<CloseOutlined/>}/>
                   </Tooltip>

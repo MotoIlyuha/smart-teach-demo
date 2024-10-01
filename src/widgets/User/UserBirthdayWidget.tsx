@@ -4,14 +4,12 @@ import {CheckOutlined, CloseOutlined, EditOutlined} from "@ant-design/icons";
 import dayjs, {Dayjs} from "dayjs";
 import {useUserStore} from "../../shared/stores/userStore.ts";
 
-dayjs.locale('ru');
-
 export default function UserBirthday({editable}: { editable: boolean }) {
   const person = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
   const loading = useUserStore((state) => state.loading);
   const [editMode, setEditMode] = useState<boolean>(person?.birth_date === null);
-  const [birthDate, setBirthDate] = useState<Dayjs | null>(dayjs(person?.birth_date));
+  const [birthDate, setBirthDate] = useState<Dayjs | null>(dayjs(person?.birth_date || dayjs()));
 
   const handleUpdateBirthday = async () => {
     await updateUser({birth_date: birthDate?.toISOString()})

@@ -29,6 +29,7 @@ interface signUpWithEmailProps {
   login: string;
   email: string;
   password: string;
+  group_id?: string | null;
 }
 
 
@@ -37,9 +38,10 @@ interface signUpWithEmailProps {
  * @param login - login пользователя
  * @param email - email пользователя
  * @param password - пароль пользователя
+ * @param group_id - id группы
  * @returns Promise с результатом попытки входа
  */
-export const signUpWithEmail = async ({login, email, password}: signUpWithEmailProps): Promise<boolean> => {
+export const signUpWithEmail = async ({login, email, password, group_id}: signUpWithEmailProps): Promise<boolean> => {
   try {
     const {data: auth_data, error: auth_error} = await supabase.auth.signUp({
       email: email,
@@ -51,7 +53,8 @@ export const signUpWithEmail = async ({login, email, password}: signUpWithEmailP
       const {error: user_error} = await supabase
         .from('users')
         .update({
-          login: login
+          login: login,
+          group_id: group_id
         })
         .eq('login', email);
       if (user_error) return false;

@@ -4,11 +4,19 @@ import {signUpWithEmail} from "../../../../features/SupaBaseAuth.ts";
 import {FormType} from "../../../../types/AuthTypes.ts";
 
 
-export const handleFinish = async (values: FormType, notification: NotificationInstance, navigate: NavigateFunction) => {
+interface handleFinishProps {
+  values: FormType
+  notification: NotificationInstance
+  navigate: NavigateFunction
+  group_id?: string | null
+}
+
+export const handleFinish = async ({values, notification, navigate, group_id}: handleFinishProps) => {
   signUpWithEmail({
     login: values.login,
     email: values.email,
-    password: values.password
+    password: values.password,
+    group_id: group_id
   })
     .then(success => {
       if (!success)

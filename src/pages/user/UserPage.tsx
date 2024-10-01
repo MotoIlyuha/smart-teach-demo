@@ -52,9 +52,9 @@ export default function UserPage() {
             <Descriptions.Item label={'Дата рождения'}>
               <UserBirthday editable={isEditable}/>
             </Descriptions.Item>
-            {person?.role_name !== 'admin' && (
+            {pagePerson.role_name !== 'admin' && (
               <>
-                {pagePerson.group_name ? (
+                {pagePerson.group ? (
                   <Descriptions.Item label={pagePerson.role_name === 'teacher' ? 'Классный руководитель для' : 'Класс'}>
                     <UserGroup/>
                   </Descriptions.Item>

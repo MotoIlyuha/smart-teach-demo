@@ -784,6 +784,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_group_details_by_id: {
+        Args: {
+          input_group_id: string
+        }
+        Returns: {
+          group_id: string
+          moderator_id: string
+          user_id: string
+        }[]
+      }
       get_user_details_by_login: {
         Args: {
           user_login: string
@@ -796,8 +806,9 @@ export type Database = {
           last_name: string
           birth_date: string
           avatar: string
+          group_id: string
           role_name: string
-          group_name: string
+          moderated_group_id: string
         }[]
       }
     }

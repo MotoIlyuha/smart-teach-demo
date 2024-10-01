@@ -1,76 +1,95 @@
-// AuthProvider.tsx
-import {createContext, ReactNode, useEffect, useState} from 'react';
-import {AuthChangeEvent, Session, User} from '@supabase/supabase-js';
-import {fetchUserDetails} from '../features/SupaBaseUsers';
+import { createContext, ReactNode, useEffect, useState, useCallback } from 'react';
+import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+import { fetchUserDetails } from '../features/SupaBaseUsers';
 import supabase from '../config/supabaseClient';
-import {useAuthStore} from "../shared/stores/authStore.ts";
-import {UserDetails} from "../types/UserTypes.ts";
+import { useAuthStore } from "../shared/stores/authStore.ts";
+import { UserDetails } from "../types/UserTypes.ts";
 
-// Создаем контекст для аутентификации
-export const AuthContext = createContext<{
-  session: Session | null;
-  user: User | null;
-  person: UserDetails | null;
+interface AuthContextProps {
+  session: Session | null; // Убираем возможность undefined
+  user: User | null; // Убираем возможность undefined
+  person: UserDetails | null; // Убираем возможность undefined
   loading: boolean;
   signOut: () => void;
-}>({
+}
+
+// Создаем контекст для аутентификации
+export const AuthContext = createContext<AuthContextProps>({
   session: null,
   user: null,
   person: null,
   loading: true,
-  signOut: () => {
-  },
+  signOut: () => {},
 });
 
-export const AuthProvider = ({children}: { children: ReactNode }) => {
-  const {user, session, person, setSession, setUser, setPerson} = useAuthStore();
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { user, session, person, setSession, setUser, setPerson } = useAuthStore();
   const [loading, setLoading] = useState(true);
 
+  // Оборачиваем setData в useCallback
+  const setData = useCallback(async (session: Session | null) => {
+    setLoading(true);
+
+    // Если сессия есть, получаем дополнительные данные о пользователе
+    if (session?.user?.id) {
+      try {
+        const { data: user_login, error: loginError } = await supabase
+          .from('users')
+          .select('login')
+          .eq('id', session.user.id)
+          .single();
+
+        if (loginError) throw loginError;
+
+        const { data: person_data, error: fetchError } = await fetchUserDetails(user_login.login);
+        if (fetchError || !person_data) throw fetchError;
+
+        // Обновляем состояние в хранилище
+        setSession(session);
+        setUser(session.user);
+        setPerson(person_data);
+      } catch (e) {
+        console.error("Error fetching user details:", e);
+        setUser(null);
+        setPerson(null);
+      }
+    } else {
+      // Если нет сессии, сбрасываем состояние
+      setSession(null);
+      setUser(null);
+      setPerson(null);
+    }
+
+    setLoading(false);
+  }, [setSession, setUser, setPerson]);
+
   useEffect(() => {
-    const setData = async (): Promise<{session: Session, user: User, person: UserDetails}> => {
-      const {data: {session}, error} = await supabase.auth.getSession();
-      if (error) throw error;
-
-      setUser(session?.user || null);
-
-      if (session?.user?.email) {
-        const {data: user_login, error} = await supabase.from('users').select('login').eq('id', session.user.id).single();
-        if (error) throw error;
-        const {data: person_data, error: fetch_error} = await fetchUserDetails(user_login.login);
-        if (fetch_error || !person_data) throw fetch_error;
-        setLoading(false);
-        return {session: session, user: session.user, person: person_data}
-      } else throw new Error("No person");
+    // Получаем текущую сессию при первом рендере
+    const initSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) console.error("Error fetching session:", error);
+      await setData(session ?? null); // Передаем null, если session undefined
     };
 
-    const {data: listener} = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
-      setData()
-        .then(({user, person}) => {
-          setSession(session);
-          setUser(user);
-          setPerson(person);
-        })
-        .catch(e => console.error(e));
-    });
+    // Подписываемся на изменения сессии
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event: AuthChangeEvent, session: Session | null) => {
+        setData(session ?? null); // Передаем null, если session undefined
+      }
+    );
 
-    setData()
-      .then(({session, user, person}) => {
-      setSession(session);
-      setUser(user);
-      setPerson(person);
-    })
-      .catch(e => console.error(e));
+    initSession();
 
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, [setPerson, setSession, setUser]);
+  }, [setData]);
 
-  const value = {
+  const value: AuthContextProps = {
     session: session || null,
     user: user || null,
     person: person || null,
-    loading: loading,
+    loading,
     signOut: () => {
       supabase.auth.signOut();
       setUser(null);

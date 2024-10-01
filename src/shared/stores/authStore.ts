@@ -7,7 +7,7 @@ interface AuthState {
   session: Session | undefined | null;
   user: User | undefined | null;
   setSession: (session: Session | null) => void;
-  setUser: (user: User | null) => void;
+  setUser: (user: User | null | undefined) => void;
   person: UserDetails | undefined | null;
   setPerson: (person: UserDetails | null) => void;
 }
