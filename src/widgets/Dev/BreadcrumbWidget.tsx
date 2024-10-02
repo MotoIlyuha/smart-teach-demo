@@ -7,7 +7,7 @@ import {
   UserOutlined,
   UsergroupAddOutlined,
   FundProjectionScreenOutlined,
-  PlusOutlined
+  PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined
 } from "@ant-design/icons";
 
 import supabase from "../../config/supabaseClient.ts";
@@ -18,12 +18,25 @@ import {BreadcrumbItemType} from "antd/es/breadcrumb/Breadcrumb";
 export default function BreadcrumbWidget() {
 
   const location = useLocation();
+  const split = location.pathname.split('/');
   const [allUsers, setAllUsers] = useState<Tables<'users'>[]>([]);
   const [allGroups, setAllGroups] = useState<Tables<'student_groups'>[]>([]);
   const [allCourses, setAllCourses] = useState<Tables<'courses'>[]>([]);
 
-  const getSecondLevel = (path: string) => {
-    switch (path.split('/')[1]) {
+  useEffect(() => {
+    supabase.from('users').select('*').then(({data}) => {
+      setAllUsers(data || []);
+    })
+    supabase.from('student_groups').select('*').then(({data}) => {
+      setAllGroups(data || []);
+    })
+    supabase.from('courses').select('*').then(({data}) => {
+      setAllCourses(data || []);
+    })
+  }, [])
+
+  const getSecondLevelTitle = () => {
+    switch (split[1]) {
       case 'user':
         return 'Пользователи';
       case 'group':
@@ -39,20 +52,7 @@ export default function BreadcrumbWidget() {
     }
   }
 
-  const secondLevel = getSecondLevel(location.pathname);
-
-  useEffect(() => {
-    supabase.from('users').select('*').then(({data}) => {
-      setAllUsers(data || []);
-    })
-    supabase.from('student_groups').select('*').then(({data}) => {
-      setAllGroups(data || []);
-    })
-    supabase.from('courses').select('*').then(({data}) => {
-      setAllCourses(data || []);
-    })
-  }, [])
-
+  const secondLevelTitle = getSecondLevelTitle();
 
   const getThirdLevel = (level: string) => {
     if (level === 'Пользователи') {
@@ -130,35 +130,75 @@ export default function BreadcrumbWidget() {
     }
     else return []
   }
-  const thirdLevel = getThirdLevel(secondLevel);
+  const thirdLevel = getThirdLevel(secondLevelTitle);
 
   const getThirdLevelTitle = () => {
-    const split = location.pathname.split('/');
-    if (secondLevel === 'Пользователи') {
+    if (secondLevelTitle === 'Пользователи') {
       if (split[1] === 'user' && !split[2]) return 'Все пользователи'
-      if (split[1] === 'user' && split[2] === 'new') return '+ Новый пользователь'
-      const currentUser = allUsers.filter(user => user.login === location.pathname.split('/')[2])[0];
+      if (split[1] === 'user' && split[2] === 'new') return 'Зарегистрировать пользователя'
+      const currentUser = allUsers.filter(user => user.login === split[2])[0];
       return (currentUser?.first_name && currentUser?.last_name) ?
         currentUser?.first_name + ' ' + currentUser?.last_name + ' (' + currentUser?.login + ')' :
         currentUser?.login;
-    } else if (secondLevel === 'Группы') {
+    } else if (secondLevelTitle === 'Группы') {
       if (split[1] === 'group' && !split[2]) return 'Все группы'
-      if (split[1] === 'group' && split[2] === 'new') return '+ Новая группа'
-      const currentGroup = allGroups.filter(group => group.id === location.pathname.split('/')[2])[0];
+      if (split[1] === 'group' && split[2] === 'new') return 'Добавить группу'
+      const currentGroup = allGroups.filter(group => group.id === split[2])[0];
       return currentGroup?.name;
-    } else if (secondLevel === 'Курсы') {
+    } else if (secondLevelTitle === 'Курсы') {
       if (split[1] === 'course' && !split[2]) return 'Все курсы'
-      if (split[1] === 'course' && split[2] === 'new') return '+ Новый курс'
-      const currentCourse = allCourses.filter(course => course.id === location.pathname.split('/')[2])[0];
+      if (split[1] === 'course' && split[2] === 'new') return 'Создать курс'
+      const currentCourse = allCourses.filter(course => course.id === split[2])[0];
       return currentCourse?.title;
     } else return '';
   }
   const thirdLevelTitle = getThirdLevelTitle();
 
-  const breadcrumbItems = [
+  const getFourthLevel = () => {
+    if (secondLevelTitle === 'Курсы') {
+      return [
+        {
+          label: <Link to={'/course/' + split[2]}>
+            <Typography.Text>Посмотреть</Typography.Text>
+          </Link>,
+          icon: <EyeOutlined/>,
+          key: 'edit_course'
+        },
+        {
+          label: <Link to={'/course/' + split[2] + '/edit'}>
+            <Typography.Text>Редактировать</Typography.Text>
+          </Link>,
+          icon: <EditOutlined/>,
+          key: 'edit_course'
+        },
+        {
+          label: <Link to={'/course/' + split[2] + '/delete'}>
+            <Typography.Text style={{color: 'red'}}>Удалить</Typography.Text>
+          </Link>,
+          icon: <DeleteOutlined/>,
+          style: {color: 'red'},
+          key: 'delete_course'
+        }
+      ]
+    }
+  }
+
+  const getFourthLevelTitle = () => {
+    if (secondLevelTitle === 'Курсы') {
+      if (thirdLevelTitle !== 'Все курсы' && split[2] !== 'new') {
+        if (split[1] === 'course' && !split[3]) return 'Просмотр'
+        if (split[1] === 'course' && split[3] === 'edit') return 'Редактирование'
+        if (split[1] === 'course' && split[3] === 'delete') return 'Удалить'
+      }
+    }
+  }
+  const fourthLevel = getFourthLevel();
+  const fourthLevelTitle = getFourthLevelTitle();
+
+  const breadcrumbItems = () => [
     {title: <HomeOutlined/>, href: '/'},
     {
-      title: secondLevel, menu: {
+      title: secondLevelTitle, menu: {
         mode: 'vertical',
         items: [
           {label: <Link to={'/'}>Главная</Link>, key: 'main'},
@@ -198,10 +238,14 @@ export default function BreadcrumbWidget() {
     thirdLevelTitle ? {
       title: thirdLevelTitle,
       menu: {items: thirdLevel}
-    } : {}
+    } : {},
+    thirdLevelTitle && fourthLevelTitle ? {
+      title: fourthLevelTitle,
+      menu: {items: fourthLevel}
+    } : {},
   ];
 
   return (
-    <Breadcrumb separator=">" style={{marginBottom: 12}} items={breadcrumbItems as Partial<BreadcrumbItemType>[]}/>
+    <Breadcrumb separator=">" style={{marginBottom: 12}} items={breadcrumbItems() as Partial<BreadcrumbItemType>[]}/>
   )
 }

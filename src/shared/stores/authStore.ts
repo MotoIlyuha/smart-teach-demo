@@ -1,7 +1,7 @@
 // authStore.ts
 import {create} from 'zustand';
 import {Session, User} from '@supabase/supabase-js';
-import {UserDetails} from "../../types/UserTypes.ts";
+import {UserDetails} from "../types/UserTypes.ts";
 
 interface AuthState {
   session: Session | undefined | null;

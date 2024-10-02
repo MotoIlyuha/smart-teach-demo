@@ -4,7 +4,7 @@ import {Avatar, Button, Flex, Popover, Tooltip, Typography} from "antd";
 import {UserOutlined} from "@ant-design/icons";
 import UserMini from "../User/UserMiniWidget.tsx";
 import {GroupDetails} from "../../features/SupaBaseGroups.ts";
-import {Tables} from "../../types/supabase.ts";
+import {Tables} from "../../shared/types/supabase.ts";
 
 export default function GroupMiniWidget({group_data}: { group_data: GroupDetails }) {
   const {students, moderator} = group_data ?? {group: null, students: [], moderator: null};

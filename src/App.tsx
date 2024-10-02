@@ -18,6 +18,7 @@ import CourseNotFoundPage from "./pages/course/CourseNotFoundPage.tsx";
 import CreateCoursePage from "./pages/course/CreateCoursePage.tsx";
 import AdminRoute from "./pages/Routes/AdminRoute.tsx";
 import TeacherRoute from "./pages/Routes/TeacherRoute.tsx";
+import CourseEditPage from "./pages/course/CourseEditPage.tsx";
 
 function App() {
 
@@ -75,6 +76,11 @@ function App() {
             <UserRoute>
               <CoursePage/>
             </UserRoute>
+          }/>
+          <Route path={":course_id/edit"} element={
+            <TeacherRoute>
+              <CourseEditPage/>
+            </TeacherRoute>
           }/>
           <Route path={'new'} element={
             <TeacherRoute>

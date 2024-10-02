@@ -1,4 +1,4 @@
-import {Tables} from "../../types/supabase.ts";
+import {Tables} from "../../shared/types/supabase.ts";
 import {Divider, Flex, Space, Typography} from "antd";
 import UserAvatar from "./UserAvatar.tsx";
 import {Link} from "react-router-dom";

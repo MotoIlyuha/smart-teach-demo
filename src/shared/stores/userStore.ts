@@ -1,6 +1,6 @@
 // userStore.ts
 import {create} from 'zustand';
-import {UserDetails} from "../../types/UserTypes.ts";
+import {UserDetails} from "../types/UserTypes.ts";
 import {fetchUserDetails, updateUserDetails} from "../../features/SupaBaseUsers.ts";
 
 interface UserState {

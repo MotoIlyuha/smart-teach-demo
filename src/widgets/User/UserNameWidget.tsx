@@ -120,6 +120,7 @@ export default function UserName({editable}: { editable: boolean }) {
           ) : (
             <Typography.Title level={3}>{person.first_name} {person.last_name}</Typography.Title>
           )}
+          <UserRole/>
         </Flex>
       )}
     </div>

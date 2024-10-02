@@ -1,7 +1,7 @@
 import {NavigateFunction} from 'react-router-dom';
 import {NotificationInstance} from "antd/es/notification/interface";
 import {signUpWithEmail} from "../../../../features/SupaBaseAuth.ts";
-import {FormType} from "../../../../types/AuthTypes.ts";
+import {FormType} from "../../../../shared/types/AuthTypes.ts";
 
 
 interface handleFinishProps {

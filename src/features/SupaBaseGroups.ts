@@ -1,4 +1,4 @@
-import {Tables} from "../types/supabase.ts";
+import {Tables} from "../shared/types/supabase.ts";
 import supabase from "../config/supabaseClient.ts";
 import {PostgrestError} from "@supabase/supabase-js";
 import {getUserById} from "./SupaBaseUsers.ts";

@@ -1,7 +1,7 @@
 import {Flex, ListProps, message, Typography} from "antd";
 import {ProList, ProListMetas} from "@ant-design/pro-components";
 import {useShallow} from "zustand/react/shallow";
-import {Tables} from "../../types/supabase.ts";
+import {Tables} from "../../shared/types/supabase.ts";
 import UserMini from "../User/UserMiniWidget.tsx";
 import UserMegaWidget from "../User/UserMegaWidget.tsx";
 import {useGroupStore} from "../../shared/stores/groupStore.ts";

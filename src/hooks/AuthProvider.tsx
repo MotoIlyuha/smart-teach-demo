@@ -3,7 +3,7 @@ import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { fetchUserDetails } from '../features/SupaBaseUsers';
 import supabase from '../config/supabaseClient';
 import { useAuthStore } from "../shared/stores/authStore.ts";
-import { UserDetails } from "../types/UserTypes.ts";
+import { UserDetails } from "../shared/types/UserTypes.ts";
 
 interface AuthContextProps {
   session: Session | null; // Убираем возможность undefined

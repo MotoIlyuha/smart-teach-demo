@@ -2,7 +2,7 @@ import {App, Flex, Modal} from "antd";
 import UserMini from "../../User/UserMiniWidget.tsx";
 import GroupMiniWidget from "../GroupMiniWidget.tsx";
 import {useEffect, useState} from "react";
-import {Tables} from "../../../types/supabase.ts";
+import {Tables} from "../../../shared/types/supabase.ts";
 import {getUserById} from "../../../features/SupaBaseUsers.ts";
 import {useAuth} from "../../../hok/Auth.ts";
 import {GroupDetails} from "../../../features/SupaBaseGroups.ts";

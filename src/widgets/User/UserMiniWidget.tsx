@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
 import {Avatar, Button, Popover, Typography} from "antd";
-import {Tables} from "../../types/supabase.ts";
+import {Tables} from "../../shared/types/supabase.ts";
 import styles from "../../styles/UserMiniWidget.module.css";
 import {UserOutlined, MoreOutlined} from "@ant-design/icons";
 import UserMegaWidget from "./UserMegaWidget.tsx";

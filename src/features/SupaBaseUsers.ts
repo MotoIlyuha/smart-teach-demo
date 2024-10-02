@@ -1,6 +1,6 @@
 import supabase from "../config/supabaseClient.ts";
-import {Tables} from "../types/supabase.ts";
-import {UserDetails} from "../types/UserTypes.ts";
+import {Tables} from "../shared/types/supabase.ts";
+import {UserDetails} from "../shared/types/UserTypes.ts";
 import {PostgrestError} from "@supabase/supabase-js";
 import {getGroupById} from "./SupaBaseGroups.ts";
 
