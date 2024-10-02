@@ -1,6 +1,6 @@
 import {NavigateFunction, Location} from "react-router-dom";
 import {signInWithEmail} from "../../../../features/SupaBaseAuth.ts";
-import {FormType} from "../../../../types/AuthTypes.ts";
+import {FormType} from "../../../../shared/types/AuthTypes.ts";
 import {getUserByEmail} from "../../../../features/SupaBaseUsers.ts";
 
 export const handleFinish = async (values: FormType, navigate: NavigateFunction, location: Location) => {

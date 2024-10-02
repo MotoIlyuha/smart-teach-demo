@@ -1,25 +1,34 @@
-import {Outlet} from "react-router-dom";
-import {App, Layout} from "antd";
+import {Outlet, useLocation} from "react-router-dom";
+import {App, Layout, theme} from "antd";
 
 import NavBar from "../widgets/NavBar/NavBar.tsx";
+import BreadcrumbWidget from "../widgets/Dev/BreadcrumbWidget.tsx";
 
+import {dev_mode, max_message_count} from "../config/allConfig.ts";
 import styles from "../styles/layout.module.css";
-import {max_message_count} from "../config/allConfig.ts";
 
 const {Content, Footer, Header} = Layout;
 
 export default function RootLayout() {
+  const {token: { colorBgContainer, borderRadiusLG }} = theme.useToken();
+  const location = useLocation();
+  const isCourseEditPage = location.pathname.split('/')[1] === 'course' && location.pathname.split('/')[3] === 'edit';
+
   return (
     <App message={{maxCount: max_message_count}} notification={{placement: 'bottomRight'}}>
       <Layout className={styles.layout}>
         <Header className={styles.layoutHeader}>
           <NavBar/>
         </Header>
-        <Content className={styles.layoutContent}>
-          <Outlet/>
+        <Content style={ { padding: !isCourseEditPage ? '24px 48px' : 0}}>
+          {dev_mode && <BreadcrumbWidget/>}
+          <Layout className={!isCourseEditPage && styles.layoutContent}
+                  style={{ background: colorBgContainer, borderRadius: borderRadiusLG }}>
+            <Outlet/>
+          </Layout>
         </Content>
         <Footer className={styles.layoutFooter}>
-          © 2024 SmartTeach
+          SmartTeach ©{new Date().getFullYear()} | Created by <a href={'https://github.com/MotoIlyuha'} style={{color: 'pink'}}>MotoIlyuha</a>
         </Footer>
       </Layout>
     </App>

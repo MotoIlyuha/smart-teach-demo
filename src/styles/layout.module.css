@@ -1,5 +1,6 @@
 .layoutHeader {
     color: #fff;
+    height: var(--header-height);
     background-color: #4096ff;
     display: flex;
     justify-content: space-between
@@ -9,9 +10,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 24px 48px;
 }
 
 .layoutFooter {
+    height: var(--footer-height);
     text-align: center;
     color: #fff;
     background-color: #4096ff;
