@@ -87,6 +87,7 @@ function App() {
               <CreateCoursePage/>
             </TeacherRoute>
           }/>
+          <Route path={'not_found'} element={<CourseNotFoundPage/>}/>
           <Route path={'add'} element={<Navigate to={'new'} replace/>}/>
           <Route path={'create'} element={<Navigate to={'new'} replace/>}/>
           <Route path={'*'} element={<CourseNotFoundPage/>}/>

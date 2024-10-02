@@ -124,39 +124,54 @@ export type Database = {
       }
       courses: {
         Row: {
+          author_id: string | null
           created_at: string | null
-          description: string
+          description: string | null
           id: string
           is_public: boolean | null
-          knowledge_ids: string[]
-          question_bank: Json
+          knowledge_ids: string[] | null
           title: string
           total_points: number
           updated_at: string | null
         }
         Insert: {
+          author_id?: string | null
           created_at?: string | null
-          description: string
+          description?: string | null
           id?: string
           is_public?: boolean | null
-          knowledge_ids: string[]
-          question_bank: Json
+          knowledge_ids?: string[] | null
           title: string
-          total_points: number
+          total_points?: number
           updated_at?: string | null
         }
         Update: {
+          author_id?: string | null
           created_at?: string | null
-          description?: string
+          description?: string | null
           id?: string
           is_public?: boolean | null
-          knowledge_ids?: string[]
-          question_bank?: Json
+          knowledge_ids?: string[] | null
           title?: string
           total_points?: number
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "courses_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "user_statistics"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "courses_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       group_moderators: {
         Row: {
@@ -266,7 +281,7 @@ export type Database = {
           id: string
           knowledge_id: string | null
           title: string
-          type: string
+          type: Database["public"]["Enums"]["lesson_type"]
           updated_at: string | null
         }
         Insert: {
@@ -275,7 +290,7 @@ export type Database = {
           id?: string
           knowledge_id?: string | null
           title: string
-          type: string
+          type: Database["public"]["Enums"]["lesson_type"]
           updated_at?: string | null
         }
         Update: {
@@ -284,7 +299,7 @@ export type Database = {
           id?: string
           knowledge_id?: string | null
           title?: string
-          type?: string
+          type?: Database["public"]["Enums"]["lesson_type"]
           updated_at?: string | null
         }
         Relationships: [
@@ -293,6 +308,36 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_bank: {
+        Row: {
+          course_id: string
+          question_id: string
+        }
+        Insert: {
+          course_id: string
+          question_id: string
+        }
+        Update: {
+          course_id?: string
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_bank_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_bank_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
             referencedColumns: ["id"]
           },
         ]
@@ -338,7 +383,7 @@ export type Database = {
           shuffle_options: boolean | null
           task_id: string
           text: string
-          type: string
+          type: Database["public"]["Enums"]["question_type"]
           updated_at: string | null
         }
         Insert: {
@@ -351,7 +396,7 @@ export type Database = {
           shuffle_options?: boolean | null
           task_id: string
           text: string
-          type: string
+          type: Database["public"]["Enums"]["question_type"]
           updated_at?: string | null
         }
         Update: {
@@ -364,7 +409,7 @@ export type Database = {
           shuffle_options?: boolean | null
           task_id?: string
           text?: string
-          type?: string
+          type?: Database["public"]["Enums"]["question_type"]
           updated_at?: string | null
         }
         Relationships: [
@@ -784,6 +829,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_course_details: {
+        Args: {
+          course_id: string
+        }
+        Returns: Json
+      }
       get_group_details_by_id: {
         Args: {
           input_group_id: string
@@ -813,7 +864,16 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      lesson_type: "default" | "initial" | "control" | "optional"
+      question_type:
+        | "mono"
+        | "multi"
+        | "number"
+        | "text"
+        | "select"
+        | "textarea"
+        | "transfer"
+        | "sort"
     }
     CompositeTypes: {
       [_ in never]: never

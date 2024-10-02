@@ -1,8 +1,9 @@
+import {Alert, Space} from "antd";
+
 export default function CourseNotFoundPage() {
-  // TODO: Реализовать страницу "курс не найден"
   return (
-    <div>
-      <h1>404 | Course not found</h1>
-    </div>
+    <Space align='center' direction='vertical' size='large'>
+      <Alert message='404 | Курс не найден!' description="Такого курса не существует" type="error" showIcon/>
+    </Space>
   );
 }

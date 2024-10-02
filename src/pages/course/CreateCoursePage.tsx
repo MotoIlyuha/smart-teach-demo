@@ -4,7 +4,8 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../hok/Auth.ts";
 import UserMini from "../../widgets/User/UserMiniWidget.tsx";
 import {useShallow} from "zustand/react/shallow";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
+import {CourseDetails} from "../../shared/types/CourseTypes.ts";
 
 export default function CreateCoursePage() {
   const {person} = useAuth();
@@ -13,24 +14,32 @@ export default function CreateCoursePage() {
     createCourse: state.createCourse,
     error: state.error
   })));
+  const [success, setSuccess] = useState(false);
+  const [checked, setChecked] = useState(true);
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (error) message.error(error);
-  }, [error]);
+    if (success && course && course.id) {
+      navigate(`/course/${course?.id}/edit`);
+      message.success('Курс успешно создан!');
+      setSuccess(false);
+    }
+  }, [error, course, success, navigate]);
 
-  const handleFinish = async (values) => {
+  const handleFinish = async (values: CourseDetails) => {
+    if (!person) return null;
+    values.isPublic = checked;
     console.log(values);
-    createCourse(values)
+    createCourse(values, person.id)
       .then(() => {
-        if (course && course.id) {
-          navigate(`/course/${course.id}/edit`);
-          message.success('Курс успешно создан!');
-        }
+        setSuccess(true);
       })
       .catch(e => message.error(e.message));
   }
+
+  if (!person) return null;
 
   return (
     <Space size={'large'} direction={'vertical'} align={'center'}>
@@ -60,13 +69,14 @@ export default function CreateCoursePage() {
             {max: 255, message: 'Слишком длинное описание курса'}
           ]}
         >
-          <Input.TextArea showCount={255} maxLength={255}/>
+          <Input.TextArea showCount={true} maxLength={255}/>
         </Form.Item>
         <Form.Item
           name={'public'}
           label={'Публичный'}
+          initialValue={true}
         >
-          <Checkbox defaultChecked={true} value={true}/>
+          <Checkbox checked={checked} onChange={e => setChecked(e.target.checked)}/>
         </Form.Item>
         <Form.Item
           name={'author_id'}

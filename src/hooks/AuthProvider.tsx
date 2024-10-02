@@ -39,10 +39,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .eq('id', session.user.id)
           .single();
 
-        if (loginError) throw loginError;
+        if (loginError) return;
 
         const { data: person_data, error: fetchError } = await fetchUserDetails(user_login.login);
-        if (fetchError || !person_data) throw fetchError;
+        if (fetchError || !person_data) return;
 
         // Обновляем состояние в хранилище
         setSession(session);

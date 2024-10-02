@@ -11,9 +11,9 @@ import {
 } from "@ant-design/icons";
 
 import supabase from "../../config/supabaseClient.ts";
-import {Tables} from "../../types/supabase.ts";
 import UserMini from "../User/UserMiniWidget.tsx";
 import {BreadcrumbItemType} from "antd/es/breadcrumb/Breadcrumb";
+import {Tables} from "../../shared/types/supabase.ts";
 
 export default function BreadcrumbWidget() {
 
@@ -76,7 +76,7 @@ export default function BreadcrumbWidget() {
           label: <Link to={'/user/new'}>
             <Button icon={<PlusOutlined />}>Добавить пользователя</Button>
           </Link>,
-          key: 'all_users'
+          key: 'add_user'
         }
       ]
     } else if (level === 'Группы') {
@@ -100,7 +100,7 @@ export default function BreadcrumbWidget() {
           label: <Link to={'/group/new'}>
             <Button icon={<PlusOutlined />}>Добавить группу</Button>
           </Link>,
-          key: 'all_groups'
+          key: 'add_groups'
         }
       ]
     } else if (level === 'Курсы') {
@@ -124,7 +124,7 @@ export default function BreadcrumbWidget() {
           label: <Link to={'/course/new'}>
             <Button icon={<PlusOutlined />}>Добавить курс</Button>
           </Link>,
-          key: 'all_courses'
+          key: 'add_course'
         }
       ]
     }
@@ -162,7 +162,7 @@ export default function BreadcrumbWidget() {
             <Typography.Text>Посмотреть</Typography.Text>
           </Link>,
           icon: <EyeOutlined/>,
-          key: 'edit_course'
+          key: 'view_course'
         },
         {
           label: <Link to={'/course/' + split[2] + '/edit'}>
@@ -243,9 +243,9 @@ export default function BreadcrumbWidget() {
       title: fourthLevelTitle,
       menu: {items: fourthLevel}
     } : {},
-  ];
+  ] as Partial<BreadcrumbItemType>[];
 
   return (
-    <Breadcrumb separator=">" style={{marginBottom: 12}} items={breadcrumbItems() as Partial<BreadcrumbItemType>[]}/>
+    <Breadcrumb separator=">" style={{padding: '12px 24px'}} items={breadcrumbItems()}/>
   )
 }

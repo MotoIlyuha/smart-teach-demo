@@ -1,5 +1,4 @@
 // SmartTeach TypeScript Definitions
-
 import { JSONContent } from "@tiptap/react";
 
 /**
