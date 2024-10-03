@@ -1,5 +1,5 @@
 import {useState, useEffect} from "react";
-import supabase from "../../config/supabaseClient.ts";
+import supabase from "../../shared/config/supabaseClient.ts";
 import {Tables} from "../../shared/types/supabase.ts";
 import UserMini from "../../widgets/User/UserMiniWidget.tsx";
 

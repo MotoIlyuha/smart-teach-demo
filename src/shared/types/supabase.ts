@@ -212,27 +212,50 @@ export type Database = {
       }
       knowledge: {
         Row: {
+          author_id: string
           created_at: string | null
+          description: string | null
           id: string
+          isapproved: boolean
           name: string
           parent_id: string | null
           updated_at: string | null
         }
         Insert: {
+          author_id: string
           created_at?: string | null
+          description?: string | null
           id: string
+          isapproved?: boolean
           name: string
           parent_id?: string | null
           updated_at?: string | null
         }
         Update: {
+          author_id?: string
           created_at?: string | null
+          description?: string | null
           id?: string
+          isapproved?: boolean
           name?: string
           parent_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "knowledge_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "user_statistics"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "knowledge_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "knowledge_parent_id_fkey"
             columns: ["parent_id"]

@@ -1,5 +1,5 @@
 import {Navigate, useParams, useSearchParams} from "react-router-dom";
-import {useAuth} from "../../hok/Auth.ts";
+import {useAuth} from "../../shared/hok/Auth.ts";
 
 export default function AddToGroupByLink() {
   const {group_id} = useParams<{ group_id: string }>();

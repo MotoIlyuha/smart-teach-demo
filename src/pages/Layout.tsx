@@ -4,8 +4,8 @@ import {App, Layout, theme} from "antd";
 import NavBar from "../widgets/NavBar/NavBar.tsx";
 import BreadcrumbWidget from "../widgets/Dev/BreadcrumbWidget.tsx";
 
-import {dev_mode, max_message_count} from "../config/allConfig.ts";
-import styles from "../styles/layout.module.css";
+import {dev_mode, max_message_count} from "../shared/config/allConfig.ts";
+import styles from "../shared/styles/layout.module.css";
 
 const {Content, Footer, Header} = Layout;
 

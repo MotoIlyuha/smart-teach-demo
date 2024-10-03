@@ -1,10 +1,10 @@
 import {Link} from "react-router-dom";
 import {Flex, Tag} from "antd";
 
-import styles from "../../styles/navBar.module.css";
+import styles from "../../shared/styles/navBar.module.css";
 import SignInWidget from "./components/SignInWidget.tsx";
 import AvatarWidget from "./components/AvatarWidget.tsx";
-import {useAuth} from "../../hok/Auth.ts";
+import {useAuth} from "../../shared/hok/Auth.ts";
 
 export default function NavBar() {
   const {user} = useAuth();

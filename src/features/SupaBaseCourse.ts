@@ -1,6 +1,6 @@
 import {CourseDetails} from "../shared/types/CourseTypes.ts";
 import {PostgrestError} from "@supabase/supabase-js";
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../shared/config/supabaseClient.ts";
 
 
 type createCourseType = Promise<{ data: CourseDetails | null; error: PostgrestError | null }>;

@@ -5,9 +5,9 @@ import {UploadOutlined} from "@ant-design/icons";
 import {UploadChangeParam} from "antd/es/upload";
 import ImgCrop from "antd-img-crop";
 
-import supabase from "../../config/supabaseClient.ts";
+import supabase from "../../shared/config/supabaseClient.ts";
 
-import styles from '../../styles/PreviewButton.module.css';
+import styles from '../../shared/styles/PreviewButton.module.css';
 import UserAvatar from "./UserAvatar.tsx";
 import {getBase64} from "../../shared/utils/getBase64.ts";
 import {useUserStore} from "../../shared/stores/userStore.ts";

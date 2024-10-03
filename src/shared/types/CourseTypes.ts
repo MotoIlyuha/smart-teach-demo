@@ -1,5 +1,5 @@
 // SmartTeach TypeScript Definitions
-import { JSONContent } from "@tiptap/react";
+import {JSONContent} from "@tiptap/react";
 
 /**
  * Типы уроков
@@ -38,10 +38,12 @@ export const QuestionTypes = [...ChoiceTypes, ...InputTypes, ...TransferTypes] a
  * Интерфейс для элемента знания
  */
 export interface Knowledge {
-  id: string;                // Уникальный идентификатор знания
-  name: string;              // Название знания
-  parentId?: string;         // Идентификатор родительского знания (если есть)
-  children?: Knowledge[];    // Подчиненные знания
+  id: string;                      // Уникальный идентификатор знания
+  name: string;                    // Название знания
+  description: string | null;      // Описание знания
+  parentId?: string;               // Идентификатор родительского знания (если есть)
+  children?: Knowledge[];          // Подчиненные знания
+  isApproved: boolean;             // Знание подвержено администратором
 }
 
 /**
@@ -251,11 +253,4 @@ export interface UserTaskHistory {
   userId: string;                         // Идентификатор пользователя
   taskId: string;                         // Идентификатор задания
   attempts: TaskHistory[];                // Все попытки решения задания
-}
-
-/**
- * Интерфейс для дерева знаний (KnowledgeTree)
- */
-export interface KnowledgeTree {
-  roots: Knowledge;                        // Корневые элементы дерева знаний
 }

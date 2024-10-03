@@ -6,8 +6,9 @@ import {Alert, Layout} from 'antd';
 import {useShallow} from "zustand/react/shallow";
 import {useCourseStore} from "../../shared/stores/courseStore.ts";
 
-import styles from '../../styles/CourseEditPage.module.css';
+import styles from '../../shared/styles/CourseEditPage.module.css';
 import CourseEditSettings from "../../widgets/Course/CourseEditSettings.tsx";
+import KnowledgeTree from "../../widgets/Knowledge/KnowledgeTree.tsx";
 
 export default function CourseEditPage() {
   const {course_id} = useParams();
@@ -39,7 +40,9 @@ export default function CourseEditPage() {
       <Layout.Sider width={320} className={styles.sider}>
         <CourseEditSettings/>
       </Layout.Sider>
-      <Layout.Content>Content</Layout.Content>
+      <Layout.Content>
+        <KnowledgeTree/>
+      </Layout.Content>
       <Layout.Sider width='25%'>
         Sider
       </Layout.Sider>
