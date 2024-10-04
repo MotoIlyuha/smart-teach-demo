@@ -1,5 +1,7 @@
 import {Knowledge} from "../types/CourseTypes.ts";
 import {create} from "zustand";
+import {immer} from "zustand/middleware/immer";
+// import {devtools} from "zustand/middleware/devtools";
 import {fetchKnowledgeTree} from "../../features/SupaBaseKnowledge.ts";
 
 interface KnowledgeStore {
@@ -9,7 +11,7 @@ interface KnowledgeStore {
   fetchKnowledgeTree: () => void
 }
 
-export const useKnowledgeStore = create<KnowledgeStore>((set) => ({
+export const useKnowledgeStore = create<KnowledgeStore>()((immer((set) => ({
   knowledgeTree: null,
   loading: false,
   error: null,
@@ -29,4 +31,4 @@ export const useKnowledgeStore = create<KnowledgeStore>((set) => ({
       set({knowledgeTree: null, error: String(error), loading: false});
     }
   },
-}))
+}))))

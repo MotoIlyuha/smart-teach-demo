@@ -8,7 +8,7 @@ import {useCourseStore} from "../../shared/stores/courseStore.ts";
 
 import styles from '../../shared/styles/CourseEditPage.module.css';
 import CourseEditSettings from "../../widgets/Course/CourseEditSettings.tsx";
-import KnowledgeTree from "../../widgets/Knowledge/KnowledgeTree.tsx";
+import KnowledgeFlow from "../../widgets/Knowledge/KnowledgeFlow.tsx";
 
 export default function CourseEditPage() {
   const {course_id} = useParams();
@@ -41,7 +41,7 @@ export default function CourseEditPage() {
         <CourseEditSettings/>
       </Layout.Sider>
       <Layout.Content>
-        <KnowledgeTree/>
+        <KnowledgeFlow/>
       </Layout.Content>
       <Layout.Sider width='25%'>
         Sider

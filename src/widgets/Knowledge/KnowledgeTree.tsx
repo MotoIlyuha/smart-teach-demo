@@ -1,35 +1,46 @@
-import React, { useMemo, useState, useEffect, Key } from "react";
-import { useShallow } from "zustand/react/shallow";
-import { Input, Tree, Typography, Button } from "antd";
-import {Input as ProInput, TreeProps} from "@ant-design/pro-editor";
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { useKnowledgeStore } from "../../shared/stores/knowledgeStore.ts";
-import type { DataNode } from "antd/es/tree";
-import { Knowledge } from "../../shared/types/CourseTypes.ts";
+import {ChangeEvent, Key, ReactNode, useCallback, useEffect, useMemo, useState} from "react";
+import {useShallow} from "zustand/react/shallow";
+import {Button, Flex, Input, Tree} from "antd";
+import {TreeProps} from "@ant-design/pro-editor";
+import type {DataNode} from "antd/es/tree";
+import {PlusOutlined, SearchOutlined} from "@ant-design/icons";
+import {useKnowledgeStore} from "../../shared/stores/knowledgeStore.ts";
+import {Knowledge} from "../../shared/types/CourseTypes.ts";
+import CreateKnowledgeNode from "./components/CreateKnowledgeNode.tsx";
+import KnowledgeNode from "./components/KnowledgeNode.tsx";
 
-const { Search } = Input;
+const {Search} = Input;
 
 interface CustomDataNode extends DataNode {
-  render: React.ReactNode;
+  render: ReactNode;
+  description?: string | null;
   children?: CustomDataNode[];
-  isApproved?: boolean;
+  isApproved: boolean;
 }
 
-const convertToTreeData = (nodes: Knowledge[], handleNodeEdit: (id: Key, name: string) => void): CustomDataNode[] => {
+const convertToTreeData = (
+  nodes: Knowledge[],
+  handleNodeEdit: (id: Key, name: string) => void,
+  handleNodeDelete: (id: Key) => void,
+  searchValue: string,
+  selected: boolean
+): CustomDataNode[] => {
   return nodes.map((node) => ({
     key: node.id,
-    title: node.name + '|||' + node.description + '|||' + (node.isApproved ? '1' : '0'),
+    title: node.name,
+    description: node.description,
     isApproved: node.isApproved,
-    render: node.isApproved ? (
-      <Typography.Text strong>{node.name}</Typography.Text>
-      // <Input value={node.name} />
-    ) : (
-      <ProInput
-        defaultValue={node.name}
-        onBlur={(e) => handleNodeEdit(node.id, e.target.value)}
+    render: (
+      <KnowledgeNode
+        title={node.name}
+        description={node.description ?? ''}
+        isApproved={node.isApproved}
+        searchValue={searchValue}
+        selected={selected}
+        onDelete={() => handleNodeDelete(node.id)}
       />
     ),
-    children: node.children ? convertToTreeData(node.children, handleNodeEdit) : [],
+    children: node.children ? convertToTreeData(node.children, handleNodeEdit, handleNodeDelete, searchValue, selected) : [],
   }));
 };
 
@@ -49,7 +60,7 @@ const getParentKey = (key: Key, tree: CustomDataNode[]): Key | undefined => {
 };
 
 const KnowledgeTree = () => {
-  const { knowledgeTree, fetchKnowledgeTree } = useKnowledgeStore(useShallow(state => ({
+  const {knowledgeTree, fetchKnowledgeTree} = useKnowledgeStore(useShallow(state => ({
     knowledgeTree: state.knowledgeTree,
     fetchKnowledgeTree: state.fetchKnowledgeTree
   })));
@@ -58,40 +69,87 @@ const KnowledgeTree = () => {
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
+  const [createNodeVisible, setCreateNodeVisible] = useState(false);
 
   useEffect(() => {
     fetchKnowledgeTree();
   }, [fetchKnowledgeTree]);
 
-  const handleAddNode = () => {
+  const handleAddNode = (name: string, description: string) => {
+    const newKey = `new_node_${Date.now()}`;
     const newNode: CustomDataNode = {
-      key: `new_node_${Date.now()}`,
-      title: "New Node",
-      render: <Input defaultValue="New Node" />,
-      children: [],
+      isApproved: false,
+      key: newKey,
+      title: name,
+      description: description,
+      render: (
+        <KnowledgeNode
+          title={name}
+          description={description}
+          searchValue={searchValue}
+          isApproved={false}
+          selected={false}
+          onDelete={() => handleNodeDelete(newKey)}
+        />
+      ),
+      children: []
     };
     setTreeData((prevData) => [...prevData, newNode]);
   };
 
-  const handleNodeEdit = (key: Key, newName: string) => {
+  const handleNodeDelete = useCallback((key: Key) => {
+    setTreeData((prevData) => {
+      const deleteNode = (nodes: CustomDataNode[]): CustomDataNode[] => {
+        return nodes
+          .map(node => ({...node}))
+          .filter(node => {
+            // Если узел соответствует ключу, удаляем его
+            if (node.key === key) return false;
+            // Если у узла есть дети, рекурсивно обрабатываем их
+            if (node.children) {
+              node.children = deleteNode(node.children);
+            }
+            return true;
+          });
+      };
+      return deleteNode(prevData);
+    });
+  }, []);
+
+  const handleNodeEdit = useCallback((key: Key, newName: string) => {
     setTreeData((prevData) =>
       prevData.map((node) =>
-        node.key === key ? { ...node, title: newName, render: <Input defaultValue={newName} /> } : node
+        node.key === key
+          ? {
+            ...node,
+            title: newName,
+            render: (
+              <KnowledgeNode
+                title={newName}
+                description={node.description ?? ''}
+                isApproved={!node.isApproved}
+                searchValue={searchValue}
+                selected={selectedKeys.includes(node.key)}
+                onDelete={() => handleNodeDelete(key)}
+              />
+            ),
+          }
+          : node
       )
     );
-  };
+  }, [handleNodeDelete, searchValue, selectedKeys]);
 
   useMemo(() => {
     if (knowledgeTree)
-      setTreeData(convertToTreeData(knowledgeTree, handleNodeEdit));
-  }, [knowledgeTree]);
+      setTreeData(convertToTreeData(knowledgeTree, handleNodeEdit, handleNodeDelete, searchValue, false));
+  }, [handleNodeDelete, handleNodeEdit, knowledgeTree, searchValue]);
 
   const dataList: { key: Key; title: string }[] = [];
   const generateList = (data: CustomDataNode[]) => {
     for (let i = 0; i < data.length; i++) {
       const node = data[i];
-      const { key, title } = node;
-      dataList.push({ key, title: (title as string).toLowerCase() });
+      const {key, title} = node;
+      dataList.push({key, title: (title as string).toLowerCase()});
       if (node.children) {
         generateList(node.children);
       }
@@ -162,8 +220,8 @@ const KnowledgeTree = () => {
     setTreeData(data);
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const {value} = e.target;
     const lowerCaseValue = value.toLowerCase();
     const newExpandedKeys = dataList
       .map((item) => {
@@ -180,66 +238,68 @@ const KnowledgeTree = () => {
 
   const processedTreeData = useMemo(() => {
     const loop = (data: CustomDataNode[]): CustomDataNode[] =>
-      data.map((item) => {
-        const strTitle = item.title as string;
-        const index = strTitle.toLowerCase().indexOf(searchValue);
-        const beforeStr = strTitle.substring(0, index);
-        const afterStr = strTitle.slice(index + searchValue.length);
-        const title =
-          index > -1 ? (
-            <span key={item.key}>
-              {beforeStr}
-              <span style={{color: '#f50'}}>{searchValue}</span>
-              {afterStr}
-            </span>
-          ) : (
-            <span key={item.key}>{strTitle}</span>
-          );
-        if (item.children) {
-          return { ...item, title, children: loop(item.children) };
-        }
-
-        return {
-          ...item,
-          title,
-        };
-      });
+      data.map((item) => ({
+        ...item,
+        render: (
+          <KnowledgeNode
+            title={item.title as string}
+            description={item.description ?? ''}
+            isApproved={item.isApproved}
+            searchValue={searchValue}
+            selected={selectedKeys.includes(item.key)}
+            onDelete={() => handleNodeDelete(item.key)}
+          />
+        ),
+        children: item.children ? loop(item.children) : [],
+      }));
 
     return loop(treeData);
-  }, [searchValue, treeData]);
+  }, [treeData, searchValue, selectedKeys, handleNodeDelete]);
+
+
+// Функция для рекурсивного преобразования всех узлов
+  const transformTreeData = (data: CustomDataNode[]): CustomDataNode[] => {
+    return data.map(({render, children, ...node}) => ({
+      ...node,
+      title: render,
+      render: render,
+      children: children ? transformTreeData(children) : [],
+    }));
+  };
 
   return (
-    <div>
+    <Flex gap={8} vertical>
       <Search
-        style={{ marginBottom: 8 }}
         placeholder="Найти знание"
         onChange={onChange}
-        enterButton={<SearchOutlined />}
+        enterButton={<SearchOutlined/>}
       />
       <Tree
-        treeData={processedTreeData.map(({ render, ...node }) => ({ ...node, title: render }))}
+        treeData={transformTreeData(processedTreeData)}
         selectable
+        multiple
         selectedKeys={selectedKeys}
         onSelect={(keys) => setSelectedKeys(keys)}
-        // draggable={(node) => node.title.toString()}
-        titleRender={(node) => {
-          console.log(knowledgeTree?.filter(tr => tr.id === node.key))
-          // return knowledgeTree?.filter(tr => tr.id === node.key)?.[0]?.name
-          return node.title;
-        }}
         onDrop={onDrop}
+        draggable={true}
         expandedKeys={expandedKeys}
         onExpand={onExpand}
         autoExpandParent={autoExpandParent}
+        defaultExpandAll={true}
       />
+      {createNodeVisible &&
+          <CreateKnowledgeNode
+              onCreate={(name, description) => handleAddNode(name, description)}
+              onCancel={() => setCreateNodeVisible(false)}/>
+      }
       <Button
         type="primary"
-        icon={<PlusOutlined />}
-        onClick={handleAddNode}
+        icon={<PlusOutlined/>}
+        onClick={() => setCreateNodeVisible(true)}
       >
-        Добавить
+        Добавить знание
       </Button>
-    </div>
+    </Flex>
   );
 };
 

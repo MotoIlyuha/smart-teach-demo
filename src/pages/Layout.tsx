@@ -22,7 +22,7 @@ export default function RootLayout() {
         </Header>
         <Content style={ { padding: !isCourseEditPage ? '24px 48px' : 0}}>
           {dev_mode && <BreadcrumbWidget/>}
-          <Layout className={!isCourseEditPage && styles.layoutContent}
+          <Layout className={!isCourseEditPage ? styles.layoutContent : ''}
                   style={{ background: colorBgContainer, borderRadius: borderRadiusLG }}>
             <Outlet/>
           </Layout>
