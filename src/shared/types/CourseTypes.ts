@@ -108,16 +108,8 @@ export interface Lesson {
  * Интерфейс для траектории обучения (LearningTrajectory)
  */
 export interface LearningTrajectory {
-  id: string;                             // Уникальный идентификатор траектории обучения
-  name: string;                           // Название траектории обучения
-  graph: TrajectoryGraph;                 // Граф траектории обучения
-}
-
-/**
- * Интерфейс для графа траектории обучения
- */
-export interface TrajectoryGraph {
-  nodes: string[];                // Узлы графа (уроки)
+  id: string;                       // Уникальный идентификатор траектории обучения
+  nodes: string[];                  // Узлы графа (уроки)
   edges: {                          // Ребра графа (отношения между уроками)
     id: string;                     // Уникальный идентификатор ребра
     source: string;                 // Идентификатор исходного урока

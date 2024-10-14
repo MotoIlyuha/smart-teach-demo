@@ -9,6 +9,8 @@ import {useCourseStore} from "../../shared/stores/courseStore.ts";
 import styles from '../../shared/styles/CourseEditPage.module.css';
 import CourseEditSettings from "../../widgets/Course/CourseEditSettings.tsx";
 import KnowledgeFlow from "../../widgets/Knowledge/KnowledgeFlow.tsx";
+import CourseEditCategories from "../../widgets/Course/CourseEditCategories.tsx";
+import {CourseProvider} from "../../widgets/Course/CourseProvider.tsx";
 
 export default function CourseEditPage() {
   const {course_id} = useParams();
@@ -36,16 +38,19 @@ export default function CourseEditPage() {
   if (!course) return null;
 
   return (
-    <Layout className={styles.layout}>
-      <Layout.Sider width={320} className={styles.sider}>
-        <CourseEditSettings/>
-      </Layout.Sider>
-      <Layout.Content>
-        <KnowledgeFlow/>
-      </Layout.Content>
-      <Layout.Sider width='25%'>
-        Sider
-      </Layout.Sider>
-    </Layout>
+    <CourseProvider>
+      <Layout className={styles.layout}>
+        <Layout.Sider width={320} className={styles.sider}>
+          <CourseEditSettings/>
+          <CourseEditCategories/>
+        </Layout.Sider>
+        <Layout.Content>
+          <KnowledgeFlow/>
+        </Layout.Content>
+        <Layout.Sider width='25%'>
+          Sider
+        </Layout.Sider>
+      </Layout>
+    </CourseProvider>
   )
 }

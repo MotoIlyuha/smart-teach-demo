@@ -151,7 +151,7 @@ const CourseSettings = memo((
 export default function CourseEditSettings() {
   const {course, updateCourseDetails, deleteCourse, loading} = useCourseStore(useShallow(state => ({
     course: state.course,
-    updateCourseDetails: state.updateCourseDetails,
+    updateCourseDetails: state.updateCourse,
     loading: state.loading,
     deleteCourse: state.deleteCourse
   })));
@@ -196,6 +196,7 @@ export default function CourseEditSettings() {
 
   return (
     <Collapse
+      className={'course-edit-settings'}
       key={'collapse'}
       collapsible={'icon'}
       activeKey={editMode ? ['main'] : []}

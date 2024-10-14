@@ -7,7 +7,7 @@ import {CheckOutlined, CloseOutlined, EditOutlined} from "@ant-design/icons";
 export default function CourseEditTitle() {
   const {course, updateCourseDetails} = useCourseStore(useShallow(state => ({
     course: state.course,
-    updateCourseDetails: state.updateCourseDetails
+    updateCourseDetails: state.updateCourse
   })));
   const [courseTitle, setCourseTitle] = useState(course?.title);
   const [valid, setValid] = useState(true);

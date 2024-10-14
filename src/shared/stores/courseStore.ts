@@ -2,7 +2,7 @@ import {create} from "zustand";
 import {CourseDetails} from "../types/CourseTypes.ts";
 import {
   createCourse, deleteCourse,
-  fetchCourseDetails,
+  fetchCourseDetails, updateCourse,
   updateCourseDetails
 } from "../../features/SupaBaseCourse.ts";
 
@@ -10,8 +10,9 @@ interface CourseStore {
   course: CourseDetails | null
   loading: boolean
   error: string | null
-  createCourse: (course: CourseDetails, user_id: string) => Promise<void>
   fetchCourse: (course_id: string) => void
+  createCourse: (course: CourseDetails, user_id: string) => Promise<void>
+  updateCourse: (updates: Partial<CourseDetails>) => Promise<void>
   updateCourseDetails: (updates: Partial<CourseDetails>) => Promise<void>
   deleteCourse: (course_id?: string) => Promise<void>
 }
@@ -55,6 +56,27 @@ export const useCourseStore = create<CourseStore>((set) => {
         }
       } catch (error) {
         console.error('Error fetching course:', error);
+        set({course: null, error: String(error), loading: false});
+      }
+    },
+
+    updateCourse: async (updates: Partial<CourseDetails>) => {
+      console.log('Updating course:', updates);
+      try {
+        set({loading: true, error: null});
+        const {course} = useCourseStore.getState();
+        if (!course || !course.id) set({course: null, error: 'Course not found', loading: false});
+        else {
+          const error = await updateCourse(course.id, updates);
+          if (error) {
+            console.error('Error updating course:', error.message);
+            set({course: null, error: error.message, loading: false});
+          } else {
+            set({error: null, loading: false});
+          }
+        }
+      } catch (error) {
+        console.error('Error updating course:', error);
         set({course: null, error: String(error), loading: false});
       }
     },
