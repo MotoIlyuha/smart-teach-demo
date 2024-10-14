@@ -17,9 +17,9 @@ export default function CategoryTitle({category, setCategoryItemDisabled}: Categ
     course: state.course,
     updateCourse: state.updateCourse
   })));
-  const [editableStr, setEditableStr] = useState(category.title);
+  const [editableStr, setEditableStr] = useState(category.title === 'new' ? '' : category.title);
   const [hovered, setHovered] = useState(false);
-  const [onEdit, setOnEdit] = useState(false);
+  const [onEdit, setOnEdit] = useState(category.title === 'new');
   const [valid, setValid] = useState(true);
 
   const handleEditCategoryTitleBlur = () => {

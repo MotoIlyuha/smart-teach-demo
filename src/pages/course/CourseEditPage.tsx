@@ -11,6 +11,7 @@ import CourseEditSettings from "../../widgets/Course/CourseEditSettings.tsx";
 import KnowledgeFlow from "../../widgets/Knowledge/KnowledgeFlow.tsx";
 import CourseEditCategories from "../../widgets/Course/CourseEditCategories.tsx";
 import {CourseProvider} from "../../widgets/Course/CourseProvider.tsx";
+import CourseSaveManager from "../../widgets/Course/CourseSaveManager.tsx";
 
 export default function CourseEditPage() {
   const {course_id} = useParams();
@@ -50,6 +51,7 @@ export default function CourseEditPage() {
         <Layout.Sider width='25%'>
           Sider
         </Layout.Sider>
+        <CourseSaveManager/>
       </Layout>
     </CourseProvider>
   )

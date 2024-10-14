@@ -6,6 +6,7 @@ import CategoryTitle from "./Category/CategoryTitle.tsx";
 import {CollapsibleType} from "antd/es/collapse/CollapsePanel";
 import {Category} from "../../shared/types/CourseTypes.ts";
 import {useCourse} from "../../shared/hok/Course.ts";
+import CreateCategory from "./Category/CreateCategory.tsx";
 
 export default function CourseEditCategories() {
 
@@ -46,7 +47,7 @@ export default function CourseEditCategories() {
           key: 'new',
           showArrow: false,
           collapsible: 'icon' as CollapsibleType,
-          label: <span style={{color: 'white'}}>Новая категория</span>,
+          label: <CreateCategory/>,
         }
       ]}
     />

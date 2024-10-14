@@ -123,7 +123,6 @@ export async function updateCourse(course_id: string, updates: Partial<CourseDet
       course_id: course_id,
       course_details: updates as unknown as Json
     });
-  console.log(error);
   if (error) return error;
   else return null;
 }

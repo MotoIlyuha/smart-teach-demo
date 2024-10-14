@@ -152,7 +152,7 @@ export default function CourseEditSettings() {
   const {course, updateCourseDetails, deleteCourse, loading} = useCourseStore(useShallow(state => ({
     course: state.course,
     updateCourseDetails: state.updateCourse,
-    loading: state.loading,
+    loading: state.dataLoading,
     deleteCourse: state.deleteCourse
   })));
   const {person} = useAuth();
