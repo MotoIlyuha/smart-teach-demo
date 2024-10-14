@@ -3,7 +3,7 @@ import {FloatButton} from "antd";
 import {CloseOutlined, SaveOutlined, LoadingOutlined, CheckOutlined} from "@ant-design/icons";
 import {useCourseStore} from "../../shared/stores/courseStore.ts";
 import {useShallow} from "zustand/react/shallow";
-import './CourseSaveManager.css'
+import '../../shared/styles/CourseSaveManager.css'
 import {course_auto_save_interval} from "../../shared/config/allConfig.ts";
 
 export default function CourseSaveManager() {

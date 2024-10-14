@@ -5,7 +5,7 @@ import {Input} from "@ant-design/pro-editor";
 import {EditAction, DeleteAction} from "@ant-design/pro-editor";
 import {Category} from "../../../shared/types/CourseTypes.ts";
 import {useCourseStore} from "../../../shared/stores/courseStore.ts";
-import styles from "./CategoryTitle.module.css";
+import styles from "../../../shared/styles/CategoryTitle.module.css";
 
 interface CategoryTitleProps {
   category: Category,
@@ -17,10 +17,10 @@ export default function CategoryTitle({category, setCategoryItemDisabled}: Categ
     course: state.course,
     updateCourse: state.updateCourse
   })));
-  const [editableStr, setEditableStr] = useState(category.title === 'new' ? '' : category.title);
+  const [editableStr, setEditableStr] = useState(category.title === '' ? '' : category.title);
   const [hovered, setHovered] = useState(false);
-  const [onEdit, setOnEdit] = useState(category.title === 'new');
-  const [valid, setValid] = useState(true);
+  const [onEdit, setOnEdit] = useState(category.title === '');
+  const [valid, setValid] = useState(false);
 
   const handleEditCategoryTitleBlur = () => {
     if (valid) {
@@ -57,8 +57,8 @@ export default function CategoryTitle({category, setCategoryItemDisabled}: Categ
           <Flex gap={8}>
               <EditAction
                   title={'Редактировать название'}
-                  onClick={event => {
-                    event.stopPropagation();
+                  onClick={e => {
+                    e.stopPropagation();
                     setCategoryItemDisabled(onEdit);
                     if (valid)
                       setOnEdit(!onEdit);

@@ -3,7 +3,7 @@ import {createContext, ReactNode, useState} from "react";
 
 interface CourseProviderProps {
   activeCategory: Category | null | undefined
-  setActiveCategory: (category: Category | undefined) => void
+  setActiveCategory: (category: Category | null | undefined) => void
 }
 
 export const CourseContext = createContext<CourseProviderProps>({

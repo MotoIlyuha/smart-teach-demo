@@ -2,7 +2,6 @@ import {Button, message} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
 import {useCourseStore} from "../../../shared/stores/courseStore.ts";
 import {useShallow} from "zustand/react/shallow";
-import {Category} from "../../../shared/types/CourseTypes.ts";
 
 export default function CreateCategory() {
   const {course, updateCourse} = useCourseStore(useShallow((state) => ({
@@ -14,7 +13,16 @@ export default function CreateCategory() {
     if (!course) return;
     updateCourse({
       ...course,
-      categories: [...course.categories, {title: 'new'} as Category]
+      categories: [...course.categories, {
+        id: `category-${Date.now().toString()}`,
+        title: '',
+        lessons: [],
+        learningTrajectory: {
+          id: Date.now().toString(),
+          nodes: [],
+          edges: []
+        },
+      }]
     }).catch(() => message.error('Не удалось создать раздел!'));
   }
 

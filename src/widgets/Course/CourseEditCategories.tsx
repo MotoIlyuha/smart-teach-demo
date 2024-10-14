@@ -4,7 +4,6 @@ import {Collapse} from "antd";
 import {useCourseStore} from "../../shared/stores/courseStore.ts";
 import CategoryTitle from "./Category/CategoryTitle.tsx";
 import {CollapsibleType} from "antd/es/collapse/CollapsePanel";
-import {Category} from "../../shared/types/CourseTypes.ts";
 import {useCourse} from "../../shared/hok/Course.ts";
 import CreateCategory from "./Category/CreateCategory.tsx";
 
@@ -31,7 +30,10 @@ export default function CourseEditCategories() {
       style={{overflow: 'auto', height: '100%', margin: 8, borderRadius: 8}}
       activeKey={activeCategory?.id ? [activeCategory.id] : []}
       onChange={key => {
-        setActiveCategory((course?.categories as Category[]).find(category => category.id === key[0]))
+        if (course && course.categories)
+          setActiveCategory(course.categories.find(category => category.id === key[0]))
+        else
+          setActiveCategory(null);
       }}
       items={[
         ...categories?.map((category) => ({
