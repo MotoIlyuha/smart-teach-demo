@@ -171,6 +171,8 @@ const KnowledgeTree = () => {
     const dropPos = info.node.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
+    if (knowledgeList?.find((node) => node.id === dragKey)?.isApproved) return null;
+
     const loop = (data: DataNode[], key: Key, callback: (item: DataNode, index: number, arr: DataNode[]) => void) => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].key === key) {
@@ -292,6 +294,7 @@ const KnowledgeTree = () => {
         onExpand={onExpand}
         autoExpandParent={autoExpandParent}
         defaultExpandAll={true}
+        height={600}
       />
       {createNodeVisible &&
           <CreateKnowledgeNode

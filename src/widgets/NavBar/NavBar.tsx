@@ -18,7 +18,7 @@ export default function NavBar() {
         </Flex>
       </Link>
       {user ? (
-        <AvatarWidget user={user}/>
+        <AvatarWidget/>
       ) : (
         <SignInWidget/>
       )}

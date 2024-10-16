@@ -3,6 +3,8 @@ import {Flex, Tag, Typography} from "antd";
 import {ActionIcon, DeleteAction, EditAction, HandleAction} from "@ant-design/pro-editor";
 import {Lesson} from "../../../../shared/types/CourseTypes.ts";
 import {typeIcon} from "../../../../shared/config/lessonTypeIcons.tsx";
+import {useCourse} from "../../../../shared/hok/Course.ts";
+import '../../../../shared/styles/LessonItem.css'
 
 interface LessonItemProps {
   index: number | undefined,
@@ -13,10 +15,13 @@ interface LessonItemProps {
 }
 
 const LessonItem = ({index, listeners, lesson, handleEdit, handleDelete}: LessonItemProps) => {
+  const {setSelectedLesson, selectedLesson} = useCourse();
   const [hover, setHover] = useState(false);
+  const selected = selectedLesson?.id === lesson.id;
 
   return (
-    <Flex gap={4} vertical style={{width: '100%'}}>
+    <Flex className={`lesson-item ${selected ? 'selected' : ''}`} gap={4} vertical
+          onClick={() => setSelectedLesson(selected ? undefined : lesson)}>
       <Flex gap={8} align={'center'} style={{width: '100%'}}
             onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
         {hover ?
@@ -40,7 +45,7 @@ const LessonItem = ({index, listeners, lesson, handleEdit, handleDelete}: Lesson
         {lesson.knowledge ? (
           <>
             <Typography.Text type={'secondary'}>Проверяемое знание: </Typography.Text>
-            <Tag>{lesson.knowledge}</Tag>
+            <Tag>{lesson.knowledge.name}</Tag>
           </>
         ) : (
           <Typography.Text type={'secondary'}>Этот урок не проверяет знания</Typography.Text>

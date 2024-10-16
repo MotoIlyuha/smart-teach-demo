@@ -31,7 +31,7 @@ export default function KnowledgeNode({title, description, isApproved, onDelete,
     );
 
   return (
-    <Space direction="vertical">
+    <Space direction="vertical" style={{backgroundColor: !isApproved ? 'lightyellow' : 'transparent', borderRadius: 4, padding: 4}}>
       <Flex gap={8} align={'baseline'}>
         {selected ?
           <Tag color={'blue'} style={{textWrap: 'nowrap'}}>{highlightedTitle}</Tag>

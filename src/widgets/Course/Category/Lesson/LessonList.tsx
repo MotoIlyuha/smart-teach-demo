@@ -62,7 +62,7 @@ export default function LessonList({category}: { category: Category }) {
     const newId = uuidv4();
     if (editableLesson && lessons.find((l) => l.id === editableLesson.id)?.title === '')
       ref?.current?.removeItem(editableLesson.index);
-    const newLesson = {id: newId, title: '', type: 'default' as LessonType, tasks: [], knowledge: ''}
+    const newLesson = {id: newId, title: '', type: 'default' as LessonType, tasks: [], knowledge: undefined}
     ref?.current?.addItem(newLesson);
     setEditableLesson({...newLesson, index: lessons.length});
   }
@@ -121,7 +121,7 @@ export default function LessonList({category}: { category: Category }) {
         creatorButtonText: 'Добавить урок',
         'record': () => {
           const newId = uuidv4();
-          const newLesson = {id: newId, title: '', type: 'default' as LessonType, tasks: [], knowledge: ''}
+          const newLesson = {id: newId, title: '', type: 'default' as LessonType, tasks: [], knowledge: undefined};
           // setLessons(lessons.filter((l) => l.title !== ''));
           if (editableLesson?.title === '') ref?.current?.removeItem(editableLesson.index);
           setEditableLesson({...newLesson, index: lessons.length});

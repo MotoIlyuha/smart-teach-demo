@@ -101,7 +101,7 @@ export interface Lesson {
   title: string;                          // Название урока
   type: LessonType;                       // Тип урока
   tasks: Task[];                          // Список заданий в уроке
-  knowledge: string;                      // Идентификатор знания, которое проверяет урок (для "default" и "optional" типов)
+  knowledge?: Knowledge;                      // Идентификатор знания, которое проверяет урок (для "default" и "optional" типов)
 }
 
 /**
@@ -172,7 +172,7 @@ export interface User {
   avatarUrl?: string;                     // URL аватарки пользователя (необязательно)
   role: UserRole;                         // Роль пользователя
   groupId?: string;                       // Идентификатор группы (для школьников)
-  moderatedGroupIds?: string[];           // Идентификаторы групп, которыми модератирует (для учителей)
+  moderatedGroupIds?: string[];           // Идентификаторы групп, которыми модерирует (для учителей)
 }
 
 /**
@@ -225,7 +225,7 @@ export interface UserDashboard {
  */
 export interface TeacherDashboard {
   teacher: User;                                 // Данные учителя
-  studentGroupStatistics: GroupStatistics[];     // Статистика по группам, которыми модератирует
+  studentGroupStatistics: GroupStatistics[];     // Статистика по группам, которыми модерирует
   individualStudentStatistics: UserStatistics[]; // Статистика по отдельным ученикам
 }
 

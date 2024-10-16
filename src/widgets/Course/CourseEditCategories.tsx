@@ -28,7 +28,7 @@ export default function CourseEditCategories() {
   return (
     <Collapse
       accordion
-      style={{overflow: 'auto', height: '100%', margin: 8, borderRadius: 8}}
+      className={'course-categories'}
       activeKey={activeCategory?.id ? [activeCategory.id] : []}
       onChange={key => {
         if (course && course.categories)

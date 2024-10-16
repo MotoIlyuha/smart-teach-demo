@@ -1,5 +1,5 @@
 import {createContext, ReactNode, useState} from "react";
-import {Category, Knowledge} from "../../shared/types/CourseTypes.ts";
+import {Category, Knowledge, Lesson} from "../../shared/types/CourseTypes.ts";
 
 interface CourseProviderProps {
   activeCategory: Category | null | undefined
@@ -8,6 +8,8 @@ interface CourseProviderProps {
   setSelectedKnowledge: (knowledge: Knowledge | undefined) => void
   selectMode: boolean
   setSelectMode: (selectMode: boolean) => void
+  selectedLesson: Lesson | undefined
+  setSelectedLesson: (lesson: Lesson | undefined) => void
 }
 
 export const CourseContext = createContext<CourseProviderProps>({
@@ -17,12 +19,15 @@ export const CourseContext = createContext<CourseProviderProps>({
   setSelectedKnowledge: () => {},
   selectMode: false,
   setSelectMode: () => {},
+  selectedLesson: undefined,
+  setSelectedLesson: () => {},
 });
 
 export const CourseProvider = ({children}: { children: ReactNode }) => {
   const [activeCategory, setActiveCategory] = useState<Category | null | undefined>(null);
   const [selectedKnowledge, setSelectedKnowledge] = useState<Knowledge | undefined>(undefined);
   const [selectMode, setSelectMode] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
 
   return (
     <CourseContext.Provider value={{
@@ -30,6 +35,8 @@ export const CourseProvider = ({children}: { children: ReactNode }) => {
       setActiveCategory,
       selectedKnowledge,
       setSelectedKnowledge,
+      selectedLesson,
+      setSelectedLesson,
       selectMode,
       setSelectMode: (selectMode: boolean) => {
         setSelectMode(selectMode);
