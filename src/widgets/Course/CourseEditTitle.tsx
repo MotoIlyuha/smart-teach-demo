@@ -1,10 +1,12 @@
-import {useCourseStore} from "../../shared/stores/courseStore.ts";
 import {useShallow} from "zustand/react/shallow";
 import {useState} from "react";
 import {Button, Flex, Input, message, Typography} from "antd";
 import {CheckOutlined, CloseOutlined, EditOutlined} from "@ant-design/icons";
+import {useCourseStore} from "../../shared/stores/courseStore.ts";
+import {useCourse} from "../../shared/hok/Course.ts";
 
 export default function CourseEditTitle() {
+  const {setActiveCategory} = useCourse();
   const {course, updateCourseDetails} = useCourseStore(useShallow(state => ({
     course: state.course,
     updateCourseDetails: state.updateCourse
@@ -63,7 +65,7 @@ export default function CourseEditTitle() {
           </>
         ) : (
           <>
-            <Typography.Title level={2}>
+            <Typography.Title level={2} onClick={() => setActiveCategory(null)}>
               {course.title}
             </Typography.Title>
             {hover && (

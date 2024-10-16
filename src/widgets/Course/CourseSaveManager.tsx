@@ -1,10 +1,10 @@
 import {ReactNode, useCallback, useEffect, useRef, useState} from "react";
+import {useShallow} from "zustand/react/shallow";
 import {FloatButton} from "antd";
 import {CloseOutlined, SaveOutlined, LoadingOutlined, CheckOutlined} from "@ant-design/icons";
 import {useCourseStore} from "../../shared/stores/courseStore.ts";
-import {useShallow} from "zustand/react/shallow";
-import '../../shared/styles/CourseSaveManager.css'
 import {course_auto_save_interval} from "../../shared/config/allConfig.ts";
+import '../../shared/styles/CourseSaveManager.css'
 
 export default function CourseSaveManager() {
   const {loading, confirm, error} = useCourseStore(useShallow((state) => ({
@@ -17,6 +17,7 @@ export default function CourseSaveManager() {
   const [description, setDescription] = useState<undefined | string>(undefined);
   const [saved, setSaved] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const unsavedChangesRef = useRef(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -25,6 +26,7 @@ export default function CourseSaveManager() {
       setIcon(<CheckOutlined />);
       setColor('#52c41a');
       setDescription('Изменения сохранены!');
+      unsavedChangesRef.current = false;
 
       // Set a timeout to reset the button after 2 seconds
       timer = setTimeout(() => {
@@ -34,6 +36,7 @@ export default function CourseSaveManager() {
       setIcon(<SaveOutlined />);
       setColor('#1890ff');
       setDescription(undefined);
+      unsavedChangesRef.current = true;  // Есть несохраненные изменения
     }
 
     return () => {
@@ -86,6 +89,22 @@ export default function CourseSaveManager() {
       }
     };
   }, [resetInterval]);
+
+  useEffect(() => {
+    // Добавление обработчика перед закрытием страницы
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (unsavedChangesRef.current) {
+        event.preventDefault();
+        event.returnValue = '';  // Отображение предупреждения о несохраненных изменениях
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Очистка обработчика при размонтировании компонента
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <FloatButton

@@ -2,6 +2,7 @@ import {Button, message} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
 import {useCourseStore} from "../../../shared/stores/courseStore.ts";
 import {useShallow} from "zustand/react/shallow";
+import {v4 as uuidv4} from 'uuid';
 
 export default function CreateCategory() {
   const {course, updateCourse} = useCourseStore(useShallow((state) => ({
@@ -14,7 +15,7 @@ export default function CreateCategory() {
     updateCourse({
       ...course,
       categories: [...course.categories, {
-        id: `category-${Date.now().toString()}`,
+        id: uuidv4(),
         title: '',
         lessons: [],
         learningTrajectory: {

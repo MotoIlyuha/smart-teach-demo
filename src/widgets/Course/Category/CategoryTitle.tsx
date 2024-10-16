@@ -5,6 +5,7 @@ import {Input} from "@ant-design/pro-editor";
 import {EditAction, DeleteAction} from "@ant-design/pro-editor";
 import {Category} from "../../../shared/types/CourseTypes.ts";
 import {useCourseStore} from "../../../shared/stores/courseStore.ts";
+import {useCourse} from "../../../shared/hok/Course.ts";
 import styles from "../../../shared/styles/CategoryTitle.module.css";
 
 interface CategoryTitleProps {
@@ -13,11 +14,12 @@ interface CategoryTitleProps {
 }
 
 export default function CategoryTitle({category, setCategoryItemDisabled}: CategoryTitleProps) {
+  const {setActiveCategory} = useCourse();
   const {course, updateCourse} = useCourseStore(useShallow((state) => ({
     course: state.course,
     updateCourse: state.updateCourse
   })));
-  const [editableStr, setEditableStr] = useState(category.title === '' ? '' : category.title);
+  const [editableStr, setEditableStr] = useState(category.title || '');
   const [hovered, setHovered] = useState(false);
   const [onEdit, setOnEdit] = useState(category.title === '');
   const [valid, setValid] = useState(false);
@@ -44,6 +46,7 @@ export default function CategoryTitle({category, setCategoryItemDisabled}: Categ
             setValid(v.length > 2 && v.length < 20);
             setEditableStr(v);
           }}
+          onClick={e => e.stopPropagation()}
           onBlur={handleEditCategoryTitleBlur}
           onKeyDown={event => event.key === 'Enter' && handleEditCategoryTitleBlur()}
           placeholder={'Название раздела'}
@@ -71,6 +74,7 @@ export default function CategoryTitle({category, setCategoryItemDisabled}: Categ
                   title={'Удалить раздел'}
                   onClick={e => {
                     e.stopPropagation();
+                    setActiveCategory(null);
                     updateCourse({
                       ...course,
                       categories: course.categories.filter(c => c.id !== category.id)

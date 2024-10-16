@@ -8,6 +8,7 @@ import {useKnowledgeStore} from "../../shared/stores/knowledgeStore.ts";
 import {Knowledge} from "../../shared/types/CourseTypes.ts";
 import CreateKnowledgeNode from "./components/CreateKnowledgeNode.tsx";
 import KnowledgeNode from "./components/KnowledgeNode.tsx";
+import {useCourse} from "../../shared/hok/Course.ts";
 
 const {Search} = Input;
 
@@ -60,9 +61,11 @@ const getParentKey = (key: Key, tree: CustomDataNode[]): Key | undefined => {
 };
 
 const KnowledgeTree = () => {
-  const {knowledgeTree, fetchKnowledgeTree} = useKnowledgeStore(useShallow(state => ({
+  const {setSelectedKnowledge, selectedKnowledge, selectMode} = useCourse();
+  const {knowledgeTree, fetchKnowledgeTree, knowledgeList} = useKnowledgeStore(useShallow(state => ({
     knowledgeTree: state.knowledgeTree,
-    fetchKnowledgeTree: state.fetchKnowledgeTree
+    fetchKnowledgeTree: state.fetchKnowledgeTree,
+    knowledgeList: state.knowledgeList
   })));
   const [treeData, setTreeData] = useState<CustomDataNode[]>([]);
   const [searchValue, setSearchValue] = useState('');
@@ -276,10 +279,15 @@ const KnowledgeTree = () => {
       />
       <Tree
         treeData={transformTreeData(processedTreeData)}
-        selectable
-        multiple
-        selectedKeys={selectedKeys}
-        onSelect={(keys) => setSelectedKeys(keys)}
+        selectable={selectMode}
+        selectedKeys={selectedKnowledge === undefined ? undefined : selectedKeys}
+        onSelect={(keys) => {
+          setSelectedKeys(keys);
+          if (keys) {
+            setSelectedKnowledge(knowledgeList?.find((k) => k.id === keys[0]?.toString()));
+            console.log(treeData, keys);
+          }
+        }}
         onDrop={onDrop}
         draggable={true}
         expandedKeys={expandedKeys}

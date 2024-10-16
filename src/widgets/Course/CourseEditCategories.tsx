@@ -6,6 +6,7 @@ import CategoryTitle from "./Category/CategoryTitle.tsx";
 import {CollapsibleType} from "antd/es/collapse/CollapsePanel";
 import {useCourse} from "../../shared/hok/Course.ts";
 import CreateCategory from "./Category/CreateCategory.tsx";
+import LessonList from "./Category/Lesson/LessonList.tsx";
 
 export default function CourseEditCategories() {
 
@@ -42,7 +43,8 @@ export default function CourseEditCategories() {
             category={category}
             setCategoryItemDisabled={manageAccordionItems(category.id)}
           />,
-          collapsible: (accordionItemsDisabled.includes(category.id) ? 'icon' : 'header') as CollapsibleType,
+          children: <LessonList category={category}/>,
+          collapsible: ((category.title === '' || accordionItemsDisabled.includes(category.id)) ? 'icon' : 'header') as CollapsibleType,
           showArrow: false,
         })) || [],
         {
