@@ -5,7 +5,7 @@ import {useState} from "react";
 import {useCourse} from "../../shared/hok/Course.ts";
 
 export default function KnowledgeFlow() {
-  const {activeCategory} = useCourse();
+  const {activeCategory, selectMode} = useCourse();
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -14,12 +14,17 @@ export default function KnowledgeFlow() {
     >
       <Panel position={'top-left'} style={{width: '100%'}}>
         <Flex gap={8} align={'baseline'}>
-          <Typography.Title level={3}>{activeCategory ? activeCategory.title : 'Дерево знаний'}</Typography.Title>
-          <Button onClick={() => setCollapsed(!collapsed)}>{collapsed ? 'Развернуть' : 'Свернуть'}</Button>
+          <Typography.Title level={3}>
+            {selectMode ? 'Выберите знание' : (activeCategory ? activeCategory.title : 'Дерево знаний')}
+          </Typography.Title>
+          {!selectMode && <Button onClick={() => setCollapsed(!collapsed)}>{collapsed ? 'Развернуть' : 'Свернуть'}</Button>}
         </Flex>
 
         <Splitter>
-          <Splitter.Panel collapsible defaultSize={200} size={collapsed ? 0 : 200}>
+          <Splitter.Panel
+            collapsible={!selectMode}
+            size={collapsed && !selectMode ? 0 : 200}
+          >
             <KnowledgeTree/>
           </Splitter.Panel>
           <Splitter.Panel/>
