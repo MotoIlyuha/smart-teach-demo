@@ -92,6 +92,7 @@ function App() {
           <Route path={'create'} element={<Navigate to={'new'} replace/>}/>
           <Route path={'*'} element={<CourseNotFoundPage/>}/>
         </Route>
+        <Route path={"add_to_group/:group_id"} element={<AddToGroupByLink/>}/>
         <Route path={"users/"} element={<Navigate to={'/user/'} replace/>}/>
         <Route path={"groups/"} element={<Navigate to={'/group/'} replace/>}/>
         <Route path={"courses/"} element={<Navigate to={'/course/'} replace/>}/>

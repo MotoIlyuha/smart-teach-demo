@@ -4,8 +4,8 @@ import {App, Layout, theme} from "antd";
 import NavBar from "../widgets/NavBar/NavBar.tsx";
 import BreadcrumbWidget from "../widgets/Dev/BreadcrumbWidget.tsx";
 
-import {dev_mode, max_message_count} from "../config/allConfig.ts";
-import styles from "../styles/layout.module.css";
+import {dev_mode, max_message_count} from "../shared/config/allConfig.ts";
+import styles from "../shared/styles/layout.module.css";
 
 const {Content, Footer, Header} = Layout;
 
@@ -22,7 +22,7 @@ export default function RootLayout() {
         </Header>
         <Content style={ { padding: !isCourseEditPage ? '24px 48px' : 0}}>
           {dev_mode && <BreadcrumbWidget/>}
-          <Layout className={!isCourseEditPage && styles.layoutContent}
+          <Layout className={!isCourseEditPage ? styles.layoutContent : ''}
                   style={{ background: colorBgContainer, borderRadius: borderRadiusLG }}>
             <Outlet/>
           </Layout>

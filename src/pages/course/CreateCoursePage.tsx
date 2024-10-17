@@ -1,7 +1,7 @@
 import {Button, Checkbox, Form, Input, message, Space, Typography} from "antd";
 import {useCourseStore} from "../../shared/stores/courseStore.ts";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../hok/Auth.ts";
+import {useAuth} from "../../shared/hok/Auth.ts";
 import UserMini from "../../widgets/User/UserMiniWidget.tsx";
 import {useShallow} from "zustand/react/shallow";
 import {useEffect, useState} from "react";

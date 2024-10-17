@@ -9,7 +9,7 @@ import GroupTitle from "./components/GroupTitle.tsx";
 import DeleteStudentConfirm from "./components/DeleteStudentConfirm.tsx";
 import AddStudentToGroup from "./components/AddStudentToGroup.tsx";
 import {getUserByLogin} from "../../features/SupaBaseUsers.ts";
-import '../../styles/GroupWidget.css';
+import '../../shared/styles/GroupWidget.css';
 
 
 export default function GroupWidget({my_group}: { my_group: boolean }) {

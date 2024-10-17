@@ -1,0 +1,24 @@
+:where(.css-dev-only-do-not-override-ccdg5a).ant-float-btn-circle .ant-float-btn-body {
+    border-radius: 20px;
+    padding: 8px;
+    transition: all 3.5s ease;
+    min-height: 42px;
+}
+
+.ant-float-btn {
+    background-color: transparent;
+    width: fit-content;
+    left: 24px;
+    bottom: 24px;
+}
+
+.ant-float-btn .ant-float-btn-body .ant-float-btn-content {
+    width: fit-content;
+    flex-direction: row;
+    gap: 8px;
+    transition: all 3.5s ease;
+}
+
+:where(.css-dev-only-do-not-override-ccdg5a).ant-float-btn-primary .ant-float-btn-body .ant-float-btn-content .ant-float-btn-description {
+    text-wrap: nowrap;
+}

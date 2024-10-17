@@ -8,7 +8,7 @@ import ruRU from 'antd/es/locale/ru_RU';
 import {AuthProvider} from "./hooks/AuthProvider.tsx";
 
 import App from './App.tsx'
-import './styles/index.css'
+import './shared/styles/index.css'
 
 createRoot(document.getElementById('root')!).render(
   // <StrictMode>

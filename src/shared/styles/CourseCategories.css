@@ -1,0 +1,10 @@
+.course-categories {
+    overflow: auto;
+    height: 100%;
+    margin: 8px;
+    border-radius: 8px;
+}
+
+.course-categories .ant-collapse-content-box {
+    padding: 8px!important;
+}

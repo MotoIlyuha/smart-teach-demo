@@ -1,5 +1,5 @@
 // SmartTeach TypeScript Definitions
-import { JSONContent } from "@tiptap/react";
+import {JSONContent} from "@tiptap/react";
 
 /**
  * Типы уроков
@@ -38,10 +38,12 @@ export const QuestionTypes = [...ChoiceTypes, ...InputTypes, ...TransferTypes] a
  * Интерфейс для элемента знания
  */
 export interface Knowledge {
-  id: string;                // Уникальный идентификатор знания
-  name: string;              // Название знания
-  parentId?: string;         // Идентификатор родительского знания (если есть)
-  children?: Knowledge[];    // Подчиненные знания
+  id: string;                      // Уникальный идентификатор знания
+  name: string;                    // Название знания
+  description: string | null;      // Описание знания
+  parentId?: string;               // Идентификатор родительского знания (если есть)
+  children?: Knowledge[];          // Подчиненные знания
+  isApproved: boolean;             // Знание подвержено администратором
 }
 
 /**
@@ -99,23 +101,15 @@ export interface Lesson {
   title: string;                          // Название урока
   type: LessonType;                       // Тип урока
   tasks: Task[];                          // Список заданий в уроке
-  knowledge: string;                      // Идентификатор знания, которое проверяет урок (для "default" и "optional" типов)
+  knowledge?: Knowledge;                      // Идентификатор знания, которое проверяет урок (для "default" и "optional" типов)
 }
 
 /**
  * Интерфейс для траектории обучения (LearningTrajectory)
  */
 export interface LearningTrajectory {
-  id: string;                             // Уникальный идентификатор траектории обучения
-  name: string;                           // Название траектории обучения
-  graph: TrajectoryGraph;                 // Граф траектории обучения
-}
-
-/**
- * Интерфейс для графа траектории обучения
- */
-export interface TrajectoryGraph {
-  nodes: string[];                // Узлы графа (уроки)
+  id: string;                       // Уникальный идентификатор траектории обучения
+  nodes: string[];                  // Узлы графа (уроки)
   edges: {                          // Ребра графа (отношения между уроками)
     id: string;                     // Уникальный идентификатор ребра
     source: string;                 // Идентификатор исходного урока
@@ -178,7 +172,7 @@ export interface User {
   avatarUrl?: string;                     // URL аватарки пользователя (необязательно)
   role: UserRole;                         // Роль пользователя
   groupId?: string;                       // Идентификатор группы (для школьников)
-  moderatedGroupIds?: string[];           // Идентификаторы групп, которыми модератирует (для учителей)
+  moderatedGroupIds?: string[];           // Идентификаторы групп, которыми модерирует (для учителей)
 }
 
 /**
@@ -231,7 +225,7 @@ export interface UserDashboard {
  */
 export interface TeacherDashboard {
   teacher: User;                                 // Данные учителя
-  studentGroupStatistics: GroupStatistics[];     // Статистика по группам, которыми модератирует
+  studentGroupStatistics: GroupStatistics[];     // Статистика по группам, которыми модерирует
   individualStudentStatistics: UserStatistics[]; // Статистика по отдельным ученикам
 }
 
@@ -251,11 +245,4 @@ export interface UserTaskHistory {
   userId: string;                         // Идентификатор пользователя
   taskId: string;                         // Идентификатор задания
   attempts: TaskHistory[];                // Все попытки решения задания
-}
-
-/**
- * Интерфейс для дерева знаний (KnowledgeTree)
- */
-export interface KnowledgeTree {
-  roots: Knowledge;                        // Корневые элементы дерева знаний
 }

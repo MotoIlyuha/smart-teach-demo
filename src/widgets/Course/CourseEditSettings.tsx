@@ -18,8 +18,8 @@ import {DeleteOutlined, LockOutlined, SettingOutlined} from "@ant-design/icons";
 
 import {useCourseStore} from "../../shared/stores/courseStore.ts";
 import {CourseDetails} from "../../shared/types/CourseTypes.ts";
-import {useAuth} from "../../hok/Auth.ts";
-import '../../styles/CourseEditSettings.css'
+import {useAuth} from "../../shared/hok/Auth.ts";
+import '../../shared/styles/CourseEditSettings.css'
 
 
 interface CourseEditTitleProps {
@@ -151,8 +151,8 @@ const CourseSettings = memo((
 export default function CourseEditSettings() {
   const {course, updateCourseDetails, deleteCourse, loading} = useCourseStore(useShallow(state => ({
     course: state.course,
-    updateCourseDetails: state.updateCourseDetails,
-    loading: state.loading,
+    updateCourseDetails: state.updateCourse,
+    loading: state.dataLoading,
     deleteCourse: state.deleteCourse
   })));
   const {person} = useAuth();
@@ -196,6 +196,7 @@ export default function CourseEditSettings() {
 
   return (
     <Collapse
+      className={'course-edit-settings'}
       key={'collapse'}
       collapsible={'icon'}
       activeKey={editMode ? ['main'] : []}

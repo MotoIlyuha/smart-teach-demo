@@ -4,7 +4,7 @@ import {useShallow} from "zustand/react/shallow";
 
 import {Alert} from "antd";
 
-import {useAuth} from "../../hok/Auth.ts";
+import {useAuth} from "../../shared/hok/Auth.ts";
 import GroupWidget from "../../widgets/Group/GroupWidget.tsx";
 import {useGroupStore} from "../../shared/stores/groupStore.ts";
 import GroupInviteModal from "../../widgets/Group/components/GroupInviteModal.tsx";

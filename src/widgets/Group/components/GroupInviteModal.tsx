@@ -4,7 +4,7 @@ import GroupMiniWidget from "../GroupMiniWidget.tsx";
 import {useEffect, useState} from "react";
 import {Tables} from "../../../shared/types/supabase.ts";
 import {getUserById} from "../../../features/SupaBaseUsers.ts";
-import {useAuth} from "../../../hok/Auth.ts";
+import {useAuth} from "../../../shared/hok/Auth.ts";
 import {GroupDetails} from "../../../features/SupaBaseGroups.ts";
 
 interface GroupInviteModalProps {
