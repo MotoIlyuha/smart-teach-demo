@@ -1,4 +1,4 @@
-import {createContext, ReactNode, useState} from "react";
+import {createContext, ReactNode, useEffect, useState} from "react";
 import {Category, Knowledge, Lesson} from "../../shared/types/CourseTypes.ts";
 
 interface CourseProviderProps {
@@ -28,6 +28,10 @@ export const CourseProvider = ({children}: { children: ReactNode }) => {
   const [selectedKnowledge, setSelectedKnowledge] = useState<Knowledge | undefined>(undefined);
   const [selectMode, setSelectMode] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
+
+  useEffect(() => {
+    console.log("SELECTED LESSON", selectedLesson);
+  }, [selectedLesson]);
 
   return (
     <CourseContext.Provider value={{
