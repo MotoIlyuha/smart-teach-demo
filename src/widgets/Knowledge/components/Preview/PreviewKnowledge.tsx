@@ -2,7 +2,7 @@ import {Tag, Tooltip, Select} from "antd";
 import {Knowledge} from "../../../../shared/types/CourseTypes.ts";
 import './PreviewKnowledge.css'
 
-export function PreviewKnowledge({knowledge}: { knowledge: Knowledge[] }) {
+export default function PreviewKnowledge({knowledge}: { knowledge: Knowledge[] }) {
 
   const tag_colors = [
     "magenta", "red", "volcano", "orange", "gold",

@@ -1,14 +1,16 @@
 import {useState} from "react";
 import {Checkbox, Divider, Flex, Popconfirm} from "antd";
 import {DeleteAction, EditAction} from "@ant-design/pro-editor";
-import {Task} from "../../../../shared/types/CourseTypes.ts";
-import {useCourseStore} from "../../../../shared/stores/courseStore.ts";
+import {Task} from "../../../../../shared/types/CourseTypes.ts";
+import {useCourseStore} from "../../../../../shared/stores/courseStore.ts";
 import {useShallow} from "zustand/react/shallow";
+import {useCourse} from "../../../../../shared/hok/Course.ts";
 
 const ActionButtons = ({task}: {task: Task}) => {
   const {deleteTask} = useCourseStore(useShallow(state => ({
     deleteTask: state.deleteTask
   })));
+  const {setContent} = useCourse();
   const [open, setOpen] = useState(false);
 
   return (

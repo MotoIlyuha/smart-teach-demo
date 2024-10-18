@@ -1,6 +1,7 @@
-import {PreviewKnowledge} from "../../../Knowledge/components/Preview/PreviewKnowledge.tsx";
+import PreviewKnowledge from "../../../../Knowledge/components/Preview/PreviewKnowledge.tsx";
 import {Flex, Space, Typography} from "antd";
-import {Task} from "../../../../shared/types/CourseTypes.ts";
+import {Task} from "../../../../../shared/types/CourseTypes.ts";
+import TaskPreview from "./TaskPreview.tsx";
 
 const TaskContent = ({task}: {task: Task}) => (
 
@@ -21,7 +22,7 @@ const TaskContent = ({task}: {task: Task}) => (
       <PreviewKnowledge knowledge={task.knowledge}/>
     </Flex>
     <div style={{padding: '1em 1em 0'}}>
-      {/*<BankQuestion task={task}/>*/}
+      <TaskPreview task={task}/>
     </div>
   </Space>
 )

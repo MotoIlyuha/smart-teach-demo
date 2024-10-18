@@ -1,5 +1,6 @@
-import {createContext, ReactNode, useState} from "react";
+import {createContext, ReactNode, useEffect, useState} from "react";
 import {Category, Knowledge, Lesson} from "../../shared/types/CourseTypes.ts";
+import {JSONContent} from "@tiptap/react";
 
 interface CourseProviderProps {
   activeCategory: Category | null | undefined
@@ -12,6 +13,8 @@ interface CourseProviderProps {
   setSelectedLesson: (lesson: Lesson | undefined) => void
   taskEditMode: boolean
   setTaskEditMode: (taskEditMode: boolean) => void
+  content: JSONContent | undefined
+  setContent: (content: JSONContent) => void
 }
 
 export const CourseContext = createContext<CourseProviderProps>({
@@ -25,6 +28,8 @@ export const CourseContext = createContext<CourseProviderProps>({
   setSelectedLesson: () => {},
   taskEditMode: false,
   setTaskEditMode: () => {},
+  content: undefined,
+  setContent: () => {},
 });
 
 export const CourseProvider = ({children}: { children: ReactNode }) => {
@@ -33,6 +38,11 @@ export const CourseProvider = ({children}: { children: ReactNode }) => {
   const [selectMode, setSelectMode] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
   const [taskEditMode, setTaskEditMode] = useState(false);
+  const [content, setContent] = useState<JSONContent | undefined>(undefined);
+
+  useEffect(() => {
+    console.log('!!!!', taskEditMode);
+  }, [taskEditMode]);
 
   return (
     <CourseContext.Provider value={{
@@ -48,7 +58,9 @@ export const CourseProvider = ({children}: { children: ReactNode }) => {
         if (!selectMode) setSelectedKnowledge(undefined);
       },
       taskEditMode,
-      setTaskEditMode
+      setTaskEditMode,
+      content,
+      setContent
     }}>
       {children}
     </CourseContext.Provider>

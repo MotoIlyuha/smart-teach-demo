@@ -60,15 +60,14 @@ export interface AnswerOption {
 export interface Question {
   id: string;                             // Уникальный идентификатор вопроса
   type: QuestionType;                     // Тип вопроса
-  text: string;                           // Текст вопроса
   cost: number;                           // Баллы за правильный ответ
-  shuffleOptions?: boolean;               // Случайный порядок вариантов ответов
-  caseSensitive?: boolean;                // Чувствительность к регистру
+  shuffleOptions: boolean;                // Случайный порядок вариантов ответов
+  caseSensitive: boolean;                 // Чувствительность к регистру
   invitationText?: string;                // Приглашающий текст перед вопросом
   explanation?: string;                   // Пояснение к правильному ответу
   options: AnswerOption[];                // Список вариантов ответов
   correctAnswerIds: string[];             // Идентификаторы правильных ответов
-  requiredKnowledge: string[];            // Список необходимых знаний (идентификаторы)
+  requiredKnowledge: Knowledge[];         // Список необходимых знаний (идентификаторы)
 }
 
 /**

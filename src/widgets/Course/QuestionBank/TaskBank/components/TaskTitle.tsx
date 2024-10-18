@@ -1,4 +1,4 @@
-import {Task} from "../../../../shared/types/CourseTypes.ts";
+import {Task} from "../../../../../shared/types/CourseTypes.ts";
 import {Badge, Space, Typography} from "antd";
 
 const TaskTitle = ({task}: {task: Task}) => (

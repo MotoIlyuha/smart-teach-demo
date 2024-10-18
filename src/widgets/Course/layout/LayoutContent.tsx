@@ -1,8 +1,9 @@
 import {Tabs} from "antd";
 import KnowledgeFlow from "../../Knowledge/KnowledgeFlow.tsx";
-import TaskBank from "../QuestionBank/TaskBank.tsx";
-import '../../../shared/styles/CourseEditPage.css';
+import TaskBank from "../QuestionBank/TaskBank/TaskBank.tsx";
+import TaskEdit from "../QuestionBank/TaskEdit/TaskEdit.tsx";
 import {useCourse} from "../../../shared/hok/Course.ts";
+import '../../../shared/styles/CourseEditPage.css';
 
 export default function CourseLayoutContent() {
   const {taskEditMode, setTaskEditMode} = useCourse();
@@ -28,7 +29,7 @@ export default function CourseLayoutContent() {
     tab_items.push({
       key: 'task-edit',
       label: `Редактор заданий`,
-      children: <TaskBank/>,
+      children: <TaskEdit/>,
       closable: true,
       style: {height: '100%'},
     });
@@ -41,12 +42,13 @@ export default function CourseLayoutContent() {
       type={'editable-card'}
       defaultActiveKey="1"
       items={tab_items}
+      activeKey={taskEditMode ? 'task-edit' : undefined}
+      hideAdd={true}
       onEdit={(targetKey, action) => {
         if (action === 'remove') {
           if (targetKey === 'task-edit') setTaskEditMode(false);
         }
       }}
-      hideAdd={true}
     />
   )
 }
