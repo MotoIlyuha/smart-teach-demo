@@ -30,9 +30,7 @@ export default function TaskBank() {
       setDataSource(tasks.map((task) => ({
         title: <TaskTitle key={task.id} task={task}/>,
         content: <TaskContent key={task.id} task={task}/>,
-        actions: [
-          <ActionButtons task={task}/>
-        ]
+        actions: [<ActionButtons task={task}/>]
       })) as ListProps<Task> as ListProps<Task>['dataSource']);
       setTotalPagination(tasks.length);
     }
@@ -43,8 +41,8 @@ export default function TaskBank() {
       className={"TaskList"}
       headerTitle={<HeaderTitle/>}
       toolBarRender={() => [<CreateTaskButton/>, <PublicSwitch/>]}
-      ghost={false}
       grid={{gutter: 16, column: 2, xs: 1, sm: 1, md: 1, lg: 1, xl: 2, xxl: 3}}
+      ghost={false}
       pagination={{
         defaultCurrent: 1,
         total: totalPagination,
