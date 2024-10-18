@@ -18,10 +18,12 @@ import styles from '../../shared/styles/CourseEditPage.module.css';
 export default function CourseEditPage() {
   const {course_id} = useParams();
   const navigate = useNavigate();
-  const {course, fetchCourse, error} = useCourseStore(useShallow(state => ({
+  const {course, fetchCourse, fetchTasks, loading, error} = useCourseStore(useShallow(state => ({
     course: state.course,
     fetchCourse: state.fetchCourse,
-    error: state.error
+    fetchTasks: state.fetchTasks,
+    error: state.error,
+    loading: state.dataLoading
   })));
 
   useEffect(() => {
@@ -29,6 +31,12 @@ export default function CourseEditPage() {
       fetchCourse(course_id);
     }
   }, [course_id, fetchCourse]);
+
+  useEffect(() => {
+    if (course_id && !loading) {
+      fetchTasks(course_id);
+    }
+  }, [course_id, fetchTasks, loading]);
 
   // if (loading || !course) return <Spin spinning size={'large'}/>
   if (error) {

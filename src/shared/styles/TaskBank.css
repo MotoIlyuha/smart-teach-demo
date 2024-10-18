@@ -1,0 +1,13 @@
+.TaskList {
+    padding: 16px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ant-pro-checkcard-content {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    background: rgba(164,216,255,0.3);
+}

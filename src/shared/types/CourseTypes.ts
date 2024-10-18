@@ -79,7 +79,7 @@ export interface Task {
   title: string;                          // Название задания
   content: JSONContent;                   // JSON-объект условия задачи
   questions: Question[];                  // Список вопросов в задании
-  knowledge: string[];                    // Список необходимых знаний для задания (идентификаторы)
+  knowledge: Knowledge[];                 // Список необходимых знаний для задания
   totalPoints: number;                    // Максимальное количество баллов за задание
   isPublic: boolean;                      // Публичность задания
 }
@@ -135,7 +135,7 @@ export interface CourseDetails {
   title: string;                          // Название курса
   description: string;                    // Описание курса
   categories: Category[];                 // Список категорий в курсе
-  questionBank: Question[];               // Банк вопросов курса
+  taskBank: Task[];                       // Банк тестов курса
   knowledge: string[];                    // Список необходимых знаний для курса (идентификаторы)
   totalPoints: number;                    // Максимальное количество баллов за курс
   isPublic: boolean;                      // Публичность курса

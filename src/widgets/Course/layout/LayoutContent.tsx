@@ -1,6 +1,6 @@
 import {Tabs} from "antd";
 import KnowledgeFlow from "../../Knowledge/KnowledgeFlow.tsx";
-import QuestionBank from "../QuestionBank/QuestionBank.tsx";
+import TaskBank from "../QuestionBank/TaskBank.tsx";
 import '../../../shared/styles/CourseEditPage.css';
 
 export default function CourseLayoutContent() {
@@ -20,7 +20,7 @@ export default function CourseLayoutContent() {
         {
           key: 'question-bank',
           label: `Банк заданий`,
-          children: <QuestionBank/>,
+          children: <TaskBank/>,
           style: {height: '100%'}
         }]}/>
   )
