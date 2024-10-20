@@ -114,7 +114,7 @@ export default function ToolBox({editor}: { editor: EditorContentProps['editor']
   ]
 
   return (
-    <Space split={<Divider/>} style={{margin: '10px'}}>
+    <Space split={<Divider/>}>
       <Space.Compact>
         <Button icon={<BoldOutlined/>}
                 onClick={() => editor?.chain().focus().toggleBold().run()}

@@ -6,7 +6,12 @@
     height: calc(100vh - var(--header-height));
 }
 
+.content {
+    height: 100%;
+}
+
 .sider {
+    height: 100%;
     background: rgba(64, 150, 255, 0.34) !important;
     bottom: 0;
 }

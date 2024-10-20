@@ -271,7 +271,7 @@ const KnowledgeTree = () => {
   };
 
   return (
-    <Flex gap={8} vertical>
+    <Flex gap={8} vertical style={{width: '100%', height: '100%'}}>
       <Search
         placeholder="Найти знание"
         onChange={onChange}

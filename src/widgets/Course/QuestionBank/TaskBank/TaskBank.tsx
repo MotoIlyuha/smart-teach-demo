@@ -62,7 +62,7 @@ export default function TaskBank() {
         content: {},
         actions: {'extra': true},
       } as ProListMetas<Task>}
-      style={{minWidth: 480}}
+      style={{minWidth: 480, height: '100%'}}
     />
   )
 }

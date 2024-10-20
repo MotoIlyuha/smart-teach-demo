@@ -1,9 +1,9 @@
 import {Button, Segmented} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
-import {useCourse} from "../../../../../shared/hok/Course.ts";
+import {useLayout} from "../../../../../shared/hok/Layout.ts";
 
 export const CreateTaskButton = () => {
-  const {setTaskEditMode} = useCourse();
+  const {setTaskEditMode} = useLayout();
 
   return (
     <Button type={'primary'} icon={<PlusOutlined/>} onClick={() => setTaskEditMode(true)}>
