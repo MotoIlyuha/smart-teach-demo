@@ -1,5 +1,9 @@
+import {Flex, Typography} from "antd";
+
 export default function CourseInfo() {
   return (
-    <div>CourseInfo</div>
+    <Flex align={'center'} justify={'center'}>
+      <Typography.Text type={'secondary'}>Тут будет информация о курсе</Typography.Text>
+    </Flex>
   )
 }

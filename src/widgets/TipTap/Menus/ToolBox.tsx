@@ -1,120 +1,25 @@
-import {Button, Divider, Space, Menu} from "antd";
+import {Button, Divider, Space} from "antd";
 import {
   BoldOutlined,
-  CheckCircleOutlined,
-  CheckSquareOutlined,
   CodeOutlined,
   ItalicOutlined,
+  OrderedListOutlined,
   StrikethroughOutlined,
-  UnorderedListOutlined,
-  OrderedListOutlined
+  UnorderedListOutlined
 } from "@ant-design/icons";
-import {RiInputField} from "react-icons/ri";
-import {PiTextAlignJustifyThin} from "react-icons/pi";
-import {MdOutlineTextFields} from "react-icons/md";
-import {AiOutlineFieldBinary} from "react-icons/ai";
-import {HiSelector} from "react-icons/hi";
 import {EditorContentProps} from "@tiptap/react";
 import Link from "./Marks/Link";
 import Image from "./Nodes/Image";
 import Formula from "./Nodes/Formula";
-import {ChoiceType, QuestionType} from "../../../shared/types/CourseTypes";
+import PasteQuestion from "./Nodes/Question.tsx";
 
 
 export default function ToolBox({editor}: { editor: EditorContentProps['editor'] }) {
 
-  if (!editor) {
-    return null
-  }
-
-  const welcomeText = (type: ChoiceType) => {
-    if (type === 'mono') {
-      return "Выберите один из вариантов ответа:"
-    } else {
-      return "Выберите несколько вариантов ответа:"
-    }
-  }
-
-  const pasteEmptyQuestion = (type: QuestionType) => JSON.parse(
-    `{
-            "type": "reactComponent",
-            "attrs": {
-                "content": {
-                    "id": "${Date.now()}",
-                    "type": "${type}",
-                    "cost": 1,
-                    "invitationText": "${welcomeText(type as ChoiceType)}",
-                    "requiredKnowledge": [],
-                    "options": [
-                        {
-                            "id": "Вариант 1",
-                            "text": "1"
-                        },
-                        {
-                            "id": "Вариант 2",
-                            "text": "2"
-                        }
-                    ],
-                    "correctAnswerIds": [
-                        "1"
-                    ],
-                    "shuffleOptions": true
-                },
-                "meta": {
-                    "edit": true
-                }
-            }
-        }`)
-
-  const menu_items = [
-    {
-      key: 'question',
-      label: 'С вариантами ответов',
-      icon: <UnorderedListOutlined/>,
-      children: [
-        {
-          label: 'с одним правильным',
-          icon: <CheckCircleOutlined/>,
-          key: 'mono'
-        },
-        {
-          label: 'с несколькими правильными',
-          icon: <CheckSquareOutlined/>,
-          key: 'multi'
-        }
-      ]
-    },
-    {
-      key: 'input',
-      label: 'Ввод текста',
-      icon: <RiInputField/>,
-      children: [
-        {
-          label: 'ввод текста',
-          icon: <MdOutlineTextFields/>,
-          key: 'text'
-        },
-        {
-          label: 'ввод числа',
-          icon: <AiOutlineFieldBinary/>,
-          key: 'number'
-        },
-        {
-          label: 'выбор из списка',
-          icon: <HiSelector/>,
-          key: 'select'
-        },
-        {
-          label: 'ввод многострочного текста',
-          icon: <PiTextAlignJustifyThin/>,
-          key: 'textarea'
-        }
-      ]
-    }
-  ]
+  if (!editor) return null;
 
   return (
-    <Space split={<Divider/>}>
+    <Space split={<Divider/>} wrap>
       <Space.Compact>
         <Button icon={<BoldOutlined/>}
                 onClick={() => editor?.chain().focus().toggleBold().run()}
@@ -148,17 +53,8 @@ export default function ToolBox({editor}: { editor: EditorContentProps['editor']
         <Formula editor={editor}/>
         <Image editor={editor}/>
       </Space.Compact>
-      <Space.Compact direction={'vertical'}>
-        {/*<Typography.Text>Вставить вопрос</Typography.Text>*/}
-        <Menu
-          items={menu_items}
-          onClick={({key}) => {
-            editor?.chain().focus().insertContent(pasteEmptyQuestion(key as ChoiceType)).run()
-          }}
-          selectable={false}
-          selectedKeys={[]}
-          mode={'horizontal'}
-        />
+      <Space.Compact direction={'horizontal'}>
+        <PasteQuestion editor={editor}/>
       </Space.Compact>
     </Space>
   )
