@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useCallback, useState} from "react";
 
 import {Col, Divider, Flex, Form, Radio, Row} from "antd";
 import {Checkbox, SortableList} from "@ant-design/pro-editor";
@@ -18,8 +18,10 @@ import {
   ShowExplanationButton,
   QuestionExplanationOptions
 } from "../../components/QuestionOptions";
+import {v4 as uuidv4} from 'uuid';
 
 import styles from "./Question.module.css";
+
 
 interface ChoiceQuestionProps {
   question: Question
@@ -48,24 +50,25 @@ export default function ChoiceQuestion({question, updateAttributes, setIsEditing
     setShuffledAnswers(shuffleArray([...question.options]));
   };
 
-  const VariantList = () => (
+  const VariantList = useCallback(() => (
     <SortableList<AnswerOption>
       initialValues={question.options}
       value={shuffledAnswers}
       onChange={(data: AnswerOption[]) => {
-        console.log(data);
         setShuffledAnswers(data);
       }}
-      renderContent={(item: AnswerOption, index) => <ItemRender type={questionType} item={item as AnswerOption} index={index}/>}
+      renderContent={(item: AnswerOption, index) =>
+        <ItemRender type={questionType} item={item as AnswerOption} index={index}/>
+      }
       creatorButtonProps={{
         creatorButtonText: 'Новый вариант ответа',
         record: () => ({
-          title: 'Вариант ' + (shuffledAnswers.length + 1),
-          dataIndex: Date.now().toString()
+          text: 'Вариант ' + (shuffledAnswers.length + 1),
+          id: uuidv4()
         })
       }}
     />
-  )
+  ), [question.options, questionType, shuffledAnswers])
 
   return (
     <Form
@@ -74,13 +77,13 @@ export default function ChoiceQuestion({question, updateAttributes, setIsEditing
         updateAttributes({
           ...question,
           type: questionType,
-          answers: shuffledAnswers,
-          correct_answers: correctAnswers,
-          random: randomSequence,
+          options: shuffledAnswers,
+          correctAnswerIds: correctAnswers,
+          shuffleOptions: randomSequence,
           knowledge: knowledge,
           cost: cost,
-          show_explanation: showExplanation,
-          welcome_text: welcomeText,
+          invitationText: welcomeText,
+          caseSensitive: question.caseSensitive
         } as Question);
         setIsEditing(false);
       }}

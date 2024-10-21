@@ -80,12 +80,13 @@ export default function PopoverBody(
         updateAttributes({
           ...question,
           type: currentType,
-          answers: answers,
-          correct_answers: rightAnswer,
-          random: randomSequence,
+          options: answers,
+          correctAnswerIds: rightAnswer,
           knowledge: knowledge,
           cost: cost,
           show_explanation: showExplanation,
+          shuffleOptions: randomSequence,
+          caseSensitive: matchCase
         } as Question);
         setIsEditing(false);
       }}

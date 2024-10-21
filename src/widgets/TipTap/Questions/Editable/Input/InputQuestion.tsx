@@ -26,10 +26,12 @@ export default function InputQuestion({question, updateAttributes, setIsEditing}
     ...question,
     cost: cost,
     type: currentType,
-    answers: answers,
-    correct_answers: rightAnswer,
+    options: answers,
     knowledge: knowledge,
     random: randomSequence,
+    correctAnswerIds: rightAnswer,
+    shuffleOptions: randomSequence,
+    caseSensitive: matchCase
   } as Question;
 
   return (
