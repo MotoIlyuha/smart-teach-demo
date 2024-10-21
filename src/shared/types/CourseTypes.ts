@@ -75,8 +75,7 @@ export interface Question {
  */
 export interface Task {
   id: string;                             // Уникальный идентификатор задания
-  title: string;                          // Название задания
-  content: JSONContent;                   // JSON-объект условия задачи
+  content: JSONContent | null;            // JSON-объект условия задачи
   questions: Question[];                  // Список вопросов в задании
   knowledge: Knowledge[];                 // Список необходимых знаний для задания
   totalPoints: number;                    // Максимальное количество баллов за задание

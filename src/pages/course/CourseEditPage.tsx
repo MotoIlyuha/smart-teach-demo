@@ -14,10 +14,9 @@ import CourseEdit from "../../widgets/Course/CourseEdit.tsx";
 export default function CourseEditPage() {
   const {course_id} = useParams();
   const navigate = useNavigate();
-  const {course, fetchCourse, fetchTasks, loading, error} = useCourseStore(useShallow(state => ({
+  const {course, fetchCourse, error} = useCourseStore(useShallow(state => ({
     course: state.course,
     fetchCourse: state.fetchCourse,
-    fetchTasks: state.fetchTasks,
     error: state.error,
     loading: state.dataLoading
   })));
@@ -27,12 +26,6 @@ export default function CourseEditPage() {
       fetchCourse(course_id);
     }
   }, [course_id, fetchCourse]);
-
-  useEffect(() => {
-    if (course_id && !loading) {
-      fetchTasks(course_id);
-    }
-  }, [course_id, fetchTasks, loading]);
 
   // if (loading || !course) return <Spin spinning size={'large'}/>
   if (error) {

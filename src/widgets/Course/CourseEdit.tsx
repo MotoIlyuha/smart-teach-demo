@@ -1,10 +1,10 @@
 import {Layout, Splitter} from "antd";
 import {useLayout} from "../../shared/hok/Layout.ts";
-import CourseEditSettings from "./CourseEditSettings.tsx";
-import CourseEditCategories from "./CourseEditCategories.tsx";
+import CourseEditSettings from "./components/CourseEditSettings.tsx";
+import CourseEditCategories from "./components/CourseEditCategories.tsx";
 import CourseLayoutContent from "./layout/LayoutContent.tsx";
 import CourseLayoutSider from "./layout/LayoutSider.tsx";
-import CourseSaveManager from "./CourseSaveManager.tsx";
+import CourseSaveManager from "./components/CourseSaveManager.tsx";
 import styles from '../../shared/styles/CourseEditPage.module.css';
 
 export default function CourseEdit() {

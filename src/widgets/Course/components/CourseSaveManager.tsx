@@ -2,9 +2,9 @@ import {ReactNode, useCallback, useEffect, useRef, useState} from "react";
 import {useShallow} from "zustand/react/shallow";
 import {FloatButton} from "antd";
 import {CloseOutlined, SaveOutlined, LoadingOutlined, CheckOutlined} from "@ant-design/icons";
-import {useCourseStore} from "../../shared/stores/courseStore.ts";
-import {course_auto_save_interval} from "../../shared/config/allConfig.ts";
-import '../../shared/styles/CourseSaveManager.css'
+import {useCourseStore} from "../../../shared/stores/courseStore.ts";
+import {course_auto_save_interval} from "../../../shared/config/allConfig.ts";
+import '../../../shared/styles/CourseSaveManager.css'
 
 export default function CourseSaveManager() {
   const {loading, confirm, error} = useCourseStore(useShallow((state) => ({

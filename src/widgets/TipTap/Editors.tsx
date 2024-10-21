@@ -4,7 +4,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import {Mathematics} from "@tiptap-pro/extension-mathematics";
 import Link from '@tiptap/extension-link';
 import QuestionComponentView from "./Questions/QuestionComponentView.tsx";
-import styles from "./Editor.module.css";
+import styles from "../../shared/styles/Editor.module.css";
 
 
 interface EditorsProps {

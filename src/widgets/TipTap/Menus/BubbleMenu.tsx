@@ -20,6 +20,7 @@ export default function BubbleMenuEditor({editor}: { editor: EditorContentProps[
   }
 
   function deleteReactComponentWithId(id: string) {
+    if (!editor) return;
     const {state, view} = editor;
 
     state.doc.descendants((node, pos) => {
@@ -33,6 +34,7 @@ export default function BubbleMenuEditor({editor}: { editor: EditorContentProps[
   }
 
   function editReactComponentWithId(id: string) {
+    if (!editor) return;
     const {state, view} = editor;
 
     state.doc.descendants((node, pos) => {

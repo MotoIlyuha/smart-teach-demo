@@ -1,25 +1,33 @@
-import {memo, useState} from "react";
+import {memo, ReactNode, useState} from "react";
 import {Radio} from "antd";
-import {useSortableList, Checkbox, Input} from "@ant-design/pro-editor";
+import {useSortableList, Checkbox} from "@ant-design/pro-editor";
 import {AnswerOption, QuestionType} from "../../../../shared/types/CourseTypes";
 import {v4 as uuidv4} from 'uuid';
+import ItemBody from "./ItemBody.tsx";
+
+const Wrapper = ({children, type}: {children: ReactNode, type: QuestionType}) => {
+    if (type === 'mono')
+        return <Radio>{children}</Radio>
+    else if (type === 'multi')
+        return <Checkbox>{children}</Checkbox>
+    else
+        return <>{children}</>;
+}
 
 export const ItemRender = memo(({type, item, index}: {type: QuestionType; item: AnswerOption; index: number }) => {
     const instance = useSortableList();
-    const [title, setTitle] = useState(item.text);
-    const [changed, setChanged] = useState(false);
+    const [text, setText] = useState(item.text);
 
-    const updateTitle = (_title?: string) => {
-        if (!_title) return;
+    const updateTitle = (_text?: string) => {
+        if (!_text) return;
         console.log("updateTitle: ", {
-            dataIndex: item.id,
-            title: _title,
+            id: item.id,
+            text: _text,
         });
         instance.updateItem({
-            dataIndex: item.id,
-            title: _title,
+            id: item.id,
+            text: _text,
         }, index);
-        setChanged(false);
     };
 
     const handleNextFocus = () => {
@@ -34,36 +42,16 @@ export const ItemRender = memo(({type, item, index}: {type: QuestionType; item: 
         }, 0);
     };
 
-    const Body = () => (
-        <Input
-            id={`index-${index}`}
-            defaultValue={item.text}
-            value={title}
-            placeholder="Вариант ответа..."
-            onChange={(value) => {
-                console.log("change: ", value);
-                setTitle(value);
-                setChanged(true);
-                updateTitle(value);
-            }}
-            onBlur={() => {
-                if (changed) updateTitle();
-            }}
-            onPressEnter={() => {
-                if (changed) updateTitle();
-                handleNextFocus();
-            }}
-            // onValueChanging={(value) => {
-            //     console.log("valueChange: ", value);
-            //     setTitle(value);
-            //     setChanged(true);
-            // }}
-        />
-    );
-
-    if (type === 'mono')
-        return <Radio value={item.text}><Body/></Radio>
-    else if (type === 'multi')
-        return <Checkbox value={item.text}><Body/></Checkbox>
-    else return <Body/>;
+    return (
+      <Wrapper type={type}>
+          <ItemBody
+            item={item}
+            index={index}
+            handleNextFocus={handleNextFocus}
+            text={text}
+            setText={setText}
+            updateTitle={updateTitle}
+          />
+      </Wrapper>
+    )
 });

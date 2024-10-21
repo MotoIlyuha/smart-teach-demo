@@ -1,4 +1,5 @@
 import {ChoiceType, QuestionType} from "../../../../shared/types/CourseTypes.ts";
+import {v4 as uuidv4} from 'uuid';
 
 const welcomeText = (type: ChoiceType) => (
   type === 'mono' ? "Выберите один из вариантов ответа:" : "Выберите несколько вариантов ответа:"
@@ -10,7 +11,7 @@ export const pasteEmptyQuestion = (type: QuestionType) =>
       "type": "reactComponent",
       "attrs": {
         "content": {
-          "id": "${Date.now()}",
+          "id": "${uuidv4()}",
           "type": "${type}",
           "cost": 1,
           "invitationText": "${welcomeText(type as ChoiceType)}",

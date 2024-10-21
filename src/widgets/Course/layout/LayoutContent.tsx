@@ -1,23 +1,29 @@
-import {useEffect, useState} from "react";
+import {CSSProperties, ReactNode, useEffect} from "react";
 import {Tabs} from "antd";
 import KnowledgeFlow from "../../Knowledge/KnowledgeFlow.tsx";
 import TaskBank from "../QuestionBank/TaskBank/TaskBank.tsx";
 import TaskEdit from "../QuestionBank/TaskEdit/TaskEdit.tsx";
-import '../../../shared/styles/CourseEditPage.css';
 import {useLayout} from "../../../shared/hok/Layout.ts";
 import {HideLeftPanelButton, HideRightPanelButton} from "./components/HidePanelButtons.tsx";
+import '../../../shared/styles/CourseEditPage.css';
+
+type TabItemType = {
+  key: string,
+  label: string,
+  icon?: ReactNode,
+  children?: ReactNode,
+  closable?: boolean,
+  style?: CSSProperties
+}
 
 export default function CourseLayoutContent() {
-  const {taskEditMode, setTaskEditMode} = useLayout();
-  const [activeKey, setActiveKey] = useState<string>();
+  const {taskEditMode, setTaskEditMode, taskSaved, activeTab, setActiveTab} = useLayout();
 
   useEffect(() => {
-    if (taskEditMode) {
-      setActiveKey('task-edit');
-    }
-  }, [taskEditMode]);
+    setActiveTab(activeTab);
+  }, [activeTab, setActiveTab]);
 
-  const tab_items = [
+  const tab_items: TabItemType[] = [
     {
       key: 'knowledge-tree',
       label: `Дерево знаний`,
@@ -37,7 +43,7 @@ export default function CourseLayoutContent() {
   if (taskEditMode) {
     tab_items.push({
       key: 'task-edit',
-      label: `Редактор заданий`,
+      label: `${!taskSaved ? '●' : ''} Редактор заданий`,
       children: <TaskEdit/>,
       closable: true,
       style: {height: '100%'},
@@ -52,11 +58,14 @@ export default function CourseLayoutContent() {
       defaultActiveKey="1"
       items={tab_items}
       hideAdd={true}
-      activeKey={activeKey}
-      onChange={key => setActiveKey(key)}
+      activeKey={activeTab}
+      onChange={key => setActiveTab(key)}
       onEdit={(targetKey, action) => {
         if (action === 'remove') {
-          if (targetKey === 'task-edit') setTaskEditMode(false);
+          if (targetKey === 'task-edit') {
+            setTaskEditMode(false);
+            setActiveTab('task-bank');
+          }
         }
       }}
       tabBarExtraContent={{

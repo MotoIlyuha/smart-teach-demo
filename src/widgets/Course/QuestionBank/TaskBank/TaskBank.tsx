@@ -1,6 +1,8 @@
 import {Key, useEffect, useState} from "react";
+
 import {ListProps} from "antd";
 import {ProList, ProListMetas} from "@ant-design/pro-components";
+
 import HeaderTitle from "./components/HeaderTitle.tsx";
 import {CreateTaskButton, PublicSwitch} from "./components/ToolBar.tsx";
 import {Task} from "../../../../shared/types/CourseTypes.ts";
@@ -9,6 +11,8 @@ import {useShallow} from "zustand/react/shallow";
 import TaskContent from "./components/TaskContent.tsx";
 import TaskTitle from "./components/TaskTitle.tsx";
 import ActionButtons from "./components/ActionButtons.tsx";
+
+import '../../../../shared/styles/TaskBank.css';
 
 export default function TaskBank() {
   const [totalPagination, setTotalPagination] = useState<number>(0);
@@ -27,7 +31,7 @@ export default function TaskBank() {
 
   useEffect(() => {
     if (!loading && tasks) {
-      setDataSource(tasks.map((task) => ({
+      setDataSource(tasks.filter(t => t.content !== null).map((task) => ({
         title: <TaskTitle key={task.id} task={task}/>,
         content: <TaskContent key={task.id} task={task}/>,
         actions: [<ActionButtons task={task}/>]

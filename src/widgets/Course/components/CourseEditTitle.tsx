@@ -2,8 +2,8 @@ import {useShallow} from "zustand/react/shallow";
 import {useState} from "react";
 import {Button, Flex, Input, message, Typography} from "antd";
 import {CheckOutlined, CloseOutlined, EditOutlined} from "@ant-design/icons";
-import {useCourseStore} from "../../shared/stores/courseStore.ts";
-import {useCourse} from "../../shared/hok/Course.ts";
+import {useCourseStore} from "../../../shared/stores/courseStore.ts";
+import {useCourse} from "../../../shared/hok/Course.ts";
 
 export default function CourseEditTitle() {
   const {setActiveCategory} = useCourse();

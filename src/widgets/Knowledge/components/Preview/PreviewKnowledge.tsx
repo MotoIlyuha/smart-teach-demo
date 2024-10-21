@@ -17,6 +17,7 @@ export default function PreviewKnowledge({knowledge}: { knowledge: Knowledge[] }
   return (
     <Select
       // multiple
+      style={{width: '100%'}}
       mode={'multiple'}
       defaultValue={knowledge}
       value={knowledge}

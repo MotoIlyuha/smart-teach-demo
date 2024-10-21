@@ -1,6 +1,6 @@
 import {createContext, ReactNode, useState} from "react";
-import {Category, Knowledge, Lesson} from "../../shared/types/CourseTypes.ts";
-import {JSONContent} from "@tiptap/react";
+import {Category, Knowledge, Lesson, Task} from "../../shared/types/CourseTypes.ts";
+import {useLayout} from "../../shared/hok/Layout.ts";
 
 interface CourseProviderProps {
   activeCategory: Category | null | undefined
@@ -11,8 +11,8 @@ interface CourseProviderProps {
   setSelectMode: (selectMode: boolean) => void
   selectedLesson: Lesson | undefined
   setSelectedLesson: (lesson: Lesson | undefined) => void
-  content: JSONContent | undefined
-  setContent: (content: JSONContent) => void
+  currentTask: Task | null | undefined
+  setCurrentTask: (task: Task | null) => void
 }
 
 export const CourseContext = createContext<CourseProviderProps>({
@@ -24,8 +24,8 @@ export const CourseContext = createContext<CourseProviderProps>({
   setSelectMode: () => {},
   selectedLesson: undefined,
   setSelectedLesson: () => {},
-  content: undefined,
-  setContent: () => {},
+  currentTask: undefined,
+  setCurrentTask: () => {},
 });
 
 export const CourseProvider = ({children}: { children: ReactNode }) => {
@@ -33,7 +33,8 @@ export const CourseProvider = ({children}: { children: ReactNode }) => {
   const [selectedKnowledge, setSelectedKnowledge] = useState<Knowledge | undefined>(undefined);
   const [selectMode, setSelectMode] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
-  const [content, setContent] = useState<JSONContent | undefined>(undefined);
+  const [currentTask, setCurrentTask] = useState<Task | null | undefined>(null);
+  const {setTaskEditMode} = useLayout();
 
   return (
     <CourseContext.Provider value={{
@@ -48,8 +49,12 @@ export const CourseProvider = ({children}: { children: ReactNode }) => {
         setSelectMode(selectMode);
         if (!selectMode) setSelectedKnowledge(undefined);
       },
-      content,
-      setContent
+      currentTask,
+      setCurrentTask: (task: Task | null) => {
+        setCurrentTask(task);
+        if (task === null) setTaskEditMode(false);
+        else setTaskEditMode(true);
+      }
     }}>
       {children}
     </CourseContext.Provider>

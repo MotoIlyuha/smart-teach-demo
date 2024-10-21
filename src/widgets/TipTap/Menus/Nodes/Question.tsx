@@ -1,7 +1,7 @@
 import {pasteEmptyQuestion} from "../handlers/PasteEmptyQuestion.ts";
 import {ChoiceType} from "../../../../shared/types/CourseTypes.ts";
 import {Button, Dropdown} from "antd";
-import {CheckCircleOutlined, CheckSquareOutlined, UnorderedListOutlined} from "@ant-design/icons";
+import {CheckCircleOutlined, CheckSquareOutlined, UnorderedListOutlined, DownOutlined} from "@ant-design/icons";
 import {RiInputField} from "react-icons/ri";
 import {MdOutlineTextFields} from "react-icons/md";
 import {AiOutlineFieldBinary} from "react-icons/ai";
@@ -72,7 +72,7 @@ const PasteQuestion = ({editor}: {editor: EditorContentProps['editor']}) => (
       })
     }}
   >
-    <Button title={'Вставить вопрос'}>? вопрос</Button>
+    <Button title={'Вставить вопрос'} icon={<DownOutlined/>} iconPosition={'end'}>Вставить вопрос</Button>
   </Dropdown>
 )
 

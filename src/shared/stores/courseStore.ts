@@ -5,7 +5,6 @@ import {
   fetchCourseDetails, updateCourse,
   updateCourseDetails
 } from "../../features/SupaBaseCourse.ts";
-import {fetchTaskBank} from "../../features/SupaBaseTasks.ts";
 
 interface CourseStore {
   dataLoading: boolean
@@ -14,9 +13,9 @@ interface CourseStore {
   error: string | null
   tasks: Task[] | null;
   course: CourseDetails | null
-  fetchTasks: (courseId: string) => void;
-  updateTask: (updates: Partial<Task>) => Promise<void>;
-  deleteTask: (taskId: string) => Promise<void>;
+  createTask: (task: Task) => Promise<void>;
+  updateTask: (task_id: string, updates: Partial<Task>) => Promise<void>;
+  deleteTask: (task_id: string) => Promise<void>;
   fetchCourse: (course_id: string) => void
   createCourse: (course: CourseDetails, user_id: string) => Promise<void>
   updateCourse: (updates: Partial<CourseDetails>) => Promise<void>
@@ -33,47 +32,38 @@ export const useCourseStore = create<CourseStore>((set) => ({
   taskLoading: false,
   error: null,
 
-  fetchTasks: async () => {
-    set({tasks: null, taskLoading: true, error: null});
-    try {
-      const {course} = useCourseStore.getState();
-      if (!course || !course.id) {
-        set({tasks: null, error: 'Course not found', taskLoading: false});
-        return;
-      }
-      const {data, error} = await fetchTaskBank(course.id);
-      if (error) {
-        console.error('Error fetching tasks:', error.message);
-        set({tasks: null, error: error.message, taskLoading: false});
-      } else {
-        set({tasks: data, taskLoading: false});
-      }
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-      set({tasks: null, error: String(error), taskLoading: false});
-    }
+  createTask: async (task: Task) => {
+    set({taskLoading: true, error: null});
+    console.log('Creating task:', task);
+    const {tasks} = useCourseStore.getState();
+    if (tasks) set({tasks: [...tasks, task], taskLoading: false, error: null});
+    else set({error: 'Create task error', taskLoading: false});
   },
 
-  updateTask: async (updates: Partial<Task>) => {
-    set({tasks: null, taskLoading: true, error: null});
-    console.log('Updating course:', updates);
+  updateTask: async (task_id: string, updates: Partial<Task>) => {
+    set({taskLoading: true, error: null});
+    console.log('Updating task:', updates);
     try {
       const {tasks} = useCourseStore.getState();
-      if (!tasks) set({course: null, error: 'TaskBank not found', taskLoading: false});
-      else set({tasks: {...tasks, ...updates}, error: null});
+      if (tasks === null) set({course: null, error: 'TaskBank not found', taskLoading: false});
+      else {
+        const updatedTask = {...tasks.find(t => t.id === task_id), ...updates} as Task;
+        updatedTask.id = task_id ?? updatedTask.id;
+        set({tasks: [...tasks, updatedTask], error: null, taskLoading: false});
+      }
     } catch (error) {
-      console.error('Error updating course:', error);
+      console.error('Error updating task:', error);
       set({tasks: null, error: String(error), taskLoading: false});
     }
   },
 
-  async deleteTask(taskId: string) {
-    set({tasks: null, taskLoading: true, error: null});
+   deleteTask: async (taskId: string) => {
+    set({taskLoading: true, error: null});
     console.log('Deleting task:', taskId);
     try {
       const {tasks} = useCourseStore.getState();
       if (!tasks) set({course: null, error: 'TaskBank not found', taskLoading: false});
-      else set({tasks: tasks.filter(t => t.id !== taskId), error: null});
+      else set({tasks: tasks.filter(t => t.id !== taskId), error: null, taskLoading: false});
     } catch (error) {
       console.error('Error deleting task:', error);
       set({tasks: null, error: String(error), taskLoading: false});
@@ -102,18 +92,18 @@ export const useCourseStore = create<CourseStore>((set) => ({
   fetchCourse: async (course_id: string) => {
     console.log('Fetching course:', course_id);
     try {
-      set({dataLoading: true, error: null});
+      set({dataLoading: true, taskLoading: true, error: null});
       const {data, error} = await fetchCourseDetails(course_id);
       console.log('Fetched course data:', data);
       if (error) {
         console.error('Error fetching course:', error.message);
-        set({course: null, error: error.message, dataLoading: false});
+        set({course: null, tasks: null, error: error.message, dataLoading: false, taskLoading: false});
       } else {
-        set({course: data, dataLoading: false});
+        set({course: data, tasks: data?.taskBank || [], dataLoading: false, taskLoading: false});
       }
     } catch (error) {
       console.error('Error fetching course:', error);
-      set({course: null, error: String(error), dataLoading: false});
+      set({course: null, error: String(error), dataLoading: false, taskLoading: false});
     }
   },
 
@@ -121,6 +111,7 @@ export const useCourseStore = create<CourseStore>((set) => ({
     console.log('Updating course:', updates);
     try {
       const {course} = useCourseStore.getState();
+      updates.taskBank = updates.taskBank || [];
       if (!course || !course.id) set({course: null, error: 'Course not found', dataLoading: false});
       else set({course: {...course, ...updates}, error: null});
     } catch (error) {
