@@ -1,6 +1,10 @@
+import {useMemo} from "react";
+import {useShallow} from "zustand/react/shallow";
 import {Button, Flex, Form, InputNumber, Segmented, Switch, Input} from "antd";
-import {Cascader} from "@ant-design/pro-editor";
+import {TreeSelect} from "@ant-design/pro-editor";
 import {Knowledge, QuestionType} from "../../../../shared/types/CourseTypes";
+import {useKnowledgeStore} from "../../../../shared/stores/knowledgeStore.ts";
+import {DataNode} from "antd/es/tree";
 
 interface QuestionTypeOptionsProps {
   options: { value: QuestionType, label: string }[]
@@ -54,6 +58,21 @@ interface QuestionKnowledgeOptionsProps {
 }
 
 export function QuestionKnowledgeOptions({knowledge, setKnowledge}: QuestionKnowledgeOptionsProps) {
+  const {knowledgeTree} = useKnowledgeStore(useShallow((set) => ({knowledgeTree: set.knowledgeTree})));
+
+  const processedTreeData = useMemo(() => {
+    if (!knowledgeTree) return [];
+    const loop = (data: Knowledge[]): DataNode[] => (
+      data.map(item => ({
+        key: item.id,
+        value: item.id,
+        title: item.name,
+        children: item.children ? loop(item.children) : []
+      }))
+    )
+    return loop(knowledgeTree);
+  }, [knowledgeTree]);
+
   return (
     <Form.Item
       name='knowledge'
@@ -61,7 +80,16 @@ export function QuestionKnowledgeOptions({knowledge, setKnowledge}: QuestionKnow
       labelCol={{span: 6}}
       wrapperCol={{span: 16}}
     >
-      <Cascader defaultValue={knowledge} value={knowledge} onChange={setKnowledge} options={knowledge}/>
+      <TreeSelect
+        showSearch
+        allowClear
+        multiple
+        value={knowledge}
+        onChange={setKnowledge}
+        treeData={processedTreeData as DefaultTreeData[]}
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        placeholder="Выберите знания"
+      />
     </Form.Item>
   )
 }

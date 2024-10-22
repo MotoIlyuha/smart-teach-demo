@@ -9,6 +9,7 @@ import {Knowledge} from "../../shared/types/CourseTypes.ts";
 import CreateKnowledgeNode from "./components/CreateKnowledgeNode.tsx";
 import KnowledgeNode from "./components/KnowledgeNode.tsx";
 import {useCourse} from "../../shared/hok/Course.ts";
+import {useAuth} from "../../shared/hok/Auth.ts";
 
 const {Search} = Input;
 
@@ -61,6 +62,7 @@ const getParentKey = (key: Key, tree: CustomDataNode[]): Key | undefined => {
 };
 
 const KnowledgeTree = () => {
+  const {person} = useAuth();
   const {setSelectedKnowledge, selectedKnowledge, selectMode} = useCourse();
   const {knowledgeTree, fetchKnowledgeTree, knowledgeList} = useKnowledgeStore(useShallow(state => ({
     knowledgeTree: state.knowledgeTree,
@@ -75,8 +77,8 @@ const KnowledgeTree = () => {
   const [createNodeVisible, setCreateNodeVisible] = useState(false);
 
   useEffect(() => {
-    fetchKnowledgeTree();
-  }, [fetchKnowledgeTree]);
+    fetchKnowledgeTree(person?.id);
+  }, [fetchKnowledgeTree, person?.id]);
 
   const handleAddNode = (name: string, description: string) => {
     const newKey = `new_node_${Date.now()}`;

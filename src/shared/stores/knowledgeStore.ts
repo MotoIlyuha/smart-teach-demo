@@ -7,9 +7,9 @@ import {fetchKnowledgeTree} from "../../features/SupaBaseKnowledge.ts";
 interface KnowledgeStore {
   loading: boolean
   error: string | null
-  knowledgeList: Knowledge[] | null
-  knowledgeTree: Knowledge[] | null
-  fetchKnowledgeTree: () => void
+  knowledgeList: Knowledge[] | null | undefined
+  knowledgeTree: Knowledge[] | null | undefined
+  fetchKnowledgeTree: (user_id?: string, admin_mode?: boolean) => void
 }
 
 export const useKnowledgeStore = create<KnowledgeStore>()((devtools(immer((set) => ({
@@ -18,10 +18,10 @@ export const useKnowledgeStore = create<KnowledgeStore>()((devtools(immer((set) 
   loading: false,
   error: null,
 
-  fetchKnowledgeTree: async () => {
+  fetchKnowledgeTree: async (user_id?: string, admin_mode?: boolean) => {
     try {
       set({loading: true, error: null});
-      const {tree, list, error} = await fetchKnowledgeTree();
+      const {tree, list, error} = await fetchKnowledgeTree(user_id, admin_mode);
       if (error) {
         console.error('Error fetching knowledge tree:', error.message);
         set({knowledgeTree: null, knowledgeList: null, error: error.message, loading: false});

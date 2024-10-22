@@ -10,10 +10,17 @@ type KnowledgeType = {
   error: PostgrestError | null
 }
 
-export async function fetchKnowledgeTree(): Promise<KnowledgeType> {
-  const { data, error } = await supabase.from('knowledge').select("*");
+export async function fetchKnowledgeTree(user_id?: string, admin_mode?: boolean): Promise<KnowledgeType> {
+  let data: Tables<'knowledge'>[] | null = [];
+  let error: PostgrestError | null = null;
+  if (admin_mode)
+    ({data, error} = await supabase.from('knowledge').select("*"));
+  else if (user_id)
+    ({data, error} = await supabase.from('knowledge').select("*").or(`isapproved.eq.true,author_id.eq.${user_id}`));
+  else
+    ({data, error} = await supabase.from('knowledge').select("*").eq('isapproved', true));
   if (error || !data) {
-    return { tree: null, list: null, error: error };
+    return {tree: null, list: null, error: error};
   } else {
     const knowledgeList: Knowledge[] = data.map((item: Tables<'knowledge'>) => ({
       id: item.id,
@@ -23,6 +30,6 @@ export async function fetchKnowledgeTree(): Promise<KnowledgeType> {
       isApproved: item.isapproved,
     }));
     const tree = buildTree(knowledgeList, '');
-    return { tree: tree, list: knowledgeList, error: null };
+    return {tree: tree, list: knowledgeList, error: null};
   }
 }
