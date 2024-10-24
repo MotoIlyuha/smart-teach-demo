@@ -39,7 +39,10 @@ export const CourseProvider = ({children}: { children: ReactNode }) => {
   return (
     <CourseContext.Provider value={{
       activeCategory,
-      setActiveCategory,
+      setActiveCategory: (category: Category | null | undefined) => {
+        setActiveCategory(category)
+        if (!category) setSelectedLesson(undefined);
+      },
       selectedKnowledge,
       setSelectedKnowledge,
       selectedLesson,

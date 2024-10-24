@@ -103,7 +103,6 @@ export default function ReactComponentNode(editor_type: 'editor' | 'preview' | '
 const ReactComponent = ({node, updateAttributes}: ReactComponentViewProps) => {
   const {content: question, editor_type, edit} = node.attrs;
   const [isEditing, setIsEditing] = useState(edit);
-  console.log('!!!!!!', question);
 
   useEffect(() => {
     setIsEditing(node.attrs.edit);

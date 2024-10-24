@@ -11,8 +11,8 @@ type KnowledgeType = {
 }
 
 export async function fetchKnowledgeTree(user_id?: string, admin_mode?: boolean): Promise<KnowledgeType> {
-  let data: Tables<'knowledge'>[] | null = [];
-  let error: PostgrestError | null = null;
+  let data: Tables<'knowledge'>[] | null;
+  let error: PostgrestError | null;
   if (admin_mode)
     ({data, error} = await supabase.from('knowledge').select("*"));
   else if (user_id)
@@ -32,4 +32,35 @@ export async function fetchKnowledgeTree(user_id?: string, admin_mode?: boolean)
     const tree = buildTree(knowledgeList, '');
     return {tree: tree, list: knowledgeList, error: null};
   }
+}
+
+export async function createKnowledge(knowledge: Knowledge, author_id: string): Promise<PostgrestError | null> {
+  const {error} = await supabase.from('knowledge')
+    .insert({
+      id: knowledge.id,
+      name: knowledge.name,
+      description: knowledge.description,
+      parent_id: null,
+      isapproved: false,
+      author_id: author_id,
+    });
+  return error;
+}
+
+export async function updateKnowledge(knowledge_id: string, updates: Partial<Knowledge>, author_id: string): Promise<PostgrestError | null> {
+  const {error} = await supabase.from('knowledge')
+    .update({
+      name: updates.name,
+      description: updates.description,
+      parent_id: updates.parentId,
+      isapproved: false,
+    })
+    .eq('id', knowledge_id)
+    .eq('author_id', author_id);
+  return error;
+}
+
+export async function deleteKnowledge(knowledge_id: string, author_id: string): Promise<PostgrestError | null> {
+  const {error} = await supabase.from('knowledge').delete().eq('id', knowledge_id).eq('author_id', author_id);
+  return error;
 }

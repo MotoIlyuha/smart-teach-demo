@@ -80,7 +80,7 @@ export default function ChoiceQuestion({question, updateAttributes, setIsEditing
           options: shuffledAnswers,
           correctAnswerIds: correctAnswers,
           shuffleOptions: randomSequence,
-          knowledge: knowledge,
+          requiredKnowledge: knowledge,
           cost: cost,
           invitationText: welcomeText,
           caseSensitive: question.caseSensitive

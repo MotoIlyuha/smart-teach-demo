@@ -49,7 +49,7 @@ export const useCourseStore = create<CourseStore>((set) => ({
       else {
         const updatedTask = {...tasks.find(t => t.id === task_id), ...updates} as Task;
         updatedTask.id = task_id ?? updatedTask.id;
-        set({tasks: [...tasks, updatedTask], error: null, taskLoading: false});
+        set({tasks: tasks.map(t => t.id === task_id ? updatedTask : t), error: null, taskLoading: false});
       }
     } catch (error) {
       console.error('Error updating task:', error);

@@ -20,7 +20,7 @@ export default function KnowledgeFlow() {
           {!selectMode &&
               <Button onClick={() => setCollapsed(!collapsed)}>{collapsed ? 'Развернуть' : 'Свернуть'}</Button>}
         </Flex>
-        {collapsed && !selectMode && <KnowledgeTree/>}
+        {(!collapsed || selectMode) && <KnowledgeTree/>}
       </Panel>
       <Background
         gap={12}

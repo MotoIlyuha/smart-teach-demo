@@ -1,8 +1,18 @@
-import {Tag, Tooltip, Select} from "antd";
+import {useShallow} from "zustand/react/shallow";
+import {Tag, Tooltip} from "antd";
+import {TreeSelect} from "@ant-design/pro-editor";
 import {Knowledge} from "../../../../shared/types/CourseTypes.ts";
+import {useKnowledgeStore} from "../../../../shared/stores/knowledgeStore.ts";
+import {convertToTreeData} from "../../../../shared/utils/buildKnowledgeTree.ts";
 import './PreviewKnowledge.css'
 
 export default function PreviewKnowledge({knowledge}: { knowledge: Knowledge[] }) {
+  const {knowledgeTree, knowledgeList} = useKnowledgeStore(useShallow((set) => ({
+    knowledgeTree: set.knowledgeTree,
+    knowledgeList: set.knowledgeList
+  })));
+
+  if (!knowledgeTree || !knowledgeList) return null;
 
   const tag_colors = [
     "magenta", "red", "volcano", "orange", "gold",
@@ -15,30 +25,33 @@ export default function PreviewKnowledge({knowledge}: { knowledge: Knowledge[] }
   }
 
   return (
-    <Select
-      // multiple
+    <TreeSelect
+      multiple
       style={{width: '100%'}}
-      mode={'multiple'}
-      defaultValue={knowledge}
-      value={knowledge}
-      options={[]}
+      value={knowledge.map(k => k.id)}
+      treeData={convertToTreeData(knowledgeTree)}
       suffixIcon={<></>}
       variant={'borderless'}
       placeholder={'Для этого вопроса не требуются знания'}
       open={false}
       allowClear={false}
       maxTagCount={'responsive'}
-      tagRender={({label}) => (
-        <Tooltip title={label}>
-          <Tag
-            className={'knowledge-tag'}
-            color={getRandomColor()}
-            closable={false}
-          >
-            {label}
-          </Tag>
-        </Tooltip>
-      )}
+      tagRender={({value}) => {
+        const _knowledge = knowledgeList.find((k) => k.id === value);
+        if (!_knowledge) return <></>;
+        const {name, description} = _knowledge;
+        return (
+          <Tooltip title={`${name}${description ? ': ' + description : ''}`}>
+            <Tag
+              className={'knowledge-tag'}
+              color={getRandomColor()}
+              closable={false}
+            >
+              {name}
+            </Tag>
+          </Tooltip>
+        )
+      }}
     />
   )
 }

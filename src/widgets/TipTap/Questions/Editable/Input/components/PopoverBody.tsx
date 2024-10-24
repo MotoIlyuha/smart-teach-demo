@@ -82,7 +82,7 @@ export default function PopoverBody(
           type: currentType,
           options: answers,
           correctAnswerIds: rightAnswer,
-          knowledge: knowledge,
+          requiredKnowledge: knowledge,
           cost: cost,
           show_explanation: showExplanation,
           shuffleOptions: randomSequence,

@@ -50,7 +50,6 @@ const TaskEdit = () => {
   }, [currentTask?.content, editor, setTaskSaved]);
 
   const saveTask = () => {
-    console.log(currentTask);
     if (editor && currentTask) {
       const questions = getReactComponents(editor);
       const knowledge: Knowledge[] = [];
@@ -85,9 +84,6 @@ const TaskEdit = () => {
     <EditorProvider editor={editor}>
       <Flex gap={8} vertical style={{padding: 32}}>
         <Flex gap={8} justify={'end'}>
-          <Button type={'primary'} onClick={saveTask}>
-            Сохранить
-          </Button>
           <Button
             type={'primary'}
             onClick={() => {
@@ -95,7 +91,7 @@ const TaskEdit = () => {
               setTaskEditMode(false);
               setActiveTab('task-bank');
             }}>
-            Сохранить и закрыть
+            Сохранить
           </Button>
         </Flex>
         <ToolBox editor={editor}/>

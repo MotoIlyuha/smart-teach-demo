@@ -24,14 +24,16 @@ export default function CreateKnowledgeNode({onCreate, onCancel}: {
           placeholder={'Название нового знания'}
           allowClear
         />
-        <Button type={'text'} title={'Сохранить'} icon={<CheckOutlined/>}
-                style={{color: valid ? 'green' : 'grey'}}
-                onClick={() => {
-                  if (valid) {
-                    onCreate(name, description);
-                    onCancel();
-                  }
-                }}/>
+        <Button
+          type={'text'} title={'Сохранить'} icon={<CheckOutlined/>}
+          style={{color: valid ? 'green' : 'grey'}}
+          onClick={() => {
+            if (valid) {
+              onCreate(name, description);
+              onCancel();
+            }
+          }}
+        />
       </Flex>
       <Flex gap={8} align={'start'}>
         <Input.TextArea
@@ -42,8 +44,10 @@ export default function CreateKnowledgeNode({onCreate, onCancel}: {
           autoSize={{minRows: 3, maxRows: 5}}
           size={'small'}
         />
-        <Button type={'text'} title={'Отмена'} icon={<CloseOutlined/>} style={{color: 'grey'}}
-                onClick={onCancel} disabled={!valid}/>
+        <Button
+          type={'text'} title={'Отмена'} icon={<CloseOutlined/>} style={{color: 'grey'}}
+          onClick={onCancel} disabled={!valid}
+        />
       </Flex>
     </Flex>
   )

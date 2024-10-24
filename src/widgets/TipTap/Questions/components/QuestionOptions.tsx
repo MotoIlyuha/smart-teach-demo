@@ -1,10 +1,9 @@
-import {useMemo} from "react";
 import {useShallow} from "zustand/react/shallow";
-import {Button, Flex, Form, InputNumber, Segmented, Switch, Input} from "antd";
+import {Button, Flex, Form, Input, InputNumber, Segmented, Switch} from "antd";
 import {TreeSelect} from "@ant-design/pro-editor";
 import {Knowledge, QuestionType} from "../../../../shared/types/CourseTypes";
 import {useKnowledgeStore} from "../../../../shared/stores/knowledgeStore.ts";
-import {DataNode} from "antd/es/tree";
+import {convertToTreeData} from "../../../../shared/utils/buildKnowledgeTree.ts";
 
 interface QuestionTypeOptionsProps {
   options: { value: QuestionType, label: string }[]
@@ -58,20 +57,11 @@ interface QuestionKnowledgeOptionsProps {
 }
 
 export function QuestionKnowledgeOptions({knowledge, setKnowledge}: QuestionKnowledgeOptionsProps) {
-  const {knowledgeTree} = useKnowledgeStore(useShallow((set) => ({knowledgeTree: set.knowledgeTree})));
-
-  const processedTreeData = useMemo(() => {
-    if (!knowledgeTree) return [];
-    const loop = (data: Knowledge[]): DataNode[] => (
-      data.map(item => ({
-        key: item.id,
-        value: item.id,
-        title: item.name,
-        children: item.children ? loop(item.children) : []
-      }))
-    )
-    return loop(knowledgeTree);
-  }, [knowledgeTree]);
+  const {knowledgeTree, knowledgeList} = useKnowledgeStore(useShallow((set) => ({
+    knowledgeTree: set.knowledgeTree,
+    knowledgeList: set.knowledgeList
+  })));
+  if (!knowledgeTree || !knowledgeList) return null;
 
   return (
     <Form.Item
@@ -85,8 +75,11 @@ export function QuestionKnowledgeOptions({knowledge, setKnowledge}: QuestionKnow
         allowClear
         multiple
         value={knowledge}
-        onChange={setKnowledge}
-        treeData={processedTreeData as DefaultTreeData[]}
+        onChange={(value) => {
+          const _knowledge = knowledgeList.filter(k => value.includes(k.id));
+          setKnowledge(_knowledge);
+        }}
+        treeData={convertToTreeData(knowledgeTree)}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         placeholder="Выберите знания"
       />

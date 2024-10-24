@@ -8,6 +8,7 @@ import LessonItemView from "./LessonItem.tsx";
 import LessonItemEdit from "./LessonItemEdit.tsx";
 import {useCourse} from "../../../../shared/hok/Course.ts";
 import {v4 as uuidv4} from 'uuid';
+import {useLayout} from "../../../../shared/hok/Layout.ts";
 
 interface LessonWithIndex extends Lesson {
   index: number
@@ -15,6 +16,7 @@ interface LessonWithIndex extends Lesson {
 
 export default function LessonList({category}: { category: Category }) {
   const {setSelectMode} = useCourse();
+  const {setActiveTab} = useLayout();
   const {course, updateCourse} = useCourseStore(useShallow((state) => ({
     course: state.course,
     updateCourse: state.updateCourse
@@ -22,14 +24,11 @@ export default function LessonList({category}: { category: Category }) {
   const ref = useRef<SortableListRef>(null);
   const [lessons, setLessons] = useState(category.lessons || []);
   const [editableLesson, setEditableLesson] = useState<LessonWithIndex | null>(null);
-  
-  useEffect(() => {
-    console.log(lessons);
-  }, [lessons]);
 
   useEffect(() => {
     setSelectMode(editableLesson !== null);
-  }, [editableLesson, setSelectMode]);
+    if (editableLesson !== null) setActiveTab('knowledge-tree');
+  }, [editableLesson, setActiveTab, setSelectMode]);
 
   // Обновляем `lessons`, если изменяется категория
   useEffect(() => {
