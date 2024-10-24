@@ -21,6 +21,7 @@ import {
 import {v4 as uuidv4} from 'uuid';
 
 import styles from "./Question.module.css";
+import {useCourse} from "../../../../../shared/hok/Course.ts";
 
 
 interface ChoiceQuestionProps {
@@ -35,11 +36,12 @@ export default function ChoiceQuestion({question, updateAttributes, setIsEditing
     return array.sort(() => Math.random() - 0.5);
   };
 
+  const {selectedLesson} = useCourse();
   const [questionType, setQuestionType] = useState<ChoiceType>(question.type as ChoiceType);
   const [shuffledAnswers, setShuffledAnswers] = useState<AnswerOption[]>(question.options);
   const [correctAnswers, setCorrectAnswers] = useState(question.correctAnswerIds);
   const [randomSequence, setRandomSequence] = useState(question.shuffleOptions);
-  const [knowledge, setKnowledge] = useState(question.requiredKnowledge);
+  const [knowledge, setKnowledge] = useState(question.requiredKnowledge || selectedLesson?.knowledge);
   const [showExplanation, setShowExplanation] = useState(false);
   const [cost, setCost] = useState<number>(question.cost || 0);
   const [welcomeText, setWelcomeText] = useState(question.invitationText ||

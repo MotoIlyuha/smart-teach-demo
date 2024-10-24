@@ -17,13 +17,13 @@ interface LessonWithIndex extends Lesson {
 export default function LessonList({category}: { category: Category }) {
   const {setSelectMode} = useCourse();
   const {setActiveTab} = useLayout();
+  const ref = useRef<SortableListRef>(null);
+  const [lessons, setLessons] = useState(category.lessons || []);
+  const [editableLesson, setEditableLesson] = useState<LessonWithIndex | null>(null);
   const {course, updateCourse} = useCourseStore(useShallow((state) => ({
     course: state.course,
     updateCourse: state.updateCourse
   })));
-  const ref = useRef<SortableListRef>(null);
-  const [lessons, setLessons] = useState(category.lessons || []);
-  const [editableLesson, setEditableLesson] = useState<LessonWithIndex | null>(null);
 
   useEffect(() => {
     setSelectMode(editableLesson !== null);
@@ -77,7 +77,9 @@ export default function LessonList({category}: { category: Category }) {
       <LessonItemEdit
         lesson={lesson}
         handleUpdate={(_lesson: Lesson) => {
-          ref?.current?.updateItem(_lesson, index);
+          console.log("!!!!");
+          setLessons(lessons.map((l, i) => i === index ? _lesson : l));
+          // ref?.current?.updateItem(_lesson, index);
           setEditableLesson(null);
         }}
         handleCancel={() => {
@@ -92,7 +94,7 @@ export default function LessonList({category}: { category: Category }) {
                           handleEdit={() => setEditableLesson({...lesson, index: index})}/> : null
         }
       </>
-  ), [editableLesson, setEditableLesson]);
+  ), [editableLesson, lessons]);
 
   return (
     <SortableList<Lesson>

@@ -5,6 +5,7 @@ import {Popover} from "antd";
 import {AnswerOption, InputType, Question} from "../../../../../shared/types/CourseTypes";
 import PreviewInput from "../../Preview/Input/PreviewInput";
 import PopoverBody from "./components/PopoverBody.tsx";
+import {useCourse} from "../../../../../shared/hok/Course.ts";
 
 interface InputQuestionProps {
   question: Question
@@ -13,11 +14,12 @@ interface InputQuestionProps {
 }
 
 export default function InputQuestion({question, updateAttributes, setIsEditing}: InputQuestionProps) {
+  const {selectedLesson} = useCourse();
   const [answers, setAnswers] = useState<AnswerOption[]>(question.options);
   const [rightAnswer, setRightAnswer] = useState<string[]>(question.correctAnswerIds);
   const [cost, setCost] = useState(question.cost);
   const [currentType, setCurrentType] = useState<InputType>(question.type as InputType);
-  const [knowledge, setKnowledge] = useState(question.requiredKnowledge);
+  const [knowledge, setKnowledge] = useState(question.requiredKnowledge || selectedLesson?.knowledge);
   const [randomSequence, setRandomSequence] = useState(question.shuffleOptions);
   const [showExplanation, setShowExplanation] = useState(false);
   const [matchCase, setMatchCase] = useState(question.caseSensitive);
