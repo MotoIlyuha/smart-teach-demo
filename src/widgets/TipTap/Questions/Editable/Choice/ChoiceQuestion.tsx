@@ -39,7 +39,7 @@ export default function ChoiceQuestion({question, updateAttributes, setIsEditing
   const {selectedLesson} = useCourse();
   const [questionType, setQuestionType] = useState<ChoiceType>(question.type as ChoiceType);
   const [shuffledAnswers, setShuffledAnswers] = useState<AnswerOption[]>(question.options);
-  const [correctAnswers, setCorrectAnswers] = useState(question.correctAnswerIds);
+  const [correctAnswers, setCorrectAnswers] = useState(question.correctAnswerIds || []);
   const [randomSequence, setRandomSequence] = useState(question.shuffleOptions);
   const [knowledge, setKnowledge] = useState(question.requiredKnowledge || selectedLesson?.knowledge);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -115,12 +115,20 @@ export default function ChoiceQuestion({question, updateAttributes, setIsEditing
               </Col>
               <Col span={22}>
                 {questionType === "mono" ? (
-                  <Radio.Group value={correctAnswers[0]} onChange={(e) => setCorrectAnswers(e.target.value)}>
+                  <Radio.Group value={correctAnswers[0]} onChange={(e) => {
+                    setCorrectAnswers([e.target.value]);
+                    console.log(e.target.value);
+                  }}>
                     <VariantList/>
                   </Radio.Group>
                 ) : (
-                  <Checkbox.Group value={correctAnswers}
-                                  onChange={(e) => setCorrectAnswers(e.map(value => String(value)))}>
+                  <Checkbox.Group
+                    value={correctAnswers}
+                    onChange={(e) => {
+                      console.log(e);
+                      setCorrectAnswers(e.map(value => String(value)))
+                    }}
+                  >
                     <VariantList/>
                   </Checkbox.Group>
                 )}

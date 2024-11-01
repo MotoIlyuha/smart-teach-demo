@@ -1,4 +1,4 @@
-import {createContext, ReactNode, useEffect, useState} from "react";
+import {createContext, ReactNode, useState} from "react";
 
 interface CourseEditLayoutProviderProps {
   isLeftSidebarVisible: boolean;
@@ -7,8 +7,8 @@ interface CourseEditLayoutProviderProps {
   setRightSidebarVisible: (visible: boolean) => void;
   taskEditMode: boolean
   setTaskEditMode: (taskEditMode: boolean) => void;
-  testMode: boolean
-  setTestMode: (testMode: boolean) => void;
+  taskTestMode: boolean
+  setTaskTestMode: (taskTestMode: boolean) => void;
   taskSaved: boolean;
   setTaskSaved: (taskSaved: boolean) => void;
   activeTab: string;
@@ -22,8 +22,8 @@ export const CourseEditLayoutContext = createContext<CourseEditLayoutProviderPro
   setRightSidebarVisible: () => {},
   taskEditMode: false,
   setTaskEditMode: () => {},
-  testMode: false,
-  setTestMode: () => {},
+  taskTestMode: false,
+  setTaskTestMode: () => {},
   taskSaved: false,
   setTaskSaved: () => {},
   activeTab: '',
@@ -34,13 +34,9 @@ export const LayoutProvider = ({children}: { children: ReactNode }) => {
   const [isLeftSidebarVisible, setLeftSidebarVisible] = useState(true);
   const [isRightSidebarVisible, setRightSidebarVisible] = useState(true);
   const [taskEditMode, setTaskEditMode] = useState(false);
-  const [testMode, setTestMode] = useState(false);
+  const [taskTestMode, setTaskTestMode] = useState(false);
   const [taskSaved, setTaskSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('knowledge-tree');
-
-  useEffect(() => {
-    console.log(taskEditMode);
-  }, [taskEditMode]);
 
   return (
     <CourseEditLayoutContext.Provider
@@ -51,8 +47,8 @@ export const LayoutProvider = ({children}: { children: ReactNode }) => {
         setRightSidebarVisible,
         taskEditMode,
         setTaskEditMode,
-        testMode,
-        setTestMode,
+        taskTestMode,
+        setTaskTestMode,
         taskSaved,
         setTaskSaved,
         activeTab,

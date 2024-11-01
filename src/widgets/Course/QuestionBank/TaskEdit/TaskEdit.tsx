@@ -1,39 +1,29 @@
 import {useEffect, useLayoutEffect} from "react";
 import {Button, Flex} from "antd";
-import {EditorContent, EditorContentProps} from '@tiptap/react'
+import {GrTest} from "react-icons/gr";
+import {EditorContent} from '@tiptap/react'
 import {useShallow} from "zustand/react/shallow";
 import {useCourseStore} from "../../../../shared/stores/courseStore.ts";
 import {EditorProvider} from "../../../TipTap/EditorProvider.tsx";
 import {useLayout} from "../../../../shared/hok/Layout.ts";
 import {useCourse} from "../../../../shared/hok/Course.ts";
-import {TestEditor} from "../../../TipTap/Editors.tsx";
 import ToolBox from "../../../TipTap/Menus/ToolBox.tsx";
 import BubbleMenu from "../../../TipTap/Menus/BubbleMenu.tsx";
 // import FloatingMenuEditor from "../../../TipTap/Menus/FloatingMenu.tsx";
-import {Knowledge, Question} from "../../../../shared/types/CourseTypes.ts";
+import {Knowledge} from "../../../../shared/types/CourseTypes.ts";
+import EditEditor from "../../../TipTap/Questions/Editable/EditEditor.ts";
+import {getQuestions} from "../getQuestions.ts";
 import 'katex/dist/katex.min.css'
-
-const getReactComponents = (editor: EditorContentProps["editor"]): Question[] => {
-  if (!editor) return [];
-  const questions: Question[] = [];
-  editor.state.doc.descendants((node) => {
-    if (node.type.name === 'reactComponent') {
-      questions.push(node.attrs.content as Question);
-    }
-    return true;
-  });
-  return questions;
-};
 
 const TaskEdit = () => {
 
   const {currentTask, setCurrentTask} = useCourse();
-  const {setTaskSaved, setTaskEditMode, setActiveTab} = useLayout();
+  const {setTaskSaved, setTaskEditMode, setActiveTab, setTaskTestMode} = useLayout();
   const {update} = useCourseStore(useShallow(state => ({
     update: state.updateTask
   })));
 
-  const editor = TestEditor();
+  const editor = EditEditor();
 
   useLayoutEffect(() => {
     if (!editor?.isDestroyed && editor && currentTask?.content) {
@@ -51,7 +41,7 @@ const TaskEdit = () => {
 
   const saveTask = () => {
     if (editor && currentTask) {
-      const questions = getReactComponents(editor);
+      const questions = getQuestions(editor);
       const knowledge: Knowledge[] = [];
       questions.forEach((question) => {
         question.requiredKnowledge.forEach((k) => {
@@ -84,6 +74,17 @@ const TaskEdit = () => {
     <EditorProvider editor={editor}>
       <Flex gap={8} vertical style={{padding: 32}}>
         <Flex gap={8} justify={'end'}>
+          <Button
+            icon={<GrTest />}
+            type={'default'}
+            onClick={() => {
+              saveTask();
+              setTaskTestMode(true);
+              setActiveTab('task-test');
+            }}
+          >
+            Протестировать
+          </Button>
           <Button
             type={'primary'}
             onClick={() => {

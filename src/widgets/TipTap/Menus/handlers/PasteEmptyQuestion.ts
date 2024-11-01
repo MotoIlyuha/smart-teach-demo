@@ -15,20 +15,30 @@ export const pasteEmptyQuestion = (type: QuestionType) =>
           "type": "${type}",
           "cost": 1,
           "invitationText": "${welcomeText(type as ChoiceType)}",
-          "requiredKnowledge": [],
+          "requiredKnowledge": ["math"],
+          "explanation": "Это тестовый вопрос",
           "options": [
             {
               "id": "Вариант 1",
-              "text": "1"
+              "text": "Вариант 1"
             },
             {
               "id": "Вариант 2",
-              "text": "2"
-            }
+              "text": "Вариант 2"
+            },
+  {
+    "text": "Вариант 3",
+    "id": "e9026a18-9653-4f70-a044-d92041556afb"
+  },
+  {
+    "text": "Вариант 4",
+    "id": "a644984a-7c63-43ec-9483-3633820b5bae"
+  }
           ],
           "correctAnswerIds": [
-            "1"
-          ],
+  "Вариант 2",
+  "e9026a18-9653-4f70-a044-d92041556afb"
+],
           "shuffleOptions": true
         },
         "meta": {

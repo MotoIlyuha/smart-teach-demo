@@ -10,7 +10,6 @@ export async function fetchTaskBank(course_id: string): Promise<{ data: Task[] |
     // @ts-expect-error
     const tasks: Task[] = fetchedData.map((task: Task) => ({
       id: task.id,
-      title: task.title,
       content: task.content,
       totalPoints: task.totalPoints,
       isPublic: task.isPublic,

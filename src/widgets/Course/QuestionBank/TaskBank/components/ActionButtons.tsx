@@ -1,9 +1,10 @@
 import {useState} from "react";
+import {useShallow} from "zustand/react/shallow";
+import {GrTest} from "react-icons/gr";
 import {Checkbox, Divider, Flex, Popconfirm} from "antd";
-import {DeleteAction, EditAction} from "@ant-design/pro-editor";
+import {ActionIcon, DeleteAction, EditAction} from "@ant-design/pro-editor";
 import {Task} from "../../../../../shared/types/CourseTypes.ts";
 import {useCourseStore} from "../../../../../shared/stores/courseStore.ts";
-import {useShallow} from "zustand/react/shallow";
 import {useCourse} from "../../../../../shared/hok/Course.ts";
 import {useLayout} from "../../../../../shared/hok/Layout.ts";
 
@@ -13,7 +14,7 @@ const ActionButtons = ({task}: {task: Task}) => {
     updateTask: state.updateTask
   })));
   const {setCurrentTask, currentTask} = useCourse();
-  const {setTaskEditMode, setActiveTab} = useLayout();
+  const {setTaskEditMode, setActiveTab, setTaskTestMode} = useLayout();
   const [open, setOpen] = useState(false);
 
   return (
@@ -28,6 +29,15 @@ const ActionButtons = ({task}: {task: Task}) => {
         Публичный
       </Checkbox>
       <Divider type="vertical"/>
+      <ActionIcon
+        title="Протестировать задание"
+        icon={<GrTest />}
+        onClick={() => {
+          setCurrentTask(task);
+          setActiveTab('task-test');
+          setTaskTestMode(true);
+        }}
+      />
       <EditAction
         title="Редактировать"
         onClick={() => {

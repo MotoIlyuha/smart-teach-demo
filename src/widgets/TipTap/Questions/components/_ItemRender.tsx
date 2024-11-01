@@ -4,11 +4,17 @@ import {Checkbox, Input, useSortableList} from "@ant-design/pro-editor";
 import {AnswerOption, QuestionType} from "../../../../shared/types/CourseTypes";
 import {v4 as uuidv4} from 'uuid';
 
-const Wrapper = ({children, type}: { children: ReactNode, type: QuestionType }) => {
+interface WrapperProps {
+  children: ReactNode,
+  type: QuestionType,
+  value: string
+}
+
+const Wrapper = ({children, type, value}: WrapperProps) => {
   if (type === 'mono')
-    return <Radio>{children}</Radio>
+    return <Radio value={value}>{children}</Radio>
   else if (type === 'multi')
-    return <Checkbox>{children}</Checkbox>
+    return <Checkbox value={value}>{children}</Checkbox>
   else
     return <>{children}</>;
 }
@@ -43,7 +49,7 @@ export const ItemRender = memo(({type, item, index}: { type: QuestionType; item:
   };
 
   return (
-    <Wrapper type={type}>
+    <Wrapper type={type} value={item.id}>
       <Input
         id={`index-${index}`}
         defaultValue={item.text}

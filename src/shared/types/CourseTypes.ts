@@ -71,6 +71,15 @@ export interface Question {
 }
 
 /**
+ * Интерфейс для вопроса с ответом пользователя
+ */
+export interface QuestionWithAnswer extends Question {
+  userAnswerIds: string[];                // Идентификаторы ответов пользователя
+  userAnswerCorrect: boolean;             // Правильность ответов пользователя
+  userPoints: number;                     // Количество баллов пользователя
+}
+
+/**
  * Интерфейс для задания (Task)
  */
 export interface Task {
@@ -83,12 +92,11 @@ export interface Task {
 }
 
 /**
- * Интерфейс для теста (Test)
+ * Интерфейс для задания с пользовательскими ответами
  */
-export interface Test {
-  id: string;                             // Уникальный идентификатор теста
-  title: string;                          // Название теста
-  tasks: Task[];                          // Список заданий в тесте
+export interface TestTask extends Task {
+  userPoints: number;                     // Количество баллов пользователя
+  questions: QuestionWithAnswer[]         // Список вопросов с ответами
 }
 
 /**

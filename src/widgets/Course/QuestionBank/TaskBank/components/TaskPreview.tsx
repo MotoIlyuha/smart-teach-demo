@@ -1,11 +1,11 @@
 import {useLayoutEffect} from "react";
 import {EditorContent} from "@tiptap/react";
-import {TestPreview} from "../../../../TipTap/Editors.tsx";
+import PreviewEditor from "../../../../TipTap/Questions/Preview/PreviewEditor.ts";
 import {Task} from "../../../../../shared/types/CourseTypes.ts";
 
 export default function TaskPreview({task}: { task: Task | null }) {
 
-  const editor = TestPreview();
+  const editor = PreviewEditor();
 
   useLayoutEffect(() => {
     if (!editor?.isDestroyed && editor && task) {

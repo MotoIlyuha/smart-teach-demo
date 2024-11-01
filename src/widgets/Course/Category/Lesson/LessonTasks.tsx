@@ -1,9 +1,10 @@
+import {useEffect, useState} from "react";
 import {useCourse} from "../../../../shared/hok/Course.ts";
-import {Badge, Flex, Table, Tooltip, Typography} from "antd";
+import {Badge, Button, Flex, Table, Tooltip, Typography} from "antd";
+import {GrTest} from "react-icons/gr";
 import {typeIcon} from "../../../../shared/config/lessonTypeIcons.tsx";
 import PreviewKnowledge from "../../../Knowledge/components/Preview/PreviewKnowledge.tsx";
 import {Knowledge, Task} from "../../../../shared/types/CourseTypes.ts";
-import {useEffect, useState} from "react";
 import {DownOutlined} from "@ant-design/icons";
 import {useCourseStore} from "../../../../shared/stores/courseStore.ts";
 import {useShallow} from "zustand/react/shallow";
@@ -12,10 +13,9 @@ import TaskPreview from "../../QuestionBank/TaskBank/components/TaskPreview.tsx"
 export default function LessonTasks() {
   const {selectedLesson, activeCategory} = useCourse();
   const [dataSource, setDataSource] = useState<Task[]>([]);
-  const {course, updateCourse, loading} = useCourseStore(useShallow(state => ({
+  const {course, loading} = useCourseStore(useShallow(state => ({
     loading: state.taskLoading,
     course: state.course,
-    updateCourse: state.updateCourse,
   })));
 
   useEffect(() => {
@@ -43,6 +43,7 @@ export default function LessonTasks() {
   ]
 
   return (
+    <Flex gap={8} justify={'space-between'} vertical style={{height: '100%', overflow: 'hide'}}>
     <Flex gap={8} vertical style={{padding: 12, color: 'white'}}>
       <Typography.Title level={3}>{selectedLesson?.title}</Typography.Title>
       <Typography.Text type={'secondary'}>{typeIcon[selectedLesson?.type || 'default'].label}</Typography.Text>
@@ -67,6 +68,10 @@ export default function LessonTasks() {
         }}
         style={{height: '100%', margin: 8, overflow: 'auto'}}
       />
+    </Flex>
+      <Button type={'primary'} size={'large'} icon={<GrTest />} disabled style={{margin: 8}}>
+        Протестировать урок
+      </Button>
     </Flex>
   )
 }

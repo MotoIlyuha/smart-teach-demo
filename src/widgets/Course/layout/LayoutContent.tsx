@@ -6,6 +6,7 @@ import TaskEdit from "../QuestionBank/TaskEdit/TaskEdit.tsx";
 import {useLayout} from "../../../shared/hok/Layout.ts";
 import {HideLeftPanelButton, HideRightPanelButton} from "./components/HidePanelButtons.tsx";
 import '../../../shared/styles/CourseEditPage.css';
+import TaskTest from "../QuestionBank/TaskTest/TaskTest.tsx";
 
 type TabItemType = {
   key: string,
@@ -17,7 +18,7 @@ type TabItemType = {
 }
 
 export default function CourseLayoutContent() {
-  const {taskEditMode, setTaskEditMode, taskSaved, activeTab, setActiveTab} = useLayout();
+  const {taskEditMode, setTaskEditMode, taskTestMode, setTaskTestMode, taskSaved, activeTab, setActiveTab} = useLayout();
 
   useEffect(() => {
     setActiveTab(activeTab);
@@ -50,6 +51,16 @@ export default function CourseLayoutContent() {
     });
   }
 
+  if (taskTestMode) {
+    tab_items.push({
+      key: 'task-test',
+      label: `Тестирование задания`,
+      children: <TaskTest/>,
+      closable: true,
+      style: {height: '100%'},
+    });
+  }
+
   return (
     <Tabs
       className={'course-tabs'}
@@ -65,6 +76,14 @@ export default function CourseLayoutContent() {
           if (targetKey === 'task-edit') {
             setTaskEditMode(false);
             setActiveTab('task-bank');
+          }
+          if (targetKey === 'task-test') {
+            setTaskTestMode(false);
+            if (taskEditMode) {
+              setActiveTab('task-edit');
+            } else {
+              setActiveTab('task-bank');
+            }
           }
         }
       }}

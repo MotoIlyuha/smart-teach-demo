@@ -15,5 +15,8 @@
     border-radius: 8px;
     border: none;
     margin: 8px;
+}
 
+.test {
+    outline: none;
 }
