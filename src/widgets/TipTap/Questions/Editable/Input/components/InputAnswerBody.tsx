@@ -4,6 +4,7 @@ import {Checkbox, SortableList} from "@ant-design/pro-editor";
 import {AnswerOption, InputType} from "../../../../../../shared/types/CourseTypes.ts";
 import {ItemRender} from "../../../components/_ItemRender.tsx";
 import {RandomSequenceIcon} from "../../../components/RandomSequenceIcon.tsx";
+import {v4 as uuidv4} from 'uuid';
 
 interface InputAnswersBodyProps {
   type: InputType
@@ -29,7 +30,7 @@ export default function InputAnswersBody(
     setMatchCase,
     randomSequence
   }: InputAnswersBodyProps) {
-  const [numberType, setNumberType] = useState('1');
+  const [numberType, setNumberType] = useState("1");
 
   function isNumber(str: string): boolean {
     return !isNaN(parseFloat(str)) && isFinite(Number(str));
@@ -64,13 +65,14 @@ export default function InputAnswersBody(
             value={answers}
             onChange={(items: AnswerOption[]) => {
               setAnswers(items);
+              setRightAnswer(items.map(item => item.text));
             }}
             renderContent={(item, index) => <ItemRender type={type} item={item as AnswerOption} index={index}/>}
             creatorButtonProps={{
               creatorButtonText: 'Новый вариант ответа',
               record: () => ({
-                title: 'Вариант ' + (rightAnswer.length + 1),
-                dataIndex: Date.now().toString()
+                text: 'Вариант ' + (rightAnswer.length + 1),
+                id: uuidv4()
               })
             }}
             renderEmpty={() => <Typography.Text type={'secondary'}>Добавьте хотя бы один вариант</Typography.Text>}
@@ -129,8 +131,7 @@ export default function InputAnswersBody(
           </Row>
           <Row style={{paddingTop: 8}}>
             <Col span={1.2} offset={1}>
-              <RandomSequenceIcon randomSequence={randomSequence} onClick={() => {
-              }}/>
+              <RandomSequenceIcon randomSequence={randomSequence} onClick={() => {}}/>
             </Col>
             <Col span={21}>
               <Checkbox.Group value={rightAnswer} onChange={setRightAnswer}>

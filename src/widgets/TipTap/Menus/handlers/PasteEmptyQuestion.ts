@@ -27,17 +27,17 @@ export const pasteEmptyQuestion = (type: QuestionType) =>
               "text": "Вариант 2"
             },
   {
-    "text": "Вариант 3",
-    "id": "e9026a18-9653-4f70-a044-d92041556afb"
+    "id": "Вариант 3",
+    "text": "Вариант 3"
   },
   {
     "text": "Вариант 4",
-    "id": "a644984a-7c63-43ec-9483-3633820b5bae"
+    "id": "Вариант 4"
   }
           ],
           "correctAnswerIds": [
   "Вариант 2",
-  "e9026a18-9653-4f70-a044-d92041556afb"
+  "Вариант 3"
 ],
           "shuffleOptions": true
         },

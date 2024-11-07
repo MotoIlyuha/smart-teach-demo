@@ -108,10 +108,15 @@ export default function PopoverBody(
             randomSequence={randomSequence}
           />
           <Flex vertical>
-            <QuestionTypeOptions options={type_options} currentType={currentType}
-                                 onTypeChange={(value) => {
-                                   setCurrentType(value as InputType)
-                                 }}/>
+            <QuestionTypeOptions
+              options={type_options} currentType={currentType}
+              onTypeChange={(value) => {
+                setCurrentType(value as InputType);
+                if (value === 'number') {
+                  setRightAnswer([1]);
+                }
+              }}
+            />
             <QuestionCostOptions cost={cost} onCostChange={setCost}/>
             {currentType === 'select' &&
                 <QuestionRandomOptions state={randomSequence} onStateChange={setRandomSequence}/>}

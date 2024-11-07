@@ -20,7 +20,7 @@ import {
 } from "../../components/QuestionOptions";
 import {v4 as uuidv4} from 'uuid';
 
-import styles from "./Question.module.css";
+import styles from "../../../../../shared/styles/Question.module.css";
 import {useCourse} from "../../../../../shared/hok/Course.ts";
 
 

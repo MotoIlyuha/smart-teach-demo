@@ -3,7 +3,7 @@ import {Node} from '@tiptap/core';
 import {NodeViewProps, NodeViewWrapper, ReactNodeViewRenderer} from "@tiptap/react";
 import {Question, QuestionType} from "../../../../shared/types/CourseTypes.ts";
 import {PreviewMemo, QuestionMemo, ReactComponentProps} from "../components/MemoQuestions.tsx";
-import styles from "./Choice/Question.module.css";
+import styles from "../../../../shared/styles/Question.module.css";
 
 export default function EditComponent() {
 

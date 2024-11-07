@@ -7,13 +7,19 @@ function InputBody({question}: { question: Question }) {
     case 'text':
       return <Input value={question.options[0].text}/>;
     case 'number':
-      return <InputNumber defaultValue={Number(question.correctAnswerIds[0])} onChange={() => {}} onStep={() => {}}
-                           style={{width: question.correctAnswerIds[0].length * 10 + 50}}/>;
+      return <InputNumber
+        defaultValue={Number(question.correctAnswerIds[0])}
+        onChange={() => {}}
+        onStep={() => {}}
+        style={{width: question.correctAnswerIds[0].length * 10 + 50}}
+      />;
     case 'select':
       return (
-        <Select value={question.options.map(answer => answer.id === question.correctAnswerIds[0] && answer.text)[0]}
-                options={question.options.map((answer) => ({value: answer.text, label: answer.text}))}
-                style={{minWidth: 100}}/>
+        <Select
+          value={question.options.map(answer => answer.id === question.correctAnswerIds[0] && answer.text)[0]}
+          options={question.options.map((answer) => ({value: answer.text, label: answer.text}))}
+          style={{minWidth: 100}}
+        />
       );
     case 'textarea':
       return <Input.TextArea value={question.correctAnswerIds[0]}/>;

@@ -2,7 +2,8 @@ import {FC} from "react";
 import {Node} from "@tiptap/core";
 import {NodeViewProps, NodeViewWrapper, ReactNodeViewRenderer} from "@tiptap/react";
 import {ReactComponentProps, TestMemo} from "../components/MemoQuestions.tsx";
-import {QuestionWithAnswer} from "../../../../shared/types/CourseTypes.ts";
+import {QuestionType, QuestionWithAnswer} from "../../../../shared/types/CourseTypes.ts";
+import styles from "../../../../shared/styles/Question.module.css";
 
 export default function TestComponent() {
 
@@ -50,10 +51,16 @@ export default function TestComponent() {
 
 const ReactComponentNode = ({node, updateAttributes}: ReactComponentProps<QuestionWithAnswer>) => {
 
-  return <NodeViewWrapper className="react-component">
-    <TestMemo question={node.attrs.content} updateAttributes={(attrs: Partial<QuestionWithAnswer>) => {
-      updateAttributes({content: {...node.attrs.content, ...attrs}} as Partial<QuestionWithAnswer>);
-      console.log("UPATTR: ", {...node.attrs.content, ...attrs});
-    }}/>
-  </NodeViewWrapper>
+  const inline = ['text', 'number', 'select'].includes(node.attrs.content.type as QuestionType);
+
+  return (
+    <NodeViewWrapper className="react-component" style={{display: inline ? 'inline' : 'block'}}>
+      <div className={`${styles.question} ${inline ? styles.inline : ''}`}>
+        <TestMemo question={node.attrs.content} updateAttributes={(attrs: Partial<QuestionWithAnswer>) => {
+          updateAttributes({content: {...node.attrs.content, ...attrs}} as Partial<QuestionWithAnswer>);
+          console.log("UPATTR: ", {...node.attrs.content, ...attrs});
+        }}/>
+      </div>
+    </NodeViewWrapper>
+  )
 }

@@ -3,6 +3,7 @@ import {Node} from "@tiptap/core";
 import {NodeViewProps, NodeViewWrapper, ReactNodeViewRenderer} from "@tiptap/react";
 import {PreviewMemo, ReactComponentProps} from "../components/MemoQuestions.tsx";
 import {Question} from "../../../../shared/types/CourseTypes.ts";
+import styles from "../../../../shared/styles/Question.module.css";
 
 export default function PreviewComponent() {
   return Node.create({
@@ -57,8 +58,13 @@ export default function PreviewComponent() {
 
 const ReactComponent = ({node}: ReactComponentProps<Question>) => {
   const {content: question} = node.attrs;
+  const inline = ['text', 'number', 'select'].includes(question.type as QuestionType);
 
-  return <NodeViewWrapper className="react-component">
-    <PreviewMemo question={question}/>
-  </NodeViewWrapper>;
+  return (
+    <NodeViewWrapper className="react-component" style={{display: inline ? 'inline' : 'block'}}>
+      <div className={`${styles.question} ${inline ? styles.inline : ''}`}>
+        <PreviewMemo question={question}/>
+      </div>
+    </NodeViewWrapper>
+  );
 }

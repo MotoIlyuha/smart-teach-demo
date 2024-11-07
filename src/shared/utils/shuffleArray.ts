@@ -1,20 +1,21 @@
-import {AnswerOption} from "../types/CourseTypes.ts";
+import { AnswerOption } from "../types/CourseTypes.ts";
 
-export const shuffle = (array: AnswerOption[], shuffle = true): AnswerOption[] => {
-  if (!shuffle) return array;
-  let m = array.length, t, i;
+export const shuffle = (array: readonly AnswerOption[], shouldShuffle = true): AnswerOption[] => {
+  if (!shouldShuffle) return [...array]; // Возвращаем копию массива, если перемешивание не нужно
+
+  const newArray = [...array]; // Создаем изменяемую копию массива
+  let m = newArray.length, t, i;
 
   // Пока есть элементы для перемешивания
   while (m) {
-
     // Взять оставшийся элемент
     i = Math.floor(Math.random() * m--);
 
     // И поменять его местами с текущим элементом
-    t = array[m];
-    array[m] = array[i];
-    array[i] = t;
+    t = newArray[m];
+    newArray[m] = newArray[i];
+    newArray[i] = t;
   }
 
-  return array;
-}
+  return newArray;
+};

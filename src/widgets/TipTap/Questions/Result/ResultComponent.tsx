@@ -2,8 +2,8 @@ import {FC} from "react";
 import {Node} from "@tiptap/core";
 import {NodeViewProps, NodeViewWrapper, ReactNodeViewRenderer} from "@tiptap/react";
 import {ReactComponentProps, ResultMemo} from "../components/MemoQuestions.tsx";
-
-import {QuestionWithAnswer} from "../../../../shared/types/CourseTypes.ts";
+import {QuestionType, QuestionWithAnswer} from "../../../../shared/types/CourseTypes.ts";
+import styles from "../../../../shared/styles/Question.module.css";
 
 export default function ResultComponent() {
 
@@ -50,8 +50,13 @@ export default function ResultComponent() {
 }
 
 const ReactComponentNode = ({node}: ReactComponentProps<QuestionWithAnswer>) => {
+  const inline = ['text', 'number', 'select'].includes(node.attrs.content.type as QuestionType);
 
-  return <NodeViewWrapper className="react-component">
-    <ResultMemo question={node.attrs.content}/>
-  </NodeViewWrapper>
+  return (
+    <NodeViewWrapper className="react-component" style={{display: inline ? 'inline' : 'block'}}>
+      <div className={`${styles.question} ${inline ? styles.inline : ''}`}>
+        <ResultMemo question={node.attrs.content}/>
+      </div>
+    </NodeViewWrapper>
+  )
 }

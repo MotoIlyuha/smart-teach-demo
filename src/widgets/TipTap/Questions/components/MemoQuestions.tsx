@@ -13,7 +13,9 @@ import InputQuestion from "../Editable/Input/InputQuestion.tsx";
 import PreviewChoice from "../Preview/Choice/PreviewChoice.tsx";
 import PreviewInput from "../Preview/Input/PreviewInput.tsx";
 import TestChoice from "../Test/Choice/TestChoice.tsx";
+import TestInput from "../Test/Input/TestInput.tsx";
 import ResultChoice from "../Result/Choice/ResultChoice.tsx";
+import ResultInput from "../Result/Input/ResultInput.tsx";
 
 export interface ReactComponentProps<T> {
   node: Node & {
@@ -61,13 +63,13 @@ interface TestMemoProps {
 export const TestMemo = memo(({question, updateAttributes}: TestMemoProps) => {
   if (ChoiceTypes.includes(question.type as ChoiceType))
     return <TestChoice question={question} updateAttributes={updateAttributes}/>;
-  // else if (InputTypes.includes(question.type as InputType))
-  //   return <TestInput question={question}/>;
+  else if (InputTypes.includes(question.type as InputType))
+    return <TestInput question={question} updateAttributes={updateAttributes}/>;
 });
 
 export const ResultMemo = memo(({question}: { question: QuestionWithAnswer }) => {
   if (ChoiceTypes.includes(question.type as ChoiceType))
     return <ResultChoice question={question}/>;
-  // else if (InputTypes.includes(question.type as InputType))
-  //   return <TestInput question={question}/>;
+  else if (InputTypes.includes(question.type as InputType))
+    return <ResultInput question={question}/>;
 });

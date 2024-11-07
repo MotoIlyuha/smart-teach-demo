@@ -31,7 +31,7 @@ export default function CourseSaveManager() {
       // Set a timeout to reset the button after 2 seconds
       timer = setTimeout(() => {
         setSaved(false);
-      }, 3350);
+      }, course_auto_save_interval);
     } else {
       setIcon(<SaveOutlined />);
       setColor('#1890ff');
@@ -64,7 +64,7 @@ export default function CourseSaveManager() {
       clearInterval(intervalRef.current);
     }
     intervalRef.current = setInterval(() => {
-      console.log('Автосохранение каждые 2 минуты');
+      console.log(`Автосохранение каждые ${course_auto_save_interval / 60000} минуты`);
       confirm()
         .then(() => setSaved(true))
         .catch(e => console.error(e)); // Автосохранение
