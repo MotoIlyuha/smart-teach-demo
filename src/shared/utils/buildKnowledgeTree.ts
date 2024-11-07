@@ -1,11 +1,22 @@
 import {Knowledge} from "../types/CourseTypes.ts";
 import {TreeDataNode} from "antd";
 
+interface TreeDataNodeWithParentId extends TreeDataNode {
+  key: string;
+  value: string;
+  title: string;
+  description?: string | null;
+  parentId?: string | null;
+  children?: TreeDataNodeWithParentId[];
+}
+
 // Функция для преобразования дерева знаний в формат TreeData
-export const convertToTreeData = (knowledgeTree: Knowledge[], parentId: string | null = null): TreeDataNode[] => {
+export const convertToTreeData = (knowledgeTree: Knowledge[], parentId: string | null = null): TreeDataNodeWithParentId[] => {
   return knowledgeTree.map((node) => ({
     key: node.id,
-    title: node.name, // Преобразование `name` в `content`
+    value: node.id,
+    title: node.name,
+    description: node.description,
     children: node.children ? convertToTreeData(node.children) : [],
     parentId: parentId,
   }));

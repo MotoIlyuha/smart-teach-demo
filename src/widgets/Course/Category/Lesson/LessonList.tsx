@@ -8,6 +8,7 @@ import LessonItemView from "./LessonItem.tsx";
 import LessonItemEdit from "./LessonItemEdit.tsx";
 import {useCourse} from "../../../../shared/hok/Course.ts";
 import {v4 as uuidv4} from 'uuid';
+import {useLayout} from "../../../../shared/hok/Layout.ts";
 
 interface LessonWithIndex extends Lesson {
   index: number
@@ -15,21 +16,19 @@ interface LessonWithIndex extends Lesson {
 
 export default function LessonList({category}: { category: Category }) {
   const {setSelectMode} = useCourse();
+  const {setActiveTab} = useLayout();
+  const ref = useRef<SortableListRef>(null);
+  const [lessons, setLessons] = useState(category.lessons || []);
+  const [editableLesson, setEditableLesson] = useState<LessonWithIndex | null>(null);
   const {course, updateCourse} = useCourseStore(useShallow((state) => ({
     course: state.course,
     updateCourse: state.updateCourse
   })));
-  const ref = useRef<SortableListRef>(null);
-  const [lessons, setLessons] = useState(category.lessons || []);
-  const [editableLesson, setEditableLesson] = useState<LessonWithIndex | null>(null);
-  
-  useEffect(() => {
-    console.log(lessons);
-  }, [lessons]);
 
   useEffect(() => {
     setSelectMode(editableLesson !== null);
-  }, [editableLesson, setSelectMode]);
+    if (editableLesson !== null) setActiveTab('knowledge-tree');
+  }, [editableLesson, setActiveTab, setSelectMode]);
 
   // Обновляем `lessons`, если изменяется категория
   useEffect(() => {
@@ -78,7 +77,9 @@ export default function LessonList({category}: { category: Category }) {
       <LessonItemEdit
         lesson={lesson}
         handleUpdate={(_lesson: Lesson) => {
-          ref?.current?.updateItem(_lesson, index);
+          console.log("!!!!");
+          setLessons(lessons.map((l, i) => i === index ? _lesson : l));
+          // ref?.current?.updateItem(_lesson, index);
           setEditableLesson(null);
         }}
         handleCancel={() => {
@@ -93,7 +94,7 @@ export default function LessonList({category}: { category: Category }) {
                           handleEdit={() => setEditableLesson({...lesson, index: index})}/> : null
         }
       </>
-  ), [editableLesson, setEditableLesson]);
+  ), [editableLesson, lessons]);
 
   return (
     <SortableList<Lesson>

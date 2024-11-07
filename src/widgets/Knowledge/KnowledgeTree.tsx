@@ -9,6 +9,7 @@ import {Knowledge} from "../../shared/types/CourseTypes.ts";
 import CreateKnowledgeNode from "./components/CreateKnowledgeNode.tsx";
 import KnowledgeNode from "./components/KnowledgeNode.tsx";
 import {useCourse} from "../../shared/hok/Course.ts";
+import {useAuth} from "../../shared/hok/Auth.ts";
 
 const {Search} = Input;
 
@@ -21,7 +22,6 @@ interface CustomDataNode extends DataNode {
 
 const convertToTreeData = (
   nodes: Knowledge[],
-  handleNodeEdit: (id: Key, name: string) => void,
   handleNodeDelete: (id: Key) => void,
   searchValue: string,
   selected: boolean
@@ -41,7 +41,7 @@ const convertToTreeData = (
         onDelete={() => handleNodeDelete(node.id)}
       />
     ),
-    children: node.children ? convertToTreeData(node.children, handleNodeEdit, handleNodeDelete, searchValue, selected) : [],
+    children: node.children ? convertToTreeData(node.children, handleNodeDelete, searchValue, selected) : [],
   }));
 };
 
@@ -61,22 +61,27 @@ const getParentKey = (key: Key, tree: CustomDataNode[]): Key | undefined => {
 };
 
 const KnowledgeTree = () => {
+  const {person} = useAuth();
   const {setSelectedKnowledge, selectedKnowledge, selectMode} = useCourse();
-  const {knowledgeTree, fetchKnowledgeTree, knowledgeList} = useKnowledgeStore(useShallow(state => ({
-    knowledgeTree: state.knowledgeTree,
-    fetchKnowledgeTree: state.fetchKnowledgeTree,
-    knowledgeList: state.knowledgeList
-  })));
   const [treeData, setTreeData] = useState<CustomDataNode[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
   const [createNodeVisible, setCreateNodeVisible] = useState(false);
+  const {
+    knowledgeTree,
+    fetchKnowledgeTree,
+    knowledgeList,
+    deleteKnowledge,
+    createKnowledge,
+    error,
+    loading
+  } = useKnowledgeStore(useShallow(state => state));
 
   useEffect(() => {
-    fetchKnowledgeTree();
-  }, [fetchKnowledgeTree]);
+    fetchKnowledgeTree(person?.id);
+  }, [fetchKnowledgeTree, person?.id]);
 
   const handleAddNode = (name: string, description: string) => {
     const newKey = `new_node_${Date.now()}`;
@@ -98,11 +103,18 @@ const KnowledgeTree = () => {
       children: []
     };
     setTreeData((prevData) => [...prevData, newNode]);
+    createKnowledge({
+      id: newKey,
+      name: name,
+      description: description,
+      parentId: '',
+      isApproved: false
+    });
   };
 
   const handleNodeDelete = useCallback((key: Key) => {
     setTreeData((prevData) => {
-      const deleteNode = (nodes: CustomDataNode[]): CustomDataNode[] => {
+      const handleDeleteNode = (nodes: CustomDataNode[]): CustomDataNode[] => {
         return nodes
           .map(node => ({...node}))
           .filter(node => {
@@ -110,42 +122,20 @@ const KnowledgeTree = () => {
             if (node.key === key) return false;
             // Если у узла есть дети, рекурсивно обрабатываем их
             if (node.children) {
-              node.children = deleteNode(node.children);
+              node.children = handleDeleteNode(node.children);
             }
             return true;
           });
       };
-      return deleteNode(prevData);
+      return handleDeleteNode(prevData);
     });
-  }, []);
-
-  const handleNodeEdit = useCallback((key: Key, newName: string) => {
-    setTreeData((prevData) =>
-      prevData.map((node) =>
-        node.key === key
-          ? {
-            ...node,
-            title: newName,
-            render: (
-              <KnowledgeNode
-                title={newName}
-                description={node.description ?? ''}
-                isApproved={!node.isApproved}
-                searchValue={searchValue}
-                selected={selectedKeys.includes(node.key)}
-                onDelete={() => handleNodeDelete(key)}
-              />
-            ),
-          }
-          : node
-      )
-    );
-  }, [handleNodeDelete, searchValue, selectedKeys]);
+    deleteKnowledge(key as string);
+  }, [deleteKnowledge]);
 
   useMemo(() => {
     if (knowledgeTree)
-      setTreeData(convertToTreeData(knowledgeTree, handleNodeEdit, handleNodeDelete, searchValue, false));
-  }, [handleNodeDelete, handleNodeEdit, knowledgeTree, searchValue]);
+      setTreeData(convertToTreeData(knowledgeTree, handleNodeDelete, searchValue, false));
+  }, [handleNodeDelete, knowledgeTree, searchValue]);
 
   const dataList: { key: Key; title: string }[] = [];
   const generateList = (data: CustomDataNode[]) => {
@@ -270,8 +260,16 @@ const KnowledgeTree = () => {
     }));
   };
 
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <Flex gap={8} vertical>
+    <Flex gap={8} vertical style={{width: '100%', height: '100%'}}>
       <Search
         placeholder="Найти знание"
         onChange={onChange}

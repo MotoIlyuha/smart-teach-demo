@@ -16,10 +16,10 @@ import {
 } from "antd";
 import {DeleteOutlined, LockOutlined, SettingOutlined} from "@ant-design/icons";
 
-import {useCourseStore} from "../../shared/stores/courseStore.ts";
-import {CourseDetails} from "../../shared/types/CourseTypes.ts";
-import {useAuth} from "../../shared/hok/Auth.ts";
-import '../../shared/styles/CourseEditSettings.css'
+import {useCourseStore} from "../../../shared/stores/courseStore.ts";
+import {CourseDetails} from "../../../shared/types/CourseTypes.ts";
+import {useAuth} from "../../../shared/hok/Auth.ts";
+import '../../../shared/styles/CourseEditSettings.css'
 
 
 interface CourseEditTitleProps {

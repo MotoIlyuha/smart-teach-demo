@@ -67,7 +67,7 @@ export default function LessonItemEdit({lesson, handleUpdate, handleCancel}: Les
         <Button
           title={'Сохранить'}
           type={'text'}
-          onClick={() => handleUpdate({...lesson, title, type})}
+          onClick={() => handleUpdate({...lesson, title, type, knowledge: selectedKnowledge})}
           icon={<CheckOutlined/>}
           style={{color: valid ? '#52c41a' : 'grey'}}
           disabled={!valid}

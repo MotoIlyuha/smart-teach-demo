@@ -60,15 +60,23 @@ export interface AnswerOption {
 export interface Question {
   id: string;                             // Уникальный идентификатор вопроса
   type: QuestionType;                     // Тип вопроса
-  text: string;                           // Текст вопроса
   cost: number;                           // Баллы за правильный ответ
-  shuffleOptions?: boolean;               // Случайный порядок вариантов ответов
-  caseSensitive?: boolean;                // Чувствительность к регистру
+  shuffleOptions: boolean;                // Случайный порядок вариантов ответов
+  caseSensitive: boolean;                 // Чувствительность к регистру
   invitationText?: string;                // Приглашающий текст перед вопросом
   explanation?: string;                   // Пояснение к правильному ответу
   options: AnswerOption[];                // Список вариантов ответов
   correctAnswerIds: string[];             // Идентификаторы правильных ответов
-  requiredKnowledge: string[];            // Список необходимых знаний (идентификаторы)
+  requiredKnowledge: Knowledge[];         // Список необходимых знаний (идентификаторы)
+}
+
+/**
+ * Интерфейс для вопроса с ответом пользователя
+ */
+export interface QuestionWithAnswer extends Question {
+  userAnswerIds: string[];                // Идентификаторы ответов пользователя
+  userAnswerCorrect: boolean;             // Правильность ответов пользователя
+  userPoints: number;                     // Количество баллов пользователя
 }
 
 /**
@@ -76,21 +84,19 @@ export interface Question {
  */
 export interface Task {
   id: string;                             // Уникальный идентификатор задания
-  title: string;                          // Название задания
-  content: JSONContent;                   // JSON-объект условия задачи
+  content: JSONContent | null;            // JSON-объект условия задачи
   questions: Question[];                  // Список вопросов в задании
-  knowledge: string[];                    // Список необходимых знаний для задания (идентификаторы)
+  knowledge: Knowledge[];                 // Список необходимых знаний для задания
   totalPoints: number;                    // Максимальное количество баллов за задание
   isPublic: boolean;                      // Публичность задания
 }
 
 /**
- * Интерфейс для теста (Test)
+ * Интерфейс для задания с пользовательскими ответами
  */
-export interface Test {
-  id: string;                             // Уникальный идентификатор теста
-  title: string;                          // Название теста
-  tasks: Task[];                          // Список заданий в тесте
+export interface TestTask extends Task {
+  userPoints: number;                     // Количество баллов пользователя
+  questions: QuestionWithAnswer[]         // Список вопросов с ответами
 }
 
 /**
@@ -101,7 +107,7 @@ export interface Lesson {
   title: string;                          // Название урока
   type: LessonType;                       // Тип урока
   tasks: Task[];                          // Список заданий в уроке
-  knowledge?: Knowledge;                      // Идентификатор знания, которое проверяет урок (для "default" и "optional" типов)
+  knowledge?: Knowledge;                  // Знание, которое проверяет урок (для "default" и "optional" типов)
 }
 
 /**
@@ -135,7 +141,7 @@ export interface CourseDetails {
   title: string;                          // Название курса
   description: string;                    // Описание курса
   categories: Category[];                 // Список категорий в курсе
-  questionBank: Question[];               // Банк вопросов курса
+  taskBank: Task[];                       // Банк тестов курса
   knowledge: string[];                    // Список необходимых знаний для курса (идентификаторы)
   totalPoints: number;                    // Максимальное количество баллов за курс
   isPublic: boolean;                      // Публичность курса

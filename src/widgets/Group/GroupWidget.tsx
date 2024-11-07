@@ -77,7 +77,7 @@ export default function GroupWidget({my_group}: { my_group: boolean }) {
       itemCardProps={{bodyStyle: {padding: 12}}}
       grid={{gutter: 8, xs: 1, sm: 1, md: 2, lg: 2, xl: 3, xxl: 3}}
       metas={{
-        content: {},
+        content: {render: () => <></>},
         actions: {cardActionProps: 'actions'},
       } as ProListMetas<Tables<'users'>>}
       toolBarRender={() => {

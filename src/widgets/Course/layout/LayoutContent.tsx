@@ -1,27 +1,96 @@
+import {CSSProperties, ReactNode, useEffect} from "react";
 import {Tabs} from "antd";
 import KnowledgeFlow from "../../Knowledge/KnowledgeFlow.tsx";
-import QuestionBank from "../QuestionBank/QuestionBank.tsx";
+import TaskBank from "../QuestionBank/TaskBank/TaskBank.tsx";
+import TaskEdit from "../QuestionBank/TaskEdit/TaskEdit.tsx";
+import {useLayout} from "../../../shared/hok/Layout.ts";
+import {HideLeftPanelButton, HideRightPanelButton} from "./components/HidePanelButtons.tsx";
 import '../../../shared/styles/CourseEditPage.css';
+import TaskTest from "../QuestionBank/TaskTest/TaskTest.tsx";
+
+type TabItemType = {
+  key: string,
+  label: string,
+  icon?: ReactNode,
+  children?: ReactNode,
+  closable?: boolean,
+  style?: CSSProperties
+}
 
 export default function CourseLayoutContent() {
+  const {taskEditMode, setTaskEditMode, taskTestMode, setTaskTestMode, taskSaved, activeTab, setActiveTab} = useLayout();
+
+  useEffect(() => {
+    setActiveTab(activeTab);
+  }, [activeTab, setActiveTab]);
+
+  const tab_items: TabItemType[] = [
+    {
+      key: 'knowledge-tree',
+      label: `Дерево знаний`,
+      children: <KnowledgeFlow/>,
+      closable: false,
+      style: {height: '100%'}
+    },
+    {
+      key: 'task-bank',
+      label: `Банк заданий`,
+      children: <TaskBank/>,
+      closable: false,
+      style: {height: '100%'}
+    }
+  ];
+
+  if (taskEditMode) {
+    tab_items.push({
+      key: 'task-edit',
+      label: `${!taskSaved ? '●' : ''} Редактор заданий`,
+      children: <TaskEdit/>,
+      closable: true,
+      style: {height: '100%'},
+    });
+  }
+
+  if (taskTestMode) {
+    tab_items.push({
+      key: 'task-test',
+      label: `Тестирование задания`,
+      children: <TaskTest/>,
+      closable: true,
+      style: {height: '100%'},
+    });
+  }
+
   return (
     <Tabs
       className={'course-tabs'}
       tabBarStyle={{margin: 0}}
-      type={'card'}
+      type={'editable-card'}
       defaultActiveKey="1"
-      items={[
-        {
-          key: 'knowledge-tree',
-          label: `Дерево знаний`,
-          children: <KnowledgeFlow/>,
-          style: {height: '100%'}
-        },
-        {
-          key: 'question-bank',
-          label: `Банк заданий`,
-          children: <QuestionBank/>,
-          style: {height: '100%'}
-        }]}/>
+      items={tab_items}
+      hideAdd={true}
+      activeKey={activeTab}
+      onChange={key => setActiveTab(key)}
+      onEdit={(targetKey, action) => {
+        if (action === 'remove') {
+          if (targetKey === 'task-edit') {
+            setTaskEditMode(false);
+            setActiveTab('task-bank');
+          }
+          if (targetKey === 'task-test') {
+            setTaskTestMode(false);
+            if (taskEditMode) {
+              setActiveTab('task-edit');
+            } else {
+              setActiveTab('task-bank');
+            }
+          }
+        }
+      }}
+      tabBarExtraContent={{
+        right: <HideRightPanelButton/>,
+        left: <HideLeftPanelButton/>
+      }}
+    />
   )
 }

@@ -1,0 +1,27 @@
+.question {
+    width: fit-content;
+    height: fit-content;
+    border-radius: 8px;
+    border: transparent 2px solid;
+    margin: 16px 8px 4px;
+}
+
+.inline {
+    display: inline-block;
+    border-radius: 8px;
+    padding: 0;
+    margin: 4px 0.5rem;
+}
+
+.active {
+    width: 100%;
+    user-select: none;
+    padding: 12px;
+    border-radius: 12px;
+    border: rgba(93, 154, 226, 0.3) 2px solid;
+    background: rgba(93, 154, 226, 0.1);
+}
+
+.ant-form-item {
+    margin-bottom: 1rem !important;
+}

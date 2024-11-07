@@ -12,7 +12,15 @@ interface KnowledgeNodeProps {
   selected: boolean;
 }
 
-export default function KnowledgeNode({title, description, isApproved, onDelete, searchValue, selected}: KnowledgeNodeProps) {
+export default function KnowledgeNode(
+  {
+    title,
+    description,
+    isApproved,
+    onDelete,
+    searchValue,
+    selected
+  }: KnowledgeNodeProps) {
   const [showDescription, setShowDescription] = useState(false);
 
   // Логика выделения совпадающего текста
@@ -31,7 +39,8 @@ export default function KnowledgeNode({title, description, isApproved, onDelete,
     );
 
   return (
-    <Space direction="vertical" style={{backgroundColor: !isApproved ? 'lightyellow' : 'transparent', borderRadius: 4, padding: 4}}>
+    <Space direction="vertical"
+           style={{backgroundColor: !isApproved ? 'lightyellow' : 'transparent', borderRadius: 4, padding: 4}}>
       <Flex gap={8} align={'baseline'}>
         {selected ?
           <Tag color={'blue'} style={{textWrap: 'nowrap'}}>{highlightedTitle}</Tag>
@@ -40,7 +49,7 @@ export default function KnowledgeNode({title, description, isApproved, onDelete,
         }
         {description && (
           <ActionIcon
-            icon={<EllipsisOutlined />}
+            icon={<EllipsisOutlined/>}
             title="Показать описание"
             onClick={(e) => {
               e.stopPropagation();
@@ -48,10 +57,15 @@ export default function KnowledgeNode({title, description, isApproved, onDelete,
             }}
           />
         )}
-        {!isApproved && <DeleteAction title="Удалить" onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}/>}
+        {!isApproved && (
+          <DeleteAction
+            title="Удалить"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+          />
+        )}
       </Flex>
       {showDescription && description && (
         <Typography.Text type="secondary">{description}</Typography.Text>

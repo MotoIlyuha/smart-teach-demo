@@ -1,19 +1,15 @@
 import {useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
-import {Alert, Layout} from 'antd';
+import {Alert} from 'antd';
 
 import {useShallow} from "zustand/react/shallow";
 import {useCourseStore} from "../../shared/stores/courseStore.ts";
 
 import {CourseProvider} from "../../widgets/Course/CourseProvider.tsx";
-import CourseEditSettings from "../../widgets/Course/CourseEditSettings.tsx";
-import CourseEditCategories from "../../widgets/Course/CourseEditCategories.tsx";
-import CourseSaveManager from "../../widgets/Course/CourseSaveManager.tsx";
-import CourseLayoutContent from "../../widgets/Course/layout/LayoutContent.tsx";
-import CourseLayoutSider from "../../widgets/Course/layout/LayoutSider.tsx";
+import {LayoutProvider} from "../../widgets/Course/CourseEditLayoutProvider.tsx";
 
-import styles from '../../shared/styles/CourseEditPage.module.css';
+import CourseEdit from "../../widgets/Course/CourseEdit.tsx";
 
 export default function CourseEditPage() {
   const {course_id} = useParams();
@@ -21,7 +17,8 @@ export default function CourseEditPage() {
   const {course, fetchCourse, error} = useCourseStore(useShallow(state => ({
     course: state.course,
     fetchCourse: state.fetchCourse,
-    error: state.error
+    error: state.error,
+    loading: state.dataLoading
   })));
 
   useEffect(() => {
@@ -42,19 +39,9 @@ export default function CourseEditPage() {
 
   return (
     <CourseProvider>
-      <Layout className={styles.layout}>
-        <Layout.Sider width={320} className={styles.sider}>
-          <CourseEditSettings/>
-          <CourseEditCategories/>
-        </Layout.Sider>
-        <Layout.Content>
-          <CourseLayoutContent/>
-        </Layout.Content>
-        <Layout.Sider width='25%' className={styles.sider}>
-          <CourseLayoutSider/>
-        </Layout.Sider>
-        <CourseSaveManager/>
-      </Layout>
+      <LayoutProvider>
+        <CourseEdit/>
+      </LayoutProvider>
     </CourseProvider>
   )
 }

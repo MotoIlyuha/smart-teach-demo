@@ -1,7 +1,8 @@
-import {AnswerOption, Category, CourseDetails, Lesson, Question} from "../shared/types/CourseTypes.ts";
+import {Category, CourseDetails, Lesson} from "../shared/types/CourseTypes.ts";
 import {PostgrestError} from "@supabase/supabase-js";
 import supabase from "../shared/config/supabaseClient.ts";
 import {Json} from "../shared/types/supabase.ts";
+import {fetchTaskBank} from "./SupaBaseTasks.ts";
 
 
 type createCourseType = Promise<{ data: CourseDetails | null; error: PostgrestError | null }>;
@@ -22,7 +23,7 @@ export async function createCourse(course: Partial<CourseDetails>, author_id: st
     const courseDetailsWithMissingProperties = {
       ...courseDetails,
       categories: [],
-      questionBank: [],
+      taskBank: [],
       knowledge: [],
       totalPoints: 0,
       isPublic: courseDetails.is_public,
@@ -39,6 +40,8 @@ export async function fetchCourseDetails(course_id: string): Promise<{
 }> {
   const {data, error} = await supabase.rpc('get_course_details_by_id', {course_id: course_id}).single();
   if (data && !error) {
+    const {data: taskBank, error: taskBankError} = await fetchTaskBank(course_id);
+    if (error) return {data: null, error: taskBankError};
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const fetchedData: CourseDetails = data as CourseDetails;
@@ -71,22 +74,7 @@ export async function fetchCourseDetails(course_id: string): Promise<{
           })),
         },
       })) || [],
-      questionBank: fetchedData.questionBank?.map((question: Question) => ({
-        id: question.id,
-        type: question.type,
-        text: question.text,
-        cost: question.cost,
-        shuffleOptions: question.shuffleOptions,
-        caseSensitive: question.caseSensitive,
-        invitationText: question.invitationText,
-        explanation: question.explanation,
-        options: question.options.map((option: AnswerOption) => ({
-          id: option.id,
-          text: option.text,
-        })),
-        correctAnswerIds: question.correctAnswerIds,
-        requiredKnowledge: question.requiredKnowledge,
-      })) || [],
+      taskBank: taskBank || [],
     };
     return {data: courseDetails, error: null};
   } else return {data: null, error: error};
@@ -105,7 +93,7 @@ export async function updateCourseDetails(course_id: string, updates: Partial<Co
   if (data && !error) {
     const courseDetails = {
       categories: [],
-      questionBank: [],
+      taskBank: [],
       knowledge: [],
       totalPoints: 0,
       isPublic: data.is_public,

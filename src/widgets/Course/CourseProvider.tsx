@@ -1,5 +1,6 @@
-import {createContext, ReactNode, useEffect, useState} from "react";
-import {Category, Knowledge, Lesson} from "../../shared/types/CourseTypes.ts";
+import {createContext, ReactNode, useState} from "react";
+import {Category, Knowledge, Lesson, Task} from "../../shared/types/CourseTypes.ts";
+import {useLayout} from "../../shared/hok/Layout.ts";
 
 interface CourseProviderProps {
   activeCategory: Category | null | undefined
@@ -10,6 +11,8 @@ interface CourseProviderProps {
   setSelectMode: (selectMode: boolean) => void
   selectedLesson: Lesson | undefined
   setSelectedLesson: (lesson: Lesson | undefined) => void
+  currentTask: Task | null | undefined
+  setCurrentTask: (task: Task | null) => void
 }
 
 export const CourseContext = createContext<CourseProviderProps>({
@@ -21,6 +24,8 @@ export const CourseContext = createContext<CourseProviderProps>({
   setSelectMode: () => {},
   selectedLesson: undefined,
   setSelectedLesson: () => {},
+  currentTask: undefined,
+  setCurrentTask: () => {},
 });
 
 export const CourseProvider = ({children}: { children: ReactNode }) => {
@@ -28,15 +33,16 @@ export const CourseProvider = ({children}: { children: ReactNode }) => {
   const [selectedKnowledge, setSelectedKnowledge] = useState<Knowledge | undefined>(undefined);
   const [selectMode, setSelectMode] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
-
-  useEffect(() => {
-    console.log("SELECTED LESSON", selectedLesson);
-  }, [selectedLesson]);
+  const [currentTask, setCurrentTask] = useState<Task | null | undefined>(null);
+  const {setTaskEditMode} = useLayout();
 
   return (
     <CourseContext.Provider value={{
       activeCategory,
-      setActiveCategory,
+      setActiveCategory: (category: Category | null | undefined) => {
+        setActiveCategory(category)
+        if (!category) setSelectedLesson(undefined);
+      },
       selectedKnowledge,
       setSelectedKnowledge,
       selectedLesson,
@@ -46,6 +52,12 @@ export const CourseProvider = ({children}: { children: ReactNode }) => {
         setSelectMode(selectMode);
         if (!selectMode) setSelectedKnowledge(undefined);
       },
+      currentTask,
+      setCurrentTask: (task: Task | null) => {
+        setCurrentTask(task);
+        if (task === null) setTaskEditMode(false);
+        else setTaskEditMode(true);
+      }
     }}>
       {children}
     </CourseContext.Provider>

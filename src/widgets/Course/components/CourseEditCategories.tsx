@@ -1,12 +1,12 @@
 import {useState} from "react";
 import {useShallow} from "zustand/react/shallow";
 import {Collapse} from "antd";
-import {useCourseStore} from "../../shared/stores/courseStore.ts";
-import CategoryTitle from "./Category/CategoryTitle.tsx";
+import {useCourseStore} from "../../../shared/stores/courseStore.ts";
+import CategoryTitle from "../Category/CategoryTitle.tsx";
 import {CollapsibleType} from "antd/es/collapse/CollapsePanel";
-import {useCourse} from "../../shared/hok/Course.ts";
-import CreateCategory from "./Category/CreateCategory.tsx";
-import LessonList from "./Category/Lesson/LessonList.tsx";
+import {useCourse} from "../../../shared/hok/Course.ts";
+import CreateCategory from "../Category/CreateCategory.tsx";
+import LessonList from "../Category/Lesson/LessonList.tsx";
 
 export default function CourseEditCategories() {
 
