@@ -3,7 +3,7 @@ import {useShallow} from "zustand/react/shallow";
 import {Button, Flex, message, Typography} from "antd";
 import {SortableList, SortableListRef} from "@ant-design/pro-editor";
 import {useCourseStore} from "../../../../shared/stores/courseStore.ts";
-import {Category, Lesson, LessonType} from "../../../../shared/types/CourseTypes.ts";
+import {Category, Lesson, LessonNode, LessonType} from "../../../../shared/types/CourseTypes.ts";
 import LessonItemView from "./LessonItem.tsx";
 import LessonItemEdit from "./LessonItemEdit.tsx";
 import {useCourse} from "../../../../shared/hok/Course.ts";
@@ -44,8 +44,28 @@ export default function LessonList({category}: { category: Category }) {
     if (currentCategory && JSON.stringify(currentCategory.lessons) !== JSON.stringify(lessons)) {
       updateCourse({
         ...course,
-        categories: course.categories.map((c) =>
-          c.id === category.id ? {...c, lessons: lessons} : c
+        categories: course.categories.map((c) => c.id === category.id ? {
+            ...c,
+            lessons: lessons,
+            learningTrajectory: {
+              ...c.learningTrajectory,
+              nodes: [
+                ...lessons.map((lesson) => {
+                  if (c.learningTrajectory.nodes && c.learningTrajectory.nodes.find(n => n.id === lesson.id))
+                    return c.learningTrajectory.nodes.find(n => n.id === lesson.id) as LessonNode;
+                  else
+                    return {
+                      id: lesson.id,
+                      label: lesson.title,
+                      lesson_id: lesson.id,
+                      type: 'lesson',
+                      position: {x: 0, y: 0},
+                      data: lesson as Record<string, unknown> & Lesson,
+                    } as LessonNode
+                }).filter(node => node !== undefined)
+              ],
+            }
+          } : c
         ),
       })
         .then(() => {
@@ -77,7 +97,6 @@ export default function LessonList({category}: { category: Category }) {
       <LessonItemEdit
         lesson={lesson}
         handleUpdate={(_lesson: Lesson) => {
-          console.log("!!!!");
           setLessons(lessons.map((l, i) => i === index ? _lesson : l));
           // ref?.current?.updateItem(_lesson, index);
           setEditableLesson(null);
@@ -89,9 +108,11 @@ export default function LessonList({category}: { category: Category }) {
       :
       <>
         {lesson.title ?
-          <LessonItemView index={index} listeners={listeners as Record<string, (param: never) => void>}
-                          lesson={lesson} handleDelete={() => ref?.current?.removeItem(index)}
-                          handleEdit={() => setEditableLesson({...lesson, index: index})}/> : null
+          <LessonItemView
+            index={index} listeners={listeners as Record<string, (param: never) => void>}
+            lesson={lesson} handleDelete={() => ref?.current?.removeItem(index)}
+            handleEdit={() => setEditableLesson({...lesson, index: index})}
+          /> : null
         }
       </>
   ), [editableLesson, lessons]);

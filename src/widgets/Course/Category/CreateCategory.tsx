@@ -12,18 +12,21 @@ export default function CreateCategory() {
 
   const handleCreateCategory = () => {
     if (!course) return;
+    const new_id = uuidv4();
     updateCourse({
       ...course,
-      categories: [...course.categories, {
-        id: uuidv4(),
-        title: '',
-        lessons: [],
-        learningTrajectory: {
-          id: Date.now().toString(),
-          nodes: [],
-          edges: []
-        },
-      }]
+      categories: [
+        ...course.categories,
+        {
+          id: uuidv4(),
+          title: '',
+          lessons: [],
+          learningTrajectory: {
+            id: new_id,
+            nodes: [],
+            edges: []
+          },
+        }]
     }).catch(() => message.error('Не удалось создать раздел!'));
   }
 

@@ -38,17 +38,17 @@ export type Database = {
         Row: {
           id: string
           question_id: string
-          text: Json
+          text: string
         }
         Insert: {
           id?: string
           question_id: string
-          text: Json
+          text: string
         }
         Update: {
           id?: string
           question_id?: string
-          text?: Json
+          text?: string
         }
         Relationships: [
           {
@@ -261,38 +261,6 @@ export type Database = {
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "knowledge"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      learning_trajectories: {
-        Row: {
-          category_id: string
-          created_at: string | null
-          id: string
-          name: string
-          updated_at: string | null
-        }
-        Insert: {
-          category_id: string
-          created_at?: string | null
-          id?: string
-          name: string
-          updated_at?: string | null
-        }
-        Update: {
-          category_id?: string
-          created_at?: string | null
-          id?: string
-          name?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "learning_trajectories_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]
@@ -593,7 +561,6 @@ export type Database = {
           created_at: string | null
           id: string
           is_public: boolean | null
-          title: string
           total_points: number
           updated_at: string | null
         }
@@ -602,7 +569,6 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_public?: boolean | null
-          title: string
           total_points: number
           updated_at?: string | null
         }
@@ -611,7 +577,6 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_public?: boolean | null
-          title?: string
           total_points?: number
           updated_at?: string | null
         }
@@ -619,76 +584,88 @@ export type Database = {
       }
       trajectory_edges: {
         Row: {
+          category_id: string
+          created_at: string | null
           id: string
-          learning_trajectory_id: string
-          source_lesson_id: string
-          target_lesson_id: string
+          source_node_id: string
+          target_node_id: string
+          updated_at: string | null
         }
         Insert: {
+          category_id: string
+          created_at?: string | null
           id?: string
-          learning_trajectory_id: string
-          source_lesson_id: string
-          target_lesson_id: string
+          source_node_id: string
+          target_node_id: string
+          updated_at?: string | null
         }
         Update: {
+          category_id?: string
+          created_at?: string | null
           id?: string
-          learning_trajectory_id?: string
-          source_lesson_id?: string
-          target_lesson_id?: string
+          source_node_id?: string
+          target_node_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "trajectory_edges_learning_trajectory_id_fkey"
-            columns: ["learning_trajectory_id"]
+            foreignKeyName: "fk_category_edge"
+            columns: ["category_id"]
             isOneToOne: false
-            referencedRelation: "learning_trajectories"
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "trajectory_edges_source_lesson_id_fkey"
-            columns: ["source_lesson_id"]
+            foreignKeyName: "fk_source_node"
+            columns: ["source_node_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "trajectory_nodes"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "trajectory_edges_target_lesson_id_fkey"
-            columns: ["target_lesson_id"]
+            foreignKeyName: "fk_target_node"
+            columns: ["target_node_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "trajectory_nodes"
             referencedColumns: ["id"]
           },
         ]
       }
       trajectory_nodes: {
         Row: {
-          id: number
-          learning_trajectory_id: string
+          category_id: string
+          created_at: string | null
+          id: string
           lesson_id: string
-          position: number
+          position: Json
+          updated_at: string | null
         }
         Insert: {
-          id?: number
-          learning_trajectory_id: string
+          category_id: string
+          created_at?: string | null
+          id?: string
           lesson_id: string
-          position: number
+          position: Json
+          updated_at?: string | null
         }
         Update: {
-          id?: number
-          learning_trajectory_id?: string
+          category_id?: string
+          created_at?: string | null
+          id?: string
           lesson_id?: string
-          position?: number
+          position?: Json
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "trajectory_nodes_learning_trajectory_id_fkey"
-            columns: ["learning_trajectory_id"]
+            foreignKeyName: "fk_category_node"
+            columns: ["category_id"]
             isOneToOne: false
-            referencedRelation: "learning_trajectories"
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "trajectory_nodes_lesson_id_fkey"
+            foreignKeyName: "fk_lesson"
             columns: ["lesson_id"]
             isOneToOne: false
             referencedRelation: "lessons"
@@ -892,7 +869,7 @@ export type Database = {
       }
       update_course_details: {
         Args: {
-          course_id: string
+          p_course_id: string
           course_details: Json
         }
         Returns: undefined

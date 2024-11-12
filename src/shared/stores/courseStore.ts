@@ -1,5 +1,5 @@
 import {create} from "zustand";
-import {CourseDetails, Task} from "../types/CourseTypes.ts";
+import {CourseDetails, LearningTrajectory, Task} from "../types/CourseTypes.ts";
 import {
   createCourse, deleteCourse,
   fetchCourseDetails, updateCourse,
@@ -16,6 +16,7 @@ interface CourseStore {
   createTask: (task: Task) => Promise<void>;
   updateTask: (task_id: string, updates: Partial<Task>) => Promise<void>;
   deleteTask: (task_id: string) => Promise<void>;
+  updateTrajectory: (category_id: string, updates: Partial<LearningTrajectory>) => Promise<void>;
   fetchCourse: (course_id: string) => void
   createCourse: (course: CourseDetails, user_id: string) => Promise<void>
   updateCourse: (updates: Partial<CourseDetails>) => Promise<void>
@@ -57,7 +58,7 @@ export const useCourseStore = create<CourseStore>((set) => ({
     }
   },
 
-   deleteTask: async (taskId: string) => {
+  deleteTask: async (taskId: string) => {
     set({taskLoading: true, error: null});
     console.log('Deleting task:', taskId);
     try {
@@ -67,6 +68,31 @@ export const useCourseStore = create<CourseStore>((set) => ({
     } catch (error) {
       console.error('Error deleting task:', error);
       set({tasks: null, error: String(error), taskLoading: false});
+    }
+  },
+
+  updateTrajectory: async (category_id: string, updates: Partial<LearningTrajectory>) => {
+    console.log('Updating trajectory:', category_id, updates);
+    try {
+      set({error: null});
+      const {course} = useCourseStore.getState();
+      console.log('Updated trajectory data:', category_id);
+      if (course && course.categories) {
+        const updatedCourse = {
+          ...course,
+          categories: course?.categories?.map(c => c.id === category_id ? {
+            ...c,
+            learningTrajectory: {...c.learningTrajectory, ...updates}
+          } : c)
+        }
+        set({course: updatedCourse});
+      } else {
+        console.error('Error updating trajectory:', category_id);
+        set({course: null, error: "Error updating trajectory"});
+      }
+    } catch (error) {
+      console.error('Error updating trajectory:', error);
+      set({course: null, error: String(error)});
     }
   },
 

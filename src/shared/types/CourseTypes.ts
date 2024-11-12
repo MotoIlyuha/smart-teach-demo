@@ -1,5 +1,6 @@
 // SmartTeach TypeScript Definitions
 import {JSONContent} from "@tiptap/react";
+import {Edge, Node} from "@xyflow/react";
 
 /**
  * Типы уроков
@@ -86,7 +87,7 @@ export interface Task {
   id: string;                             // Уникальный идентификатор задания
   content: JSONContent | null;            // JSON-объект условия задачи
   questions: Question[];                  // Список вопросов в задании
-  knowledge: Knowledge[];                 // Список необходимых знаний для задания
+  knowledge?: Knowledge[];                // Список необходимых знаний для задания
   totalPoints: number;                    // Максимальное количество баллов за задание
   isPublic: boolean;                      // Публичность задания
 }
@@ -114,13 +115,13 @@ export interface Lesson {
  * Интерфейс для траектории обучения (LearningTrajectory)
  */
 export interface LearningTrajectory {
-  id: string;                       // Уникальный идентификатор траектории обучения
-  nodes: string[];                  // Узлы графа (уроки)
-  edges: {                          // Ребра графа (отношения между уроками)
-    id: string;                     // Уникальный идентификатор ребра
-    source: string;                 // Идентификатор исходного урока
-    target: string;                 // Идентификатор целевого урока
-  }[];                              // Список ребер графа
+  nodes: LessonNode[];              // Узлы графа (уроки)
+  edges: Edge[];                    // Список ребер графа
+}
+
+export interface LessonNode extends Node {
+  lesson_id: string;
+  data: Record<string, unknown> & Lesson;
 }
 
 /**
