@@ -75,8 +75,9 @@ export default function BubbleMenuEditor({editor}: { editor: EditorContentProps[
         {editor.getAttributes('reactComponent')?.content?.id ? (
           <Space.Compact style={{display: editor.getAttributes('reactComponent')?.edit ? 'none' : 'flex'}}>
             {rcBMItems(editor.getAttributes('reactComponent')?.content).map((item) => (
-              <Tooltip title={item.title}>
+              <Tooltip title={item.title} key={item.title}>
                 <Button
+                  key={item.title}
                   icon={item.icon}
                   onClick={item.onClick}
                   type={item.type}

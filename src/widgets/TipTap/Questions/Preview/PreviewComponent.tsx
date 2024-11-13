@@ -2,7 +2,7 @@ import {FC} from "react";
 import {Node} from "@tiptap/core";
 import {NodeViewProps, NodeViewWrapper, ReactNodeViewRenderer} from "@tiptap/react";
 import {PreviewMemo, ReactComponentProps} from "../components/MemoQuestions.tsx";
-import {Question} from "../../../../shared/types/CourseTypes.ts";
+import {Question, QuestionType} from "../../../../shared/types/CourseTypes.ts";
 import styles from "../../../../shared/styles/Question.module.css";
 
 export default function PreviewComponent() {

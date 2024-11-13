@@ -1,10 +1,23 @@
-import {useState} from "react";
-import {Background, BackgroundVariant, Panel, ReactFlow} from "@xyflow/react";
+import {useCallback, useMemo, useState} from "react";
+import {
+  addEdge,
+  Background,
+  BackgroundVariant,
+  Connection,
+  Edge,
+  Panel,
+  ReactFlow,
+  useEdgesState,
+  useNodesState
+} from "@xyflow/react";
 import {Button, Flex, Typography} from 'antd';
 import KnowledgeTree from "./KnowledgeTree.tsx";
 import {useCourse} from "../../shared/hok/Course.ts";
-import {LessonNode} from "./LessonNode.tsx";
+import {LessonNode} from "./Node/LessonNode.tsx";
 import {Lesson} from "../../shared/types/CourseTypes.ts";
+import {useCourseStore} from "../../shared/stores/courseStore.ts";
+import {useShallow} from "zustand/react/shallow";
+import {v4 as uuidv4} from 'uuid';
 
 const nodeTypes = {
   lesson: LessonNode,
@@ -13,21 +26,50 @@ const nodeTypes = {
 export default function KnowledgeFlow() {
   const {activeCategory, selectMode} = useCourse();
   const [collapsed, setCollapsed] = useState(false);
-  // const {course} = useCourseStore(useShallow((set) => ({
-  //   course: set.course
-  // })));
+  const {course, updateCourse} = useCourseStore(useShallow((set) => ({
+    updateCourse: set.updateCourse,
+    course: set.course
+  })));
   const trajectory = activeCategory?.learningTrajectory;
-  const nodes = trajectory?.nodes?.map(n => ({
-    ...n,
-    data: activeCategory?.lessons?.find(l => l.id === n.id) as Record<string, unknown> & Lesson
-  }));
+  const initial_nodes = useMemo(() => (
+    trajectory?.nodes?.map(n => ({
+      ...n,
+      type: 'lesson',
+      data: activeCategory?.lessons?.find(l => l.id === n.lesson_id) as Record<string, unknown> & Lesson
+    })) || []
+  ), [trajectory, activeCategory]);
 
-  console.log(trajectory, nodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initial_nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(trajectory?.edges || []);
+
+  // useEffect(() => {
+  //   if (activeCategory) {
+  //     setNodes(initial_nodes || []);
+  //   }
+  // }, [activeCategory, initial_nodes, setNodes]);
+
+  const onConnect = useCallback((connection: Connection) => {
+    const edge: Edge = { ...connection, id: uuidv4() };
+    setEdges((eds) => addEdge(edge, eds));
+    updateCourse({
+      ...course,
+      categories: course?.categories?.map(c => c.id === activeCategory?.id ? {
+        ...c,
+        learningTrajectory: {
+          ...c.learningTrajectory,
+          edges: [...c.learningTrajectory.edges, edge]
+        }
+      } : c)
+    }).then(r => console.log(r));
+  }, [activeCategory, course, setEdges, updateCourse]);
 
   return (
     <ReactFlow
-      nodes={nodes}
-      edges={trajectory?.edges || []}
+      nodes={initial_nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
       nodeTypes={nodeTypes}
       fitView
       style={{width: '100%', height: '100%'}}

@@ -5,11 +5,16 @@ import {Badge, Input, InputNumber, Select} from "antd";
 interface TestProps {
   question: QuestionWithAnswer
   updateAttributes: (attrs: Partial<QuestionWithAnswer>) => void
+}
+
+interface DynamicInputProps {
+  question: QuestionWithAnswer
+  updateAttributes: (attrs: Partial<QuestionWithAnswer>) => void
   onFocus: () => void
   onBlur: () => void
 }
 
-function TextTest({updateAttributes, ...props}: TestProps) {
+function TextTest({updateAttributes, ...props}: DynamicInputProps) {
   const [text, setText] = useState('');
 
   return (
@@ -27,7 +32,7 @@ function TextTest({updateAttributes, ...props}: TestProps) {
   )
 }
 
-function NumberTest({updateAttributes, ...props}: TestProps) {
+function NumberTest({updateAttributes, ...props}: DynamicInputProps) {
   const [number, setNumber] = useState<number>();
 
   return (
@@ -44,7 +49,7 @@ function NumberTest({updateAttributes, ...props}: TestProps) {
   )
 }
 
-function SelectTest({question, updateAttribute, ...props}: TestProps) {
+function SelectTest({question, updateAttributes, ...props}: DynamicInputProps) {
   const [select, setSelect] = useState<string[]>([]);
 
   return (
@@ -63,7 +68,7 @@ function SelectTest({question, updateAttribute, ...props}: TestProps) {
   )
 }
 
-function TextareaTest({updateAttributes, ...props}: TestProps) {
+function TextareaTest({updateAttributes, ...props}: DynamicInputProps) {
   const [textarea, setTextarea] = useState('');
 
   return (
@@ -80,7 +85,7 @@ function TextareaTest({updateAttributes, ...props}: TestProps) {
   )
 }
 
-function DynamicInput(props: TestProps) {
+function DynamicInput(props: DynamicInputProps) {
   switch (props.question.type) {
     case 'text':
       return <TextTest {...props}/>;

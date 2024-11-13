@@ -131,8 +131,8 @@ export async function fetchCourseDetails(course_id: string): Promise<{
 }
 
 
-export async function updateCourseDetails(course_id: string, updates: Partial<CourseDetails>): createCourseType {
-  const {data, error} = await supabase.from('courses')
+export async function updateCourseDetails(course_id: string, updates: Partial<CourseDetails>): Promise<PostgrestError | null> {
+  const {error} = await supabase.from('courses')
     .update({
       title: updates.title ?? '',
       description: updates.description ?? '',
@@ -141,19 +141,7 @@ export async function updateCourseDetails(course_id: string, updates: Partial<Co
     .eq('id', course_id)
     .select()
     .single();
-  if (data && !error) {
-    const courseDetails = {
-      categories: [],
-      taskBank: [],
-      knowledge: [],
-      totalPoints: 0,
-      isPublic: data.is_public,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-      ...data,
-    } as CourseDetails;
-    return {data: courseDetails, error: null};
-  } else return {data: null, error: error};
+  return error;
 }
 
 export async function updateCourse(course_id: string, updates: Partial<CourseDetails>): Promise<PostgrestError | null> {

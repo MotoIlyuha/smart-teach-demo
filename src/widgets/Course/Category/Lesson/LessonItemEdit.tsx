@@ -23,6 +23,8 @@ export default function LessonItemEdit({lesson, handleUpdate, handleCancel}: Les
     console.log(selectedKnowledge);
   }, [selectedKnowledge]);
 
+  // setSelectedKnowledge(lesson.knowledge);
+
   const TypePicker = () => (
     <Popover overlayInnerStyle={{padding: 2}} open={open} content={
       <ActionGroup
@@ -67,7 +69,13 @@ export default function LessonItemEdit({lesson, handleUpdate, handleCancel}: Les
         <Button
           title={'Сохранить'}
           type={'text'}
-          onClick={() => handleUpdate({...lesson, title, type, knowledge: selectedKnowledge})}
+          onClick={() => handleUpdate({
+            ...lesson,
+            title,
+            type,
+            knowledge: selectedKnowledge,
+            knowledge_id: selectedKnowledge?.id
+          })}
           icon={<CheckOutlined/>}
           style={{color: valid ? '#52c41a' : 'grey'}}
           disabled={!valid}

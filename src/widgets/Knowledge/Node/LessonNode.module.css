@@ -1,0 +1,8 @@
+.node {
+    background: azure;
+    border-radius: 16px;
+    padding: 12px;
+    border: #242424 2px solid;
+    cursor: pointer;
+    user-select: none;
+}

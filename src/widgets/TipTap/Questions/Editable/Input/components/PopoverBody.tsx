@@ -113,7 +113,7 @@ export default function PopoverBody(
               onTypeChange={(value) => {
                 setCurrentType(value as InputType);
                 if (value === 'number') {
-                  setRightAnswer([1]);
+                  setRightAnswer(['1']);
                 }
               }}
             />

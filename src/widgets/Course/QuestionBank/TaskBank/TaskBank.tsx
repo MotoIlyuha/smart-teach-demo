@@ -58,8 +58,22 @@ export default function TaskBank() {
         actions: [<ActionButtons task={task}/>]
       })) as ListProps<Task> as ListProps<Task>['dataSource']);
       setTotalPagination(tasks.length);
+      console.log(tasks);
     }
   }, [loading, tasks]);
+
+  useEffect(() => {
+    const updatedCourse = {
+      ...course,
+      taskBank: tasks || []
+    };
+    if (tasks && JSON.stringify(course) !== JSON.stringify(updatedCourse)) {
+      updateCourse({
+        ...course,
+        taskBank: tasks.filter(t => t.content !== null)
+      }).catch(e => message.error(e.message));
+    }
+  }, [course, selectedLesson?.tasks, tasks, updateCourse]);
 
   useEffect(() => {
     setSelectedRowKeys(selectedLesson?.tasks?.map(t => t.id) || []);
@@ -68,7 +82,7 @@ export default function TaskBank() {
   return (
     <ProList<Task>
       className={"TaskList"}
-      headerTitle={<HeaderTitle/>}
+      headerTitle={<div onClick={() => console.log(course?.taskBank)}><HeaderTitle/></div>}
       toolBarRender={() => [<CreateTaskButton/>, <PublicSwitch/>]}
       grid={{gutter: 16, column: 2, xs: 1, sm: 1, md: 1, lg: 1, xl: 2, xxl: 3}}
       ghost={false}

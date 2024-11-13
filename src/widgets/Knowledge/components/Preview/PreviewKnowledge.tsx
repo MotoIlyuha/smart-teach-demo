@@ -1,12 +1,12 @@
 import {useShallow} from "zustand/react/shallow";
-import {Tag, Tooltip} from "antd";
+import {Tag, Tooltip, Typography} from "antd";
 import {TreeSelect} from "@ant-design/pro-editor";
 import {Knowledge} from "../../../../shared/types/CourseTypes.ts";
 import {useKnowledgeStore} from "../../../../shared/stores/knowledgeStore.ts";
 import {convertToTreeData} from "../../../../shared/utils/buildKnowledgeTree.ts";
 import './PreviewKnowledge.css'
 
-export default function PreviewKnowledge({knowledge}: { knowledge: Knowledge[] }) {
+export default function PreviewKnowledge({knowledge}: { knowledge: Knowledge[] | undefined }) {
   const {knowledgeTree, knowledgeList} = useKnowledgeStore(useShallow((set) => ({
     knowledgeTree: set.knowledgeTree,
     knowledgeList: set.knowledgeList
@@ -23,6 +23,8 @@ export default function PreviewKnowledge({knowledge}: { knowledge: Knowledge[] }
     const randomIndex = Math.floor(Math.random() * tag_colors.length);
     return tag_colors[randomIndex];
   }
+
+  if (!knowledge) return <Typography.Text type={'secondary'}>Знание не определено!</Typography.Text>
 
   return (
     <TreeSelect

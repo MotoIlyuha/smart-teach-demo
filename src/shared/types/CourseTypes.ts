@@ -109,6 +109,7 @@ export interface Lesson {
   type: LessonType;                       // Тип урока
   tasks: Task[];                          // Список заданий в уроке
   knowledge?: Knowledge;                  // Знание, которое проверяет урок (для "default" и "optional" типов)
+  knowledge_id?: string;                  // Идентификатор знания, которое проверяет урок
 }
 
 /**

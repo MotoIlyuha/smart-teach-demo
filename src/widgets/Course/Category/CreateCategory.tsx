@@ -18,11 +18,10 @@ export default function CreateCategory() {
       categories: [
         ...course.categories,
         {
-          id: uuidv4(),
+          id: new_id,
           title: '',
           lessons: [],
           learningTrajectory: {
-            id: new_id,
             nodes: [],
             edges: []
           },

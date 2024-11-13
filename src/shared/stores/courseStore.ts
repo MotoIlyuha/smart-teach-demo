@@ -137,7 +137,6 @@ export const useCourseStore = create<CourseStore>((set) => ({
     console.log('Updating course:', updates);
     try {
       const {course} = useCourseStore.getState();
-      updates.taskBank = updates.taskBank || [];
       if (!course || !course.id) set({course: null, error: 'Course not found', dataLoading: false});
       else set({course: {...course, ...updates}, error: null});
     } catch (error) {
@@ -174,13 +173,13 @@ export const useCourseStore = create<CourseStore>((set) => ({
       const {course} = useCourseStore.getState();
       if (!course || !course.id) set({course: null, error: 'Course not found', dataLoading: false});
       else {
-        const {data, error} = await updateCourseDetails(course.id, updates);
-        console.log('Updated course data:', data);
+        const error = await updateCourseDetails(course.id, updates);
+        console.log('Updated course data:', updates);
         if (error) {
           console.error('Error updating course:', error.message);
           set({course: null, error: error.message, dataLoading: false});
         } else {
-          set({course: data, dataLoading: false});
+          set({course: {...course, ...updates}, dataLoading: false});
         }
       }
     } catch (error) {

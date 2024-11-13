@@ -6,8 +6,6 @@ export async function fetchTaskBank(course_id: string): Promise<{ data: Task[] |
   const {data, error} = await supabase.rpc('fetch_course_task_data', {in_course_id: course_id});
   const fetchedData = data as unknown as Task[];
   if (data && !error) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     const tasks: Task[] = fetchedData.map((task: Task) => ({
       id: task.id,
       content: task.content,
