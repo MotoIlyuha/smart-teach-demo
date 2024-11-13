@@ -48,9 +48,7 @@ export async function fetchCourseDetails(course_id: string): Promise<{
 }> {
   const { data, error } = await supabase.rpc('get_course_details_by_id', { course_id }).single();
   if (data && !error) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const fetchedData: CourseDetails = data as CourseDetails;
+    const fetchedData: CourseDetails = data;
     const courseDetails: CourseDetails = {
       id: fetchedData.id,
       title: fetchedData.title,
@@ -65,8 +63,10 @@ export async function fetchCourseDetails(course_id: string): Promise<{
         title: category.title,
         lessons: category.lessons?.map((lesson: Lesson) => ({
           id: lesson.id,
+          index: lesson.index,
           title: lesson.title,
           type: lesson.type,
+          knowledge_id: lesson.knowledge_id,
           tasks: lesson.tasks?.map((task: Task) => ({
             id: task.id,
             content: task.content,
@@ -88,7 +88,6 @@ export async function fetchCourseDetails(course_id: string): Promise<{
               requiredKnowledge: question.requiredKnowledge
             }))
           })),
-          knowledge: lesson.knowledge,
         })) || [],
         learningTrajectory: {
           nodes: category.learningTrajectory?.nodes?.map((node: LessonNode) => ({

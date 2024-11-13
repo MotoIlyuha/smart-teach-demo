@@ -1,3 +1,5 @@
+import {CourseDetails} from "./CourseTypes.ts";
+
 export type Json =
   | string
   | number
@@ -820,7 +822,7 @@ export type Database = {
         Args: {
           course_id: string
         }
-        Returns: Json
+        Returns: CourseDetails
       }
       get_course_task_data: {
         Args: {

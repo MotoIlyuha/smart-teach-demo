@@ -29,9 +29,13 @@ export default function TaskBank() {
   const rowSelection = {
     selectedRowKeys,
     onChange: (keys: Key[]) => {
-      if (!selectedLesson) return;
+      console.log('!!!!!!!! Selected keys: ', keys);
+      if (!selectedLesson || !tasks) return;
       setSelectedRowKeys(keys);
-      if (!tasks) return;
+      setSelectedLesson({
+        ...selectedLesson,
+        tasks: tasks.filter(t => keys.includes(t.id)),
+      } as Lesson);
       updateCourse({
         ...course,
         categories: course?.categories?.map(c => c.id === activeCategory?.id ? {
@@ -42,10 +46,6 @@ export default function TaskBank() {
           } : l)
         } : c)
       }).catch(e => message.error(e.message));
-      setSelectedLesson({
-        ...selectedLesson,
-        tasks: tasks.filter(t => keys.includes(t.id)),
-      } as Lesson);
     }
   };
 
@@ -62,18 +62,18 @@ export default function TaskBank() {
     }
   }, [loading, tasks]);
 
-  useEffect(() => {
-    const updatedCourse = {
-      ...course,
-      taskBank: tasks || []
-    };
-    if (tasks && JSON.stringify(course) !== JSON.stringify(updatedCourse)) {
-      updateCourse({
-        ...course,
-        taskBank: tasks.filter(t => t.content !== null)
-      }).catch(e => message.error(e.message));
-    }
-  }, [course, selectedLesson?.tasks, tasks, updateCourse]);
+  // useEffect(() => {
+  //   const updatedCourse = {
+  //     ...course,
+  //     taskBank: tasks || []
+  //   };
+  //   if (tasks && JSON.stringify(course) !== JSON.stringify(updatedCourse)) {
+  //     updateCourse({
+  //       ...course,
+  //       taskBank: tasks.filter(t => t.content !== null)
+  //     }).catch(e => message.error(e.message));
+  //   }
+  // }, [course, selectedLesson?.tasks, tasks, updateCourse]);
 
   useEffect(() => {
     setSelectedRowKeys(selectedLesson?.tasks?.map(t => t.id) || []);
@@ -82,7 +82,7 @@ export default function TaskBank() {
   return (
     <ProList<Task>
       className={"TaskList"}
-      headerTitle={<div onClick={() => console.log(course?.taskBank)}><HeaderTitle/></div>}
+      headerTitle={<HeaderTitle/>}
       toolBarRender={() => [<CreateTaskButton/>, <PublicSwitch/>]}
       grid={{gutter: 16, column: 2, xs: 1, sm: 1, md: 1, lg: 1, xl: 2, xxl: 3}}
       ghost={false}

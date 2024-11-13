@@ -1,25 +1,25 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useShallow} from "zustand/react/shallow";
-import {Button, Flex, message, Typography} from "antd";
+import {Button, Flex, Typography} from "antd";
 import {SortableList, SortableListRef} from "@ant-design/pro-editor";
 import {useCourseStore} from "../../../../shared/stores/courseStore.ts";
-import {Category, Lesson, LessonNode, LessonType} from "../../../../shared/types/CourseTypes.ts";
+import {Category, Lesson, LessonType} from "../../../../shared/types/CourseTypes.ts";
 import LessonItemView from "./LessonItem.tsx";
 import LessonItemEdit from "./LessonItemEdit.tsx";
 import {useCourse} from "../../../../shared/hok/Course.ts";
 import {v4 as uuidv4} from 'uuid';
 import {useLayout} from "../../../../shared/hok/Layout.ts";
-
-interface LessonWithIndex extends Lesson {
-  index: number
-}
+import {useKnowledgeStore} from "../../../../shared/stores/knowledgeStore.ts";
 
 export default function LessonList({category}: { category: Category }) {
-  const {setSelectMode} = useCourse();
-  const {setActiveTab} = useLayout();
   const ref = useRef<SortableListRef>(null);
+
+  const {setSelectMode, activeCategory} = useCourse();
+  const {setActiveTab} = useLayout();
+
   const [lessons, setLessons] = useState(category.lessons || []);
-  const [editableLesson, setEditableLesson] = useState<LessonWithIndex | null>(null);
+  const [editableLesson, setEditableLesson] = useState<Lesson | null>(null);
+  const {knowledgeList} = useKnowledgeStore(useShallow(state => ({knowledgeList: state.knowledgeList})));
   const {course, updateCourse} = useCourseStore(useShallow((state) => ({
     course: state.course,
     updateCourse: state.updateCourse
@@ -32,49 +32,49 @@ export default function LessonList({category}: { category: Category }) {
 
   // Обновляем `lessons`, если изменяется категория
   useEffect(() => {
-    setLessons(category.lessons || []);
-  }, [category]);
+    setLessons(category.lessons.map(l => ({...l, knowledge: knowledgeList?.find(k => k.id === l.knowledge_id)})) || []);
+  }, [category, knowledgeList]);
 
   // Обновляем курс, если изменяются уроки
-  useEffect(() => {
-    if (!course || !category) return;
-
-    // Проверяем, действительно ли изменились уроки
-    const currentCategory = course.categories.find((c) => c.id === category.id);
-    if (currentCategory && JSON.stringify(currentCategory.lessons) !== JSON.stringify(lessons)) {
-      updateCourse({
-        ...course,
-        categories: course.categories.map((c) => c.id === category.id ? {
-            ...c,
-            lessons: lessons,
-            learningTrajectory: {
-              ...c.learningTrajectory,
-              nodes: [
-                ...lessons.map((lesson) => {
-                  if (c.learningTrajectory.nodes && c.learningTrajectory.nodes.find(n => n.id === lesson.id))
-                    return c.learningTrajectory.nodes.find(n => n.id === lesson.id) as LessonNode;
-                  else
-                    return {
-                      id: lesson.id,
-                      label: lesson.title,
-                      lesson_id: lesson.id,
-                      type: 'lesson',
-                      position: {x: 0, y: 0},
-                      data: lesson as Record<string, unknown> & Lesson,
-                    } as LessonNode
-                }).filter(node => node !== undefined)
-              ],
-            }
-          } : c
-        ),
-      })
-        .then(() => {
-          console.log('Course updated successfully');
-        })
-        .catch(() => message.error('Не удалось обновить уроки!'));
-    }
-    // Удалите лишние зависимости, такие как `course` и `category`, чтобы избежать повторных рендеров
-  }, [category, course, lessons, updateCourse]);
+  // useEffect(() => {
+  //   if (!course || !category) return;
+  //
+  //   // Проверяем, действительно ли изменились уроки
+  //   const currentCategory = course.categories.find((c) => c.id === category.id);
+  //   if (currentCategory && JSON.stringify(currentCategory.lessons) !== JSON.stringify(lessons)) {
+  //     updateCourse({
+  //       ...course,
+  //       categories: course.categories.map((c) => c.id === category.id ? {
+  //           ...c,
+  //           lessons: lessons,
+  //           learningTrajectory: {
+  //             ...c.learningTrajectory,
+  //             nodes: [
+  //               ...lessons.map((lesson) => {
+  //                 if (c.learningTrajectory.nodes && c.learningTrajectory.nodes.find(n => n.id === lesson.id))
+  //                   return c.learningTrajectory.nodes.find(n => n.id === lesson.id) as LessonNode;
+  //                 else
+  //                   return {
+  //                     id: lesson.id,
+  //                     label: lesson.title,
+  //                     lesson_id: lesson.id,
+  //                     type: 'lesson',
+  //                     position: {x: 0, y: 0},
+  //                     data: lesson as Record<string, unknown> & Lesson,
+  //                   } as LessonNode
+  //               }).filter(node => node !== undefined)
+  //             ],
+  //           }
+  //         } : c
+  //       ),
+  //     })
+  //       .then(() => {
+  //         console.log('Course updated successfully');
+  //       })
+  //       .catch(() => message.error('Не удалось обновить уроки!'));
+  //   }
+  //   // Удалите лишние зависимости, такие как `course` и `category`, чтобы избежать повторных рендеров
+  // }, [category, course, lessons, updateCourse]);
 
   const handleCreateLesson = () => {
     if (!course || !category) return;
@@ -99,6 +99,13 @@ export default function LessonList({category}: { category: Category }) {
         handleUpdate={(_lesson: Lesson) => {
           setLessons(lessons.map((l, i) => i === index ? _lesson : l));
           // ref?.current?.updateItem(_lesson, index);
+          updateCourse({
+            ...course,
+            categories: course?.categories?.map(c => c.id === activeCategory?.id ? {
+              ...c,
+              lessons: lessons.map((l, i) => i === index ? _lesson : l)
+            } : c)
+          }).then()
           setEditableLesson(null);
         }}
         handleCancel={() => {
@@ -115,13 +122,27 @@ export default function LessonList({category}: { category: Category }) {
           /> : null
         }
       </>
-  ), [editableLesson, lessons]);
+  ), [activeCategory?.id, course, editableLesson, lessons, updateCourse]);
 
   return (
     <SortableList<Lesson>
       ref={ref}
       value={lessons}
-      onChange={setLessons}
+      onChange={(lessons) => {
+        setLessons(lessons)
+        updateCourse({
+          ...course,
+          categories: course?.categories?.map(c => c.id === activeCategory?.id ? {
+            ...c,
+            lessons: lessons
+              .filter(l => l.title !== '')
+              .map((l, index) => ({
+                ...l,
+                index
+              }))
+          } : c)
+        }).then()
+      }}
       renderItem={(lesson: Lesson, {index, listeners}) =>
         <LessonItem
           index={index as number}
@@ -145,15 +166,16 @@ export default function LessonList({category}: { category: Category }) {
           const newId = uuidv4();
           const newLesson = {
             id: newId,
-            title: '',
+            index: lessons.length,
+            title: 'Новый урок',
             type: 'default' as LessonType,
             tasks: [],
             knowledge: undefined,
             knowledge_id: undefined
           };
           // setLessons(lessons.filter((l) => l.title !== ''));
-          if (editableLesson?.title === '') ref?.current?.removeItem(editableLesson.index);
-          setEditableLesson({...newLesson, index: lessons.length});
+          if (editableLesson?.title === 'Новый урок') ref?.current?.removeItem(editableLesson.index);
+          setEditableLesson(newLesson);
           return newLesson;
         }
       }}

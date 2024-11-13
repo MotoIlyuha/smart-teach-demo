@@ -44,32 +44,32 @@ export default function LessonTasks() {
 
   return (
     <Flex gap={8} justify={'space-between'} vertical style={{height: '100%', overflow: 'hide'}}>
-    <Flex gap={8} vertical style={{padding: 12, color: 'white'}}>
-      <Typography.Title level={3}>{selectedLesson?.title}</Typography.Title>
-      <Typography.Text type={'secondary'}>{typeIcon[selectedLesson?.type || 'default'].label}</Typography.Text>
-      {selectedLesson?.knowledge &&
-          <Tooltip title={selectedLesson.knowledge.description}>
-              <Typography.Text>{selectedLesson.knowledge.name}</Typography.Text>
-          </Tooltip>
-      }
-      <Table
-        loading={loading}
-        columns={columns}
-        dataSource={dataSource}
-        pagination={false}
-        scroll={{y: '100%'}}
-        rowKey={(task: Task) => task.id}
-        expandable={{
-          'expandedRowRender': (task: Task) => <TaskPreview task={task}/>,
-          'expandIcon': ({expanded, onExpand, record}) =>
-            <DownOutlined style={{rotate: expanded ? '180deg' : '0deg', transition: '0.3s all'}}
-                          onClick={(e) => onExpand(record, e)}/>,
-          'rowExpandable': (task: Task) => task.content !== null,
-        }}
-        style={{height: '100%', margin: 8, overflow: 'auto'}}
-      />
-    </Flex>
-      <Button type={'primary'} size={'large'} icon={<GrTest />} disabled style={{margin: 8}}>
+      <Flex gap={8} vertical style={{padding: 12, color: 'white'}}>
+        <Typography.Title level={3}>{selectedLesson?.title}</Typography.Title>
+        <Typography.Text type={'secondary'}>{typeIcon[selectedLesson?.type || 'default'].label}</Typography.Text>
+        {selectedLesson?.knowledge &&
+            <Tooltip title={selectedLesson.knowledge.description}>
+                <Typography.Text>{selectedLesson.knowledge.name}</Typography.Text>
+            </Tooltip>
+        }
+        <Table
+          loading={loading}
+          columns={columns}
+          dataSource={dataSource}
+          pagination={false}
+          scroll={{y: '100%'}}
+          rowKey={(task: Task) => task.id}
+          expandable={{
+            'expandedRowRender': (task: Task) => <TaskPreview task={task}/>,
+            'expandIcon': ({expanded, onExpand, record}) =>
+              <DownOutlined style={{rotate: expanded ? '180deg' : '0deg', transition: '0.3s all'}}
+                            onClick={(e) => onExpand(record, e)}/>,
+            'rowExpandable': (task: Task) => task.content !== null,
+          }}
+          style={{height: '100%', margin: 8, overflow: 'auto'}}
+        />
+      </Flex>
+      <Button type={'primary'} size={'large'} icon={<GrTest/>} disabled style={{margin: 8}}>
         Протестировать урок
       </Button>
     </Flex>

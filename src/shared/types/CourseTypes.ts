@@ -105,6 +105,7 @@ export interface TestTask extends Task {
  */
 export interface Lesson {
   id: string;                             // Уникальный идентификатор урока
+  index: number;                          // Порядковый номер урока
   title: string;                          // Название урока
   type: LessonType;                       // Тип урока
   tasks: Task[];                          // Список заданий в уроке
