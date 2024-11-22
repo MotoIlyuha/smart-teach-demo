@@ -43,7 +43,7 @@ export default function CategoryTitle({category, setCategoryItemDisabled}: Categ
         <Input
           value={editableStr}
           onValueChanging={(v) => {
-            setValid(v.length > 2 && v.length < 20);
+            setValid(v.length > 2 && v.length < 50);
             setEditableStr(v);
           }}
           onClick={e => e.stopPropagation()}
@@ -62,13 +62,15 @@ export default function CategoryTitle({category, setCategoryItemDisabled}: Categ
                   title={'Редактировать название'}
                   onClick={e => {
                     e.stopPropagation();
-                    setCategoryItemDisabled(onEdit);
-                    if (valid)
-                      setOnEdit(!onEdit);
+                    console.log(category.id, onEdit);
+                    setCategoryItemDisabled(!onEdit);
                     if (onEdit) {
+                      if (valid) setOnEdit(false);
+                      else setOnEdit(true);
                       setEditableStr(category.title);
                       handleEditCategoryTitleBlur();
                     }
+                    else setOnEdit(true);
                   }}/>
               <DeleteAction
                   title={'Удалить раздел'}

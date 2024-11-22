@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import {MarkerType} from "reactflow";
 import {
   addEdge,
@@ -6,13 +6,10 @@ import {
   BackgroundVariant,
   Connection,
   Edge,
-  Panel,
   ReactFlow,
   useEdgesState,
   useNodesState
 } from "@xyflow/react";
-import {Button, Flex, Typography} from 'antd';
-import KnowledgeTree from "./KnowledgeTree.tsx";
 import {useCourse} from "../../shared/hok/Course.ts";
 import {LessonNode} from "./Node/LessonNode.tsx";
 import {Lesson} from "../../shared/types/CourseTypes.ts";
@@ -45,8 +42,7 @@ const connectionLineStyle = {
 };
 
 export default function KnowledgeFlow() {
-  const {activeCategory, selectMode} = useCourse();
-  const [collapsed, setCollapsed] = useState(false);
+  const {activeCategory} = useCourse();
   const {course, updateCourse} = useCourseStore(useShallow((set) => ({
     updateCourse: set.updateCourse,
     course: set.course
@@ -106,16 +102,6 @@ export default function KnowledgeFlow() {
       fitView
       style={{width: '100%', height: '100%'}}
     >
-      <Panel position={'top-left'} onClick={() => console.log(edges)}>
-        <Flex gap={8} align={'baseline'}>
-          <Typography.Title level={3}>
-            {selectMode ? 'Выберите знание' : (activeCategory ? activeCategory.title : 'Дерево знаний')}
-          </Typography.Title>
-          {!selectMode &&
-              <Button onClick={() => setCollapsed(!collapsed)}>{collapsed ? 'Развернуть' : 'Свернуть'}</Button>}
-        </Flex>
-        {(!collapsed || selectMode) && <KnowledgeTree/>}
-      </Panel>
       <Background
         gap={12}
         variant={BackgroundVariant.Dots}

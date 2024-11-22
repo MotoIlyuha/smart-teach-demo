@@ -129,13 +129,14 @@ export default function LessonList({category}: { category: Category }) {
       ref={ref}
       value={lessons}
       onChange={(lessons) => {
+        console.log(lessons);
         setLessons(lessons)
         updateCourse({
           ...course,
           categories: course?.categories?.map(c => c.id === activeCategory?.id ? {
             ...c,
             lessons: lessons
-              .filter(l => l.title !== '')
+              // .filter(l => l.title !== '')
               .map((l, index) => ({
                 ...l,
                 index
@@ -174,7 +175,7 @@ export default function LessonList({category}: { category: Category }) {
             knowledge_id: undefined
           };
           // setLessons(lessons.filter((l) => l.title !== ''));
-          if (editableLesson?.title === 'Новый урок') ref?.current?.removeItem(editableLesson.index);
+          // if (editableLesson?.title === 'Новый урок') ref?.current?.removeItem(editableLesson.index);
           setEditableLesson(newLesson);
           return newLesson;
         }

@@ -46,7 +46,7 @@ export default function CreateKnowledgeNode({onCreate, onCancel}: {
         />
         <Button
           type={'text'} title={'Отмена'} icon={<CloseOutlined/>} style={{color: 'grey'}}
-          onClick={onCancel} disabled={!valid}
+          onClick={onCancel}
         />
       </Flex>
     </Flex>

@@ -269,43 +269,48 @@ const KnowledgeTree = () => {
   }
 
   return (
-    <Flex gap={8} vertical style={{width: '100%', height: '100%'}}>
-      <Search
-        placeholder="Найти знание"
-        onChange={onChange}
-        enterButton={<SearchOutlined/>}
-      />
-      <Tree
-        treeData={transformTreeData(processedTreeData)}
-        selectable={selectMode}
-        selectedKeys={selectedKnowledge === undefined ? undefined : selectedKeys}
-        onSelect={(keys) => {
-          setSelectedKeys(keys);
-          if (keys) {
-            setSelectedKnowledge(knowledgeList?.find((k) => k.id === keys[0]?.toString()));
-            console.log(treeData, keys);
-          }
-        }}
-        onDrop={onDrop}
-        draggable={true}
-        expandedKeys={expandedKeys}
-        onExpand={onExpand}
-        autoExpandParent={autoExpandParent}
-        defaultExpandAll={true}
-        height={600}
-      />
-      {createNodeVisible &&
-          <CreateKnowledgeNode
-              onCreate={(name, description) => handleAddNode(name, description)}
-              onCancel={() => setCreateNodeVisible(false)}/>
-      }
-      <Button
-        type="primary"
-        icon={<PlusOutlined/>}
-        onClick={() => setCreateNodeVisible(true)}
-      >
-        Добавить знание
-      </Button>
+    <Flex gap={8} vertical justify={'space-between'}
+          style={{width: '100%', height: '100%', padding: 8}}>
+      <Flex gap={8} vertical>
+        <Search
+          placeholder="Найти знание"
+          onChange={onChange}
+          enterButton={<SearchOutlined/>}
+        />
+        <Tree
+          treeData={transformTreeData(processedTreeData)}
+          selectable={selectMode}
+          selectedKeys={selectedKnowledge === undefined ? undefined : selectedKeys}
+          onSelect={(keys) => {
+            setSelectedKeys(keys);
+            if (keys) {
+              setSelectedKnowledge(knowledgeList?.find((k) => k.id === keys[0]?.toString()));
+              console.log(treeData, keys);
+            }
+          }}
+          onDrop={onDrop}
+          draggable={true}
+          expandedKeys={expandedKeys}
+          onExpand={onExpand}
+          autoExpandParent={autoExpandParent}
+          defaultExpandAll={true}
+          height={1000}
+        />
+      </Flex>
+      <Flex gap={8} vertical style={{width: '50%'}}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined/>}
+          onClick={() => setCreateNodeVisible(true)}
+        >
+          Добавить знание
+        </Button>
+        {createNodeVisible &&
+            <CreateKnowledgeNode
+                onCreate={(name, description) => handleAddNode(name, description)}
+                onCancel={() => setCreateNodeVisible(false)}/>
+        }
+      </Flex>
     </Flex>
   );
 };

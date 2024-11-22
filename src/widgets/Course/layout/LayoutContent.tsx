@@ -5,8 +5,9 @@ import TaskBank from "../QuestionBank/TaskBank/TaskBank.tsx";
 import TaskEdit from "../QuestionBank/TaskEdit/TaskEdit.tsx";
 import {useLayout} from "../../../shared/hok/Layout.ts";
 import {HideLeftPanelButton, HideRightPanelButton} from "./components/HidePanelButtons.tsx";
-import '../../../shared/styles/CourseEditPage.css';
 import TaskTest from "../QuestionBank/TaskTest/TaskTest.tsx";
+import KnowledgeTree from "../../Knowledge/KnowledgeTree.tsx";
+import '../../../shared/styles/CourseEditPage.css';
 
 type TabItemType = {
   key: string,
@@ -28,6 +29,13 @@ export default function CourseLayoutContent() {
     {
       key: 'knowledge-tree',
       label: `Дерево знаний`,
+      children: <KnowledgeTree/>,
+      closable: false,
+      style: {height: '100%'}
+    },
+    {
+      key: 'learning-trajectory',
+      label: `Траектория обучения`,
       children: <KnowledgeFlow/>,
       closable: false,
       style: {height: '100%'}

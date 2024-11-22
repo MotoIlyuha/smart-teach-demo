@@ -46,16 +46,17 @@ const LessonItem = ({index, listeners, lesson, handleEdit, handleDelete}: Lesson
           style={{opacity: hover ? 1 : 0}}
         />
       </Flex>
-      <Flex gap={8} align={'baseline'} style={{paddingInline: 8}}>
-        {lesson.knowledge ? (
-          <>
-            <Typography.Text type={'secondary'}>Проверяемое знание: </Typography.Text>
-            <Tag>{lesson.knowledge.name}</Tag>
-          </>
-        ) : (
-          <Typography.Text type={'secondary'}>Этот урок не проверяет знания</Typography.Text>
-        )}
-      </Flex>
+      {lesson.type === 'default' &&
+          <Flex gap={8} align={'baseline'} style={{paddingInline: 8}}>
+            {lesson.knowledge ? (
+              <>
+                <Typography.Text type={'secondary'}>Проверяемое знание: </Typography.Text>
+                <Tag>{lesson.knowledge.name}</Tag>
+              </>
+            ) : (
+              <Typography.Text type={'secondary'}>Этот урок не проверяет знания</Typography.Text>
+            )}
+          </Flex>}
     </Flex>
   )
 }
