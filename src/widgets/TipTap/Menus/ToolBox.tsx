@@ -5,11 +5,14 @@ import {
   ItalicOutlined,
   OrderedListOutlined,
   StrikethroughOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  UnderlineOutlined,
+  UndoOutlined,
+  RedoOutlined
 } from "@ant-design/icons";
 import {EditorContentProps} from "@tiptap/react";
 import Link from "./Marks/Link";
-import Image from "./Nodes/Image";
+import Media from "./Nodes/Media";
 import Formula from "./Nodes/Formula";
 import PasteQuestion from "./Nodes/Question.tsx";
 
@@ -21,6 +24,12 @@ export default function ToolBox({editor}: { editor: EditorContentProps['editor']
   return (
     <Space split={<Divider/>} wrap>
       <Space.Compact>
+        <Button icon={<UndoOutlined/>}
+                onClick={() => editor?.chain().focus().undo().run()}
+                disabled={!editor.can().chain().focus().undo().run()}/>
+        <Button icon={<RedoOutlined/>}
+                onClick={() => editor?.chain().focus().redo().run()}
+                disabled={!editor.can().chain().focus().redo().run()}/>
         <Button icon={<BoldOutlined/>}
                 onClick={() => editor?.chain().focus().toggleBold().run()}
                 disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -33,6 +42,10 @@ export default function ToolBox({editor}: { editor: EditorContentProps['editor']
                 onClick={() => editor?.chain().focus().toggleStrike().run()}
                 disabled={!editor.can().chain().focus().toggleStrike().run()}
                 type={editor.isActive('strike') ? 'primary' : 'default'}/>
+        <Button icon={<UnderlineOutlined/>}
+                onClick={() => editor?.chain().focus().toggleUnderline().run()}
+                disabled={!editor.can().chain().focus().toggleUnderline().run()}
+                type={editor.isActive('underline') ? 'primary' : 'default'}/>
         <Button icon={<CodeOutlined/>}
                 onClick={() => editor?.chain().focus().toggleCode().run()}
                 disabled={!editor.can().chain().focus().toggleCode().run()}
@@ -51,7 +64,7 @@ export default function ToolBox({editor}: { editor: EditorContentProps['editor']
       <Space.Compact>
         <Link editor={editor}/>
         <Formula editor={editor}/>
-        <Image editor={editor}/>
+        <Media editor={editor}/>
       </Space.Compact>
       <Space.Compact direction={'horizontal'}>
         <PasteQuestion editor={editor}/>
