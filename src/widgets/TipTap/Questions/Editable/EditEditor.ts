@@ -4,6 +4,7 @@ import {Mathematics} from "@tiptap-pro/extension-mathematics";
 import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
 import EditComponent from "./EditComponent.tsx";
+import Underline from "../../extensions/Underline";
 import styles from "../../../../shared/styles/Editor.module.css";
 
 export default function EditEditor(): EditorContentProps['editor'] {
@@ -14,6 +15,7 @@ export default function EditEditor(): EditorContentProps['editor'] {
     extensions: [
       StarterKit,
       Mathematics,
+      Underline,
       EditComponent(),
       Placeholder.configure(
         {

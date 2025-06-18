@@ -1,5 +1,5 @@
 import {useEffect, useLayoutEffect} from "react";
-import {Button, Flex} from "antd";
+import {Button, Flex, Splitter} from "antd";
 import {GrTest} from "react-icons/gr";
 import {EditorContent} from '@tiptap/react'
 import {useShallow} from "zustand/react/shallow";
@@ -13,6 +13,7 @@ import BubbleMenu from "../../../TipTap/Menus/BubbleMenu.tsx";
 import {Knowledge} from "../../../../shared/types/CourseTypes.ts";
 import EditEditor from "../../../TipTap/Questions/Editable/EditEditor.ts";
 import {getQuestions} from "../getQuestions.ts";
+import QuestionPanel from "./QuestionPanel";
 import 'katex/dist/katex.min.css'
 
 const TaskEdit = () => {
@@ -72,39 +73,41 @@ const TaskEdit = () => {
 
   return (
     <EditorProvider editor={editor}>
-      <Flex gap={8} vertical style={{padding: 32}}>
-        <Flex gap={8} justify={'end'}>
-          <Button
-            icon={<GrTest />}
-            type={'default'}
-            onClick={() => {
-              saveTask();
-              setTaskTestMode(true);
-              setActiveTab('task-test');
-            }}
-          >
-            Протестировать
-          </Button>
-          <Button
-            type={'primary'}
-            onClick={() => {
-              saveTask();
-              setTaskEditMode(false);
-              setActiveTab('task-bank');
-            }}>
-            Сохранить
-          </Button>
-        </Flex>
-        <ToolBox editor={editor}/>
-        <BubbleMenu editor={editor}/>
-        {/*<FloatingMenuEditor editor={editor}/>*/}
-        <EditorContent editor={editor}/>
-        <button onClick={() => {
-          console.log(editor?.getJSON())
-        }}>
-          Get JSON
-        </button>
-      </Flex>
+      <Splitter style={{height: '100%'}}>
+        <Splitter.Panel>
+          <Flex gap={8} vertical style={{padding: 16, height: '100%'}}>
+            <Flex gap={8} justify={'end'}>
+              <Button
+                icon={<GrTest />}
+                type={'default'}
+                onClick={() => {
+                  saveTask();
+                  setTaskTestMode(true);
+                  setActiveTab('task-test');
+                }}
+              >
+                Протестировать
+              </Button>
+              <Button
+                type={'primary'}
+                onClick={() => {
+                  saveTask();
+                  setTaskEditMode(false);
+                  setActiveTab('task-bank');
+                }}>
+                Сохранить
+              </Button>
+            </Flex>
+            <ToolBox editor={editor}/>
+            <BubbleMenu editor={editor}/>
+            {/*<FloatingMenuEditor editor={editor}/>*/}
+            <EditorContent editor={editor}/>
+          </Flex>
+        </Splitter.Panel>
+        <Splitter.Panel collapsible defaultSize={'25%'} min={'15%'} max={'35%'}>
+          <QuestionPanel editor={editor}/>
+        </Splitter.Panel>
+      </Splitter>
     </EditorProvider>
   )
 }
