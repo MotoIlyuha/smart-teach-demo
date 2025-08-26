@@ -5,7 +5,7 @@ import UploadAvatar from "../../widgets/User/UploadAvatarWidget.tsx";
 import UserName from "../../widgets/User/UserNameWidget.tsx";
 import UserBirthday from "../../widgets/User/UserBirthdayWidget.tsx";
 import UserGroup from "../../widgets/Group/UserGroupWidget.tsx";
-import {useAuth} from "../../hok/Auth.ts";
+import {useAuth} from "../../shared/hok/Auth.ts";
 import {useUserStore} from "../../shared/stores/userStore.ts";
 import {useShallow} from "zustand/react/shallow";
 

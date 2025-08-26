@@ -3,7 +3,7 @@ import {useState} from "react";
 import {Avatar, Image} from "antd";
 import {EyeOutlined, UserOutlined} from "@ant-design/icons";
 
-import styles from "../../styles/PreviewButton.module.css";
+import styles from "../../shared/styles/PreviewButton.module.css";
 
 
 export default function UserAvatar({avatar_url, size = 240}: { avatar_url: string, size?: number }) {

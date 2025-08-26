@@ -1,0 +1,11 @@
+.ant-select-selection-search {
+    display: none !important;
+}
+
+.knowledge-tag {
+    margin-right: 3px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

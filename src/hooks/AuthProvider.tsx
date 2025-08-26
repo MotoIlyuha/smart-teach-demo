@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useEffect, useState, useCallback } from 'react';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { fetchUserDetails } from '../features/SupaBaseUsers';
-import supabase from '../config/supabaseClient';
+import supabase from '../shared/config/supabaseClient';
 import { useAuthStore } from "../shared/stores/authStore.ts";
 import { UserDetails } from "../shared/types/UserTypes.ts";
 

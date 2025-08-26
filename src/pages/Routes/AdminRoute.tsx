@@ -1,6 +1,6 @@
 import {ReactNode} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
-import {useAuth} from "../../hok/Auth.ts";
+import {useAuth} from "../../shared/hok/Auth.ts";
 import {App} from "antd";
 import {useEffect} from 'react';
 

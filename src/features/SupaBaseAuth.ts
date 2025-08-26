@@ -1,4 +1,4 @@
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../shared/config/supabaseClient.ts";
 import {AuthApiError, Session, User} from "@supabase/supabase-js";
 import {getUserByLogin} from "./SupaBaseUsers.ts";
 

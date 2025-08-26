@@ -1,3 +1,5 @@
+import {CourseDetails} from "./CourseTypes.ts";
+
 export type Json =
   | string
   | number
@@ -212,27 +214,50 @@ export type Database = {
       }
       knowledge: {
         Row: {
+          author_id: string
           created_at: string | null
+          description: string | null
           id: string
+          isapproved: boolean
           name: string
           parent_id: string | null
           updated_at: string | null
         }
         Insert: {
+          author_id: string
           created_at?: string | null
+          description?: string | null
           id: string
+          isapproved?: boolean
           name: string
           parent_id?: string | null
           updated_at?: string | null
         }
         Update: {
+          author_id?: string
           created_at?: string | null
+          description?: string | null
           id?: string
+          isapproved?: boolean
           name?: string
           parent_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "knowledge_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "user_statistics"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "knowledge_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "knowledge_parent_id_fkey"
             columns: ["parent_id"]
@@ -242,34 +267,32 @@ export type Database = {
           },
         ]
       }
-      learning_trajectories: {
+      lesson_tasks: {
         Row: {
-          category_id: string
-          created_at: string | null
-          id: string
-          name: string
-          updated_at: string | null
+          lesson_id: string
+          task_id: string
         }
         Insert: {
-          category_id: string
-          created_at?: string | null
-          id?: string
-          name: string
-          updated_at?: string | null
+          lesson_id: string
+          task_id: string
         }
         Update: {
-          category_id?: string
-          created_at?: string | null
-          id?: string
-          name?: string
-          updated_at?: string | null
+          lesson_id?: string
+          task_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "learning_trajectories_category_id_fkey"
-            columns: ["category_id"]
+            foreignKeyName: "lesson_tasks_lesson_id_fkey"
+            columns: ["lesson_id"]
             isOneToOne: false
-            referencedRelation: "categories"
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lesson_tasks_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -281,7 +304,7 @@ export type Database = {
           id: string
           knowledge_id: string | null
           title: string
-          type: Database["public"]["Enums"]["lesson_type"]
+          type: Database["public"]["Enums"]["lesson_type"] | null
           updated_at: string | null
         }
         Insert: {
@@ -290,7 +313,7 @@ export type Database = {
           id?: string
           knowledge_id?: string | null
           title: string
-          type: Database["public"]["Enums"]["lesson_type"]
+          type?: Database["public"]["Enums"]["lesson_type"] | null
           updated_at?: string | null
         }
         Update: {
@@ -299,7 +322,7 @@ export type Database = {
           id?: string
           knowledge_id?: string | null
           title?: string
-          type?: Database["public"]["Enums"]["lesson_type"]
+          type?: Database["public"]["Enums"]["lesson_type"] | null
           updated_at?: string | null
         }
         Relationships: [
@@ -308,36 +331,6 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      question_bank: {
-        Row: {
-          course_id: string
-          question_id: string
-        }
-        Insert: {
-          course_id: string
-          question_id: string
-        }
-        Update: {
-          course_id?: string
-          question_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "question_bank_course_id_fkey"
-            columns: ["course_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "question_bank_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "questions"
             referencedColumns: ["id"]
           },
         ]
@@ -377,12 +370,11 @@ export type Database = {
           case_sensitive: boolean | null
           cost: number
           created_at: string | null
-          explanation: string | null
+          explanation: Json | null
           id: string
           invitation_text: string | null
           shuffle_options: boolean | null
-          task_id: string
-          text: string
+          task_id: string | null
           type: Database["public"]["Enums"]["question_type"]
           updated_at: string | null
         }
@@ -390,12 +382,11 @@ export type Database = {
           case_sensitive?: boolean | null
           cost: number
           created_at?: string | null
-          explanation?: string | null
+          explanation?: Json | null
           id?: string
           invitation_text?: string | null
           shuffle_options?: boolean | null
-          task_id: string
-          text: string
+          task_id?: string | null
           type: Database["public"]["Enums"]["question_type"]
           updated_at?: string | null
         }
@@ -403,12 +394,11 @@ export type Database = {
           case_sensitive?: boolean | null
           cost?: number
           created_at?: string | null
-          explanation?: string | null
+          explanation?: Json | null
           id?: string
           invitation_text?: string | null
           shuffle_options?: boolean | null
-          task_id?: string
-          text?: string
+          task_id?: string | null
           type?: Database["public"]["Enums"]["question_type"]
           updated_at?: string | null
         }
@@ -457,6 +447,36 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      task_bank: {
+        Row: {
+          course_id: string
+          task_id: string
+        }
+        Insert: {
+          course_id: string
+          task_id: string
+        }
+        Update: {
+          course_id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_bank_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_bank_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       task_history: {
         Row: {
@@ -543,8 +563,6 @@ export type Database = {
           created_at: string | null
           id: string
           is_public: boolean | null
-          test_id: string
-          title: string
           total_points: number
           updated_at: string | null
         }
@@ -553,8 +571,6 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_public?: boolean | null
-          test_id: string
-          title: string
           total_points: number
           updated_at?: string | null
         }
@@ -563,125 +579,95 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_public?: boolean | null
-          test_id?: string
-          title?: string
           total_points?: number
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "tasks_test_id_fkey"
-            columns: ["test_id"]
-            isOneToOne: false
-            referencedRelation: "tests"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tests: {
-        Row: {
-          created_at: string | null
-          id: string
-          lesson_id: string
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          lesson_id: string
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          lesson_id?: string
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tests_lesson_id_fkey"
-            columns: ["lesson_id"]
-            isOneToOne: false
-            referencedRelation: "lessons"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       trajectory_edges: {
         Row: {
+          category_id: string
+          created_at: string | null
           id: string
-          learning_trajectory_id: string
-          source_lesson_id: string
-          target_lesson_id: string
+          source_node_id: string
+          target_node_id: string
+          updated_at: string | null
         }
         Insert: {
+          category_id: string
+          created_at?: string | null
           id?: string
-          learning_trajectory_id: string
-          source_lesson_id: string
-          target_lesson_id: string
+          source_node_id: string
+          target_node_id: string
+          updated_at?: string | null
         }
         Update: {
+          category_id?: string
+          created_at?: string | null
           id?: string
-          learning_trajectory_id?: string
-          source_lesson_id?: string
-          target_lesson_id?: string
+          source_node_id?: string
+          target_node_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "trajectory_edges_learning_trajectory_id_fkey"
-            columns: ["learning_trajectory_id"]
+            foreignKeyName: "fk_category_edge"
+            columns: ["category_id"]
             isOneToOne: false
-            referencedRelation: "learning_trajectories"
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "trajectory_edges_source_lesson_id_fkey"
-            columns: ["source_lesson_id"]
+            foreignKeyName: "fk_source_node"
+            columns: ["source_node_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "trajectory_nodes"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "trajectory_edges_target_lesson_id_fkey"
-            columns: ["target_lesson_id"]
+            foreignKeyName: "fk_target_node"
+            columns: ["target_node_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "trajectory_nodes"
             referencedColumns: ["id"]
           },
         ]
       }
       trajectory_nodes: {
         Row: {
-          id: number
-          learning_trajectory_id: string
+          category_id: string
+          created_at: string | null
+          id: string
           lesson_id: string
-          position: number
+          position: Json
+          updated_at: string | null
         }
         Insert: {
-          id?: number
-          learning_trajectory_id: string
+          category_id: string
+          created_at?: string | null
+          id?: string
           lesson_id: string
-          position: number
+          position: Json
+          updated_at?: string | null
         }
         Update: {
-          id?: number
-          learning_trajectory_id?: string
+          category_id?: string
+          created_at?: string | null
+          id?: string
           lesson_id?: string
-          position?: number
+          position?: Json
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "trajectory_nodes_learning_trajectory_id_fkey"
-            columns: ["learning_trajectory_id"]
+            foreignKeyName: "fk_category_node"
+            columns: ["category_id"]
             isOneToOne: false
-            referencedRelation: "learning_trajectories"
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "trajectory_nodes_lesson_id_fkey"
+            foreignKeyName: "fk_lesson"
             columns: ["lesson_id"]
             isOneToOne: false
             referencedRelation: "lessons"
@@ -787,13 +773,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "users_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "users_role_id_fkey"
             columns: ["role_id"]
             isOneToOne: false
@@ -811,15 +790,7 @@ export type Database = {
           total_score: number | null
           user_id: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "users_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
@@ -829,7 +800,43 @@ export type Database = {
         }
         Returns: boolean
       }
+      fetch_course_task_data: {
+        Args: {
+          in_course_id: string
+        }
+        Returns: Json
+      }
+      get_course_categories: {
+        Args: {
+          p_course_id: string
+        }
+        Returns: Json
+      }
       get_course_details: {
+        Args: {
+          course_id: string
+        }
+        Returns: Json
+      }
+      get_course_details_by_id: {
+        Args: {
+          course_id: string
+        }
+        Returns: CourseDetails
+      }
+      get_course_task_data: {
+        Args: {
+          course_id: string
+        }
+        Returns: Json
+      }
+      get_course_tasks: {
+        Args: {
+          course_id: string
+        }
+        Returns: Json
+      }
+      get_course_tasks_with_questions: {
         Args: {
           course_id: string
         }
@@ -861,6 +868,20 @@ export type Database = {
           role_name: string
           moderated_group_id: string
         }[]
+      }
+      update_course_details: {
+        Args: {
+          p_course_id: string
+          course_details: Json
+        }
+        Returns: undefined
+      }
+      update_task_bank: {
+        Args: {
+          p_course_id: string
+          task_bank_details: Json
+        }
+        Returns: undefined
       }
     }
     Enums: {
@@ -1276,4 +1297,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

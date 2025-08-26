@@ -1,13 +1,15 @@
 import {useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
-import {Alert, Layout} from 'antd';
+import {Alert} from 'antd';
 
 import {useShallow} from "zustand/react/shallow";
 import {useCourseStore} from "../../shared/stores/courseStore.ts";
 
-import styles from '../../styles/CourseEditPage.module.css';
-import CourseEditSettings from "../../widgets/Course/CourseEditSettings.tsx";
+import {CourseProvider} from "../../widgets/Course/CourseProvider.tsx";
+import {LayoutProvider} from "../../widgets/Course/CourseEditLayoutProvider.tsx";
+
+import CourseEdit from "../../widgets/Course/CourseEdit.tsx";
 
 export default function CourseEditPage() {
   const {course_id} = useParams();
@@ -15,7 +17,8 @@ export default function CourseEditPage() {
   const {course, fetchCourse, error} = useCourseStore(useShallow(state => ({
     course: state.course,
     fetchCourse: state.fetchCourse,
-    error: state.error
+    error: state.error,
+    loading: state.dataLoading
   })));
 
   useEffect(() => {
@@ -35,14 +38,10 @@ export default function CourseEditPage() {
   if (!course) return null;
 
   return (
-    <Layout className={styles.layout}>
-      <Layout.Sider width={320} className={styles.sider}>
-        <CourseEditSettings/>
-      </Layout.Sider>
-      <Layout.Content>Content</Layout.Content>
-      <Layout.Sider width='25%'>
-        Sider
-      </Layout.Sider>
-    </Layout>
+    <CourseProvider>
+      <LayoutProvider>
+        <CourseEdit/>
+      </LayoutProvider>
+    </CourseProvider>
   )
 }

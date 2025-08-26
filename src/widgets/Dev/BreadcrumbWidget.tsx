@@ -10,7 +10,7 @@ import {
   PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined
 } from "@ant-design/icons";
 
-import supabase from "../../config/supabaseClient.ts";
+import supabase from "../../shared/config/supabaseClient.ts";
 import UserMini from "../User/UserMiniWidget.tsx";
 import {BreadcrumbItemType} from "antd/es/breadcrumb/Breadcrumb";
 import {Tables} from "../../shared/types/supabase.ts";

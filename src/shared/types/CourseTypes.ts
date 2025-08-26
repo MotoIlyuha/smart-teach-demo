@@ -1,5 +1,6 @@
 // SmartTeach TypeScript Definitions
-import { JSONContent } from "@tiptap/react";
+import {JSONContent} from "@tiptap/react";
+import {Edge, Node} from "@xyflow/react";
 
 /**
  * Типы уроков
@@ -38,10 +39,12 @@ export const QuestionTypes = [...ChoiceTypes, ...InputTypes, ...TransferTypes] a
  * Интерфейс для элемента знания
  */
 export interface Knowledge {
-  id: string;                // Уникальный идентификатор знания
-  name: string;              // Название знания
-  parentId?: string;         // Идентификатор родительского знания (если есть)
-  children?: Knowledge[];    // Подчиненные знания
+  id: string;                      // Уникальный идентификатор знания
+  name: string;                    // Название знания
+  description: string | null;      // Описание знания
+  parentId?: string;               // Идентификатор родительского знания (если есть)
+  children?: Knowledge[];          // Подчиненные знания
+  isApproved: boolean;             // Знание подвержено администратором
 }
 
 /**
@@ -58,15 +61,23 @@ export interface AnswerOption {
 export interface Question {
   id: string;                             // Уникальный идентификатор вопроса
   type: QuestionType;                     // Тип вопроса
-  text: string;                           // Текст вопроса
   cost: number;                           // Баллы за правильный ответ
-  shuffleOptions?: boolean;               // Случайный порядок вариантов ответов
-  caseSensitive?: boolean;                // Чувствительность к регистру
+  shuffleOptions: boolean;                // Случайный порядок вариантов ответов
+  caseSensitive: boolean;                 // Чувствительность к регистру
   invitationText?: string;                // Приглашающий текст перед вопросом
   explanation?: string;                   // Пояснение к правильному ответу
   options: AnswerOption[];                // Список вариантов ответов
   correctAnswerIds: string[];             // Идентификаторы правильных ответов
-  requiredKnowledge: string[];            // Список необходимых знаний (идентификаторы)
+  requiredKnowledge: Knowledge[];         // Список необходимых знаний (идентификаторы)
+}
+
+/**
+ * Интерфейс для вопроса с ответом пользователя
+ */
+export interface QuestionWithAnswer extends Question {
+  userAnswerIds: string[];                // Идентификаторы ответов пользователя
+  userAnswerCorrect: boolean;             // Правильность ответов пользователя
+  userPoints: number;                     // Количество баллов пользователя
 }
 
 /**
@@ -74,21 +85,19 @@ export interface Question {
  */
 export interface Task {
   id: string;                             // Уникальный идентификатор задания
-  title: string;                          // Название задания
-  content: JSONContent;                   // JSON-объект условия задачи
+  content: JSONContent | null;            // JSON-объект условия задачи
   questions: Question[];                  // Список вопросов в задании
-  knowledge: string[];                    // Список необходимых знаний для задания (идентификаторы)
+  knowledge?: Knowledge[];                // Список необходимых знаний для задания
   totalPoints: number;                    // Максимальное количество баллов за задание
   isPublic: boolean;                      // Публичность задания
 }
 
 /**
- * Интерфейс для теста (Test)
+ * Интерфейс для задания с пользовательскими ответами
  */
-export interface Test {
-  id: string;                             // Уникальный идентификатор теста
-  title: string;                          // Название теста
-  tasks: Task[];                          // Список заданий в тесте
+export interface TestTask extends Task {
+  userPoints: number;                     // Количество баллов пользователя
+  questions: QuestionWithAnswer[]         // Список вопросов с ответами
 }
 
 /**
@@ -96,31 +105,25 @@ export interface Test {
  */
 export interface Lesson {
   id: string;                             // Уникальный идентификатор урока
+  index: number;                          // Порядковый номер урока
   title: string;                          // Название урока
   type: LessonType;                       // Тип урока
   tasks: Task[];                          // Список заданий в уроке
-  knowledge: string;                      // Идентификатор знания, которое проверяет урок (для "default" и "optional" типов)
+  knowledge?: Knowledge;                  // Знание, которое проверяет урок (для "default" и "optional" типов)
+  knowledge_id?: string;                  // Идентификатор знания, которое проверяет урок
 }
 
 /**
  * Интерфейс для траектории обучения (LearningTrajectory)
  */
 export interface LearningTrajectory {
-  id: string;                             // Уникальный идентификатор траектории обучения
-  name: string;                           // Название траектории обучения
-  graph: TrajectoryGraph;                 // Граф траектории обучения
+  nodes: LessonNode[];              // Узлы графа (уроки)
+  edges: Edge[];                    // Список ребер графа
 }
 
-/**
- * Интерфейс для графа траектории обучения
- */
-export interface TrajectoryGraph {
-  nodes: string[];                // Узлы графа (уроки)
-  edges: {                          // Ребра графа (отношения между уроками)
-    id: string;                     // Уникальный идентификатор ребра
-    source: string;                 // Идентификатор исходного урока
-    target: string;                 // Идентификатор целевого урока
-  }[];                              // Список ребер графа
+export interface LessonNode extends Node {
+  lesson_id: string;
+  data: Record<string, unknown> & Lesson;
 }
 
 /**
@@ -141,7 +144,7 @@ export interface CourseDetails {
   title: string;                          // Название курса
   description: string;                    // Описание курса
   categories: Category[];                 // Список категорий в курсе
-  questionBank: Question[];               // Банк вопросов курса
+  taskBank: Task[];                       // Банк тестов курса
   knowledge: string[];                    // Список необходимых знаний для курса (идентификаторы)
   totalPoints: number;                    // Максимальное количество баллов за курс
   isPublic: boolean;                      // Публичность курса
@@ -178,7 +181,7 @@ export interface User {
   avatarUrl?: string;                     // URL аватарки пользователя (необязательно)
   role: UserRole;                         // Роль пользователя
   groupId?: string;                       // Идентификатор группы (для школьников)
-  moderatedGroupIds?: string[];           // Идентификаторы групп, которыми модератирует (для учителей)
+  moderatedGroupIds?: string[];           // Идентификаторы групп, которыми модерирует (для учителей)
 }
 
 /**
@@ -231,7 +234,7 @@ export interface UserDashboard {
  */
 export interface TeacherDashboard {
   teacher: User;                                 // Данные учителя
-  studentGroupStatistics: GroupStatistics[];     // Статистика по группам, которыми модератирует
+  studentGroupStatistics: GroupStatistics[];     // Статистика по группам, которыми модерирует
   individualStudentStatistics: UserStatistics[]; // Статистика по отдельным ученикам
 }
 
@@ -251,11 +254,4 @@ export interface UserTaskHistory {
   userId: string;                         // Идентификатор пользователя
   taskId: string;                         // Идентификатор задания
   attempts: TaskHistory[];                // Все попытки решения задания
-}
-
-/**
- * Интерфейс для дерева знаний (KnowledgeTree)
- */
-export interface KnowledgeTree {
-  roots: Knowledge;                        // Корневые элементы дерева знаний
 }

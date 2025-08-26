@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {Avatar, Button, Dropdown, MenuProps, Skeleton, Space, Typography} from "antd";
 import {UserOutlined} from "@ant-design/icons";
 
-import {useAuth} from "../../../hok/Auth.ts";
+import {useAuth} from "../../../shared/hok/Auth.ts";
 
 export default function AvatarWidget() {
   const {signOut, person, loading} = useAuth();

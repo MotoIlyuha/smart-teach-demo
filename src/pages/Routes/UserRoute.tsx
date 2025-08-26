@@ -1,6 +1,6 @@
 import {ReactNode} from "react";
 import {Navigate, useLocation} from "react-router-dom";
-import {useAuth} from "../../hok/Auth.ts";
+import {useAuth} from "../../shared/hok/Auth.ts";
 import {App} from "antd";
 
 const UserRoute = ({children}: { children: ReactNode }) => {

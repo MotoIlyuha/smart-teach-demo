@@ -1,0 +1,24 @@
+.groupDisabled {
+    opacity: 1 !important;
+    cursor: default !important;
+    padding-left: 0.5rem;
+    user-select: none;
+}
+
+.checkboxGroup {
+    flex-direction: column !important;
+    gap: 8px !important;
+    user-select: none;
+}
+
+.wrapperDisabled span {
+    opacity: 1 !important; /* Отменить изменение прозрачности */
+    color: #000 !important; /* Отменить изменение цвета текста */
+    cursor: default !important; /* Курсор по умолчанию */
+    user-select: none;
+}
+
+.randomIcon {
+    margin: 4px;
+    opacity: 0.3;
+}
